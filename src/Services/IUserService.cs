@@ -5,6 +5,7 @@ namespace elastic_app_v3.Services
 {
     public interface IUserService
     {
-        Result<SignUpResponse> TrySignUp(SignUpRequest request);
+        Result<SignUpResponse> SignUp(SignUpRequest request);
+        Result<GetUserResponse> GetUserById(Guid userId);
     }
 }

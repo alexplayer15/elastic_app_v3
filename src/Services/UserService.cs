@@ -8,7 +8,7 @@ namespace elastic_app_v3.Services
     public class UserService(IUserRepository userRepository) : IUserService
     {
         private readonly IUserRepository _userRepository = userRepository;
-        public Result<SignUpResponse> TrySignUp(SignUpRequest request)
+        public Result<SignUpResponse> SignUp(SignUpRequest request)
         {
             var user = new User(
                 request.FirstName,
@@ -17,7 +17,17 @@ namespace elastic_app_v3.Services
                 request.Password
             );
 
-            return _userRepository.TryAdd(user);
+            var idResult = _userRepository.Add(user);
+
+            return idResult.Map(id => new SignUpResponse(id));
+        }
+
+        public Result<GetUserResponse> GetUserById(Guid userId)
+        {
+            var userResult = _userRepository.GetUserById(userId);
+
+            return userResult
+                .Map(user => new GetUserResponse(user.FirstName, user.LastName, user.UserName));
         }
     }
 }
