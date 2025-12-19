@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace elastic_app_v3.Errors
+﻿namespace elastic_app_v3.Errors
 {
     public class Result<T>
     {

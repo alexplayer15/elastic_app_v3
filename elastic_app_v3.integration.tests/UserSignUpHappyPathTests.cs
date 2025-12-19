@@ -1,6 +1,9 @@
 ﻿using System.Net;
 using AutoFixture;
+using elastic_app_v3.Config;
 using elastic_app_v3.DTOs;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace elastic_app_v3.integration.tests
 {
@@ -8,10 +11,13 @@ namespace elastic_app_v3.integration.tests
     public class UserSignUpHappyPathTests
     {
         private readonly ApiClient _client;
-        private readonly Fixture _fixture = new();
+        private readonly Fixture _fixture = new();  
         public UserSignUpHappyPathTests(CustomWebApplicationFactory<Program> factory)
         {
-            _client = new ApiClient(factory);
+            var scope = factory.Services.CreateScope();
+            var userSettings = scope.ServiceProvider.GetRequiredService<IOptions<UserSettings>>();
+
+            _client = new ApiClient(factory, userSettings);
 
             _fixture = new Fixture();
 
@@ -27,19 +33,27 @@ namespace elastic_app_v3.integration.tests
         [Fact]
         public async Task GivenValidUserSignUpRequest_WhenSendUserSignUpRequest_ThenReturn200AndUserId()
         {
-            //Arrange
             var requestBody = _fixture.Create<SignUpRequest>();
+            Guid? testUserId = null;
 
-            //Act
-            var httpResponse = await _client.SendUserSignupRequest(requestBody);
+            try
+            {
+                var httpResponse = await _client.SendUserSignupRequest(requestBody);
+                Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
 
-            //Assert
-            Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
+                var signUpResponse = await _client.GetSignUpResponse(httpResponse);
+                Assert.NotNull(signUpResponse);
+                Assert.NotEqual(Guid.Empty, signUpResponse.UserId);
 
-            var signUpResponse = await _client.GetSignUpResponse(httpResponse);
-
-            Assert.NotNull(signUpResponse);
-            Assert.NotEqual(Guid.Empty, signUpResponse.UserId);
+                testUserId = signUpResponse.UserId;
+            }
+            finally
+            {
+                if (testUserId.HasValue)
+                {
+                    await _client.DisposeTestDataAsync(testUserId.Value);
+                }
+            }
         }
     }
 }

@@ -8,3 +8,30 @@ services:
       - ASPNETCORE_URLS=http://+:8081
     ports:
       - "8081:8081"
+  sqlserver-local:
+    build:
+      context: ./Mock/User
+      dockerfile: Dockerfile
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD_FILE=/run/secrets/MSSQL_SA_PASSWORD
+      - TZ=UTC
+      - SQLHOST=localhost
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -C -U sa -P $(cat /run/secrets/MSSQL_SA_PASSWORD) -S localhost -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    secrets:
+        - MSSQL_SA_PASSWORD
+secrets:
+  MSSQL_SA_PASSWORD:
+    file: .mssql-sa-password

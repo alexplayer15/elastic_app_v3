@@ -5,7 +5,7 @@ namespace elastic_app_v3.Repositories
 {
     public interface IUserRepository
     {
-        Result<Guid> Add(User user);
-        Result<User> GetUserById(Guid userId);
+        Task<Result<Guid>> AddAsync(User user);
+        Task<Result<UserSchema>> GetUserByIdAsync(Guid userId);
     }
 }

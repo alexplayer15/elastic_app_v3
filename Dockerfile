@@ -22,4 +22,9 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
+#Fix issue where Alpine runs with Globalization invariant mode which is not compatible with Microsoft.Data.SqlClient
+RUN apk add --no-cache icu-libs=76.1-r1 icu-data-full=76.1-r1
+
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 ENTRYPOINT ["dotnet", "elastic_app_v3.dll"]

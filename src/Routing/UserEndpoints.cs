@@ -10,28 +10,29 @@ namespace elastic_app_v3.Routing
     {
         public static void Map(WebApplication app)
         {
-            app.MapPost(RoutingConstants.UserSignUpEndpoint, IResult (
+            app.MapPost(RoutingConstants.UserSignUpEndpoint, async Task<IResult> (
                 [FromBody] SignUpRequest request,
                 [FromServices] IUserService userService) =>
             {
-                var result = userService.SignUp(request);
+                var result = await userService.SignUpAsync(request);
 
                 return result.IsSuccess
                     ? TypedResults.Ok(result.Value)
                     : result.Error.ErrorCategory switch
                     {
                         ErrorCategory.UserAlreadyExists => TypedResults.Conflict(result.Error),
+                        ErrorCategory.SqlTimeoutException => TypedResults.StatusCode(504),
                         _ => TypedResults.StatusCode(500)
                     };
             })
             .WithName(RoutingConstants.UserSignUpEndpointOpenApiName)
             .WithOpenApi();
 
-            app.MapGet(RoutingConstants.GetUserByIdEndpoint, IResult (
+            app.MapGet(RoutingConstants.GetUserByIdEndpoint, async Task<IResult> (
                 Guid userId,
                 [FromServices] IUserService userService) =>
             {
-                var result = userService.GetUserById(userId);
+                var result = await userService.GetUserByIdAsync(userId);
 
                 return result.IsSuccess
                     ? TypedResults.Ok(result.Value)

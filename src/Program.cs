@@ -1,5 +1,4 @@
-using elastic_app_v3.Services;
-using elastic_app_v3.Repositories;
+using elastic_app_v3;
 using elastic_app_v3.Routing;
 using System.Text.Json.Serialization;
 
@@ -16,11 +15,10 @@ builder.Services.ConfigureHttpJsonOptions(options =>
         JsonIgnoreCondition.WhenWritingNull;
 
     options.SerializerOptions.Converters.Add(
-        new JsonStringEnumConverter());
+    new JsonStringEnumConverter());
 });
 
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.ConfigureServices(builder.Configuration);
 
 var app = builder.Build();
 

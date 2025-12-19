@@ -1,40 +1,88 @@
-﻿using elastic_app_v3.Domain;
+﻿using Dapper;
+using elastic_app_v3.Config;
+using elastic_app_v3.Constants;
+using elastic_app_v3.Domain;
 using elastic_app_v3.Errors;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 
 namespace elastic_app_v3.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(IOptions<UserSettings> userSettings) : IUserRepository
     {
-        private readonly List<User> _users = [];
-        public Result<Guid>Add(User user)
+        private readonly string _connectionString = userSettings.Value.GetConnectionString();
+        public async Task<Result<Guid>> AddAsync(User user)
         {
-            var userExists = CheckIfUserNameExists(user.GetUserName());
-
-            if (userExists)
+            try
             {
-                var error = UserErrors.UserAlreadyExistsError(user.GetUserName());
-                return Result<Guid>.Failure(error);
+                var userName = user.GetUserName();
+                var userExists = await CheckIfUserNameExistsAsync(userName);
+
+                if (userExists)
+                {
+                    return Result<Guid>.Failure(UserErrors.UserAlreadyExistsError(userName));
+                }
+
+                Guid userId;
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    userId = await connection.ExecuteScalarAsync<Guid>(SqlConstants.InsertUser, user);
+                }
+
+                return Result<Guid>.Success(userId);
+            }
+            catch (SqlException ex)
+            {
+                return Result<Guid>.Failure(DataBaseErrors.SqlDatabaseError(ex.Message));
+            }
+            catch (TimeoutException ex)
+            {
+                return Result<Guid>.Failure(DataBaseErrors.SqlTimeoutError(ex.Message));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<Result<UserSchema>> GetUserByIdAsync(Guid userId)
+        {
+            UserSchema? user;
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    user = await connection.QuerySingleOrDefaultAsync<UserSchema>(
+                        SqlConstants.GetUserById,
+                        new { UserId = userId }
+                    );
+                };
+                if (user == null)
+                {
+                    return Result<UserSchema>.Failure(UserErrors.UserDoesNotExistError);
+                }
+            }
+            catch (SqlException ex)
+            {
+                return Result<UserSchema>.Failure(DataBaseErrors.SqlDatabaseError(ex.Message));
+            }
+            catch (TimeoutException ex)
+            {
+                return Result<UserSchema>.Failure(DataBaseErrors.SqlTimeoutError(ex.Message));
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
-            _users.Add(user);
-
-            return Result<Guid>.Success(user.GetId());
+            return Result<UserSchema>.Success(user);
         }
-
-        public Result<User> GetUserById(Guid userId)
+        private async Task<bool> CheckIfUserNameExistsAsync(string userName)
         {
-            var user = _users.FirstOrDefault(u => u.GetId() == userId);
-
-            if (user == null)
-            {
-                return Result<User>.Failure(UserErrors.UserDoesNotExistError);
-            }
-
-            return Result<User>.Success(user);
-        }
-        private bool CheckIfUserNameExists(string userName)
-        {
-            return _users.Any(u => u.UserName == userName);
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+            return await connection.ExecuteScalarAsync<bool>(SqlConstants.CheckIfUserExists, new { UserName = userName });
         }
     }
 }

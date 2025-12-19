@@ -4,6 +4,8 @@
     {
         UserAlreadyExists,
         None,
-        UserDoesNotExist
+        UserDoesNotExist,
+        SqlException,
+        SqlTimeoutException
     }
 }

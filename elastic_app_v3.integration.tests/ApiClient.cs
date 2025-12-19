@@ -1,23 +1,22 @@
 using elastic_app_v3.DTOs;
 using elastic_app_v3.Routing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using elastic_app_v3.Errors;
+using Microsoft.Extensions.Options;
+using elastic_app_v3.Config;
+using Microsoft.Data.SqlClient;
+using Dapper;
 
 namespace elastic_app_v3.integration.tests
 {
-    public class ApiClient : IDisposable
+    public class ApiClient(
+        CustomWebApplicationFactory<Program> factory,
+        IOptions<UserSettings> userSettings) : IDisposable
     {
-        private readonly HttpClient _client;
-
-        public ApiClient(CustomWebApplicationFactory<Program> factory)
-        {
-            _client = factory.CreateClient();
-        }
-
+        private readonly HttpClient _client = factory.CreateClient();
+        private readonly string _connectionString = userSettings.Value.GetConnectionString();
         public async Task<HttpResponseMessage> SendUserSignupRequest(SignUpRequest request)
         {
             var uri = RoutingConstants.UserSignUpEndpoint;
@@ -38,6 +37,22 @@ namespace elastic_app_v3.integration.tests
                     PropertyNameCaseInsensitive = true,
                     Converters = { new JsonStringEnumConverter() }
                 });
+        }
+        public async Task DisposeTestDataAsync(Guid testUserId)
+        {
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                var sqlQuery = "DELETE FROM Users WHERE Id = @Id;";
+
+                await connection.ExecuteAsync(sqlQuery, new { Id = testUserId });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Something went wrong while clearing up the test data", ex);
+            }
         }
         public void Dispose()
         {

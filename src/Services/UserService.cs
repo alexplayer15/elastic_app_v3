@@ -5,10 +5,10 @@ using elastic_app_v3.Errors;
 
 namespace elastic_app_v3.Services
 {
-    public class UserService(IUserRepository userRepository) : IUserService
+    public class UserService(IUserRepository userDbRepository) : IUserService
     {
-        private readonly IUserRepository _userRepository = userRepository;
-        public Result<SignUpResponse> SignUp(SignUpRequest request)
+        private readonly IUserRepository _userDbRepository = userDbRepository;
+        public async Task<Result<SignUpResponse>> SignUpAsync(SignUpRequest request)
         {
             var user = new User(
                 request.FirstName,
@@ -17,17 +17,16 @@ namespace elastic_app_v3.Services
                 request.Password
             );
 
-            var idResult = _userRepository.Add(user);
+            var idResult = await _userDbRepository.AddAsync(user);
 
             return idResult.Map(id => new SignUpResponse(id));
         }
-
-        public Result<GetUserResponse> GetUserById(Guid userId)
+        public async Task<Result<GetUserResponse>> GetUserByIdAsync(Guid userId)
         {
-            var userResult = _userRepository.GetUserById(userId);
+            var userResult = await _userDbRepository.GetUserByIdAsync(userId);
 
             return userResult
-                .Map(user => new GetUserResponse(user.FirstName, user.LastName, user.UserName));
+                .Map(user => new GetUserResponse(user.FirstName, user.LastName, user.UserName, user.CreatedAt));
         }
     }
 }

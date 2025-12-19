@@ -1,0 +1,21 @@
+﻿namespace elastic_app_v3.Constants
+{
+    public static class SqlConstants
+    {
+        public const string GetUserById = @"
+        SELECT Id, Firstname, Lastname, Username, PasswordHash, CreatedAt
+        FROM Users
+        WHERE Id = @UserId;";
+
+        public const string InsertUser = @"
+        INSERT INTO Users (FirstName, LastName, UserName, PasswordHash)
+        OUTPUT INSERTED.Id
+        VALUES (@FirstName, @LastName, @UserName, @PasswordHash);";
+
+        public const string CheckIfUserExists = @"
+        SELECT CAST(
+            CASE WHEN EXISTS (SELECT 1 FROM Users WHERE UserName = @UserName)
+            THEN 1 ELSE 0 END AS BIT
+        );";
+    }
+}
