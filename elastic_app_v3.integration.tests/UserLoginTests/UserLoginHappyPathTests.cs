@@ -15,25 +15,28 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
         public UserLoginHappyPathTests(IntegrationTestFixture fixture)
         {
             _apiClient = new ApiClient(fixture.Client);
-            _fixture.Customize<LoginRequest>(lr => lr
-                .With(lr => lr.UserName, "alexplayer15")
-                .With(lr => lr.Password, "password")
-            );
         }
 
         [Fact]
         public async Task GivenSignedUpUser_WhenSendUserLoginRequest_ThenReturn200AndLoginCredentials()
         {
             //Arrange
+            var maxUsernameLength = 22;
+            //GUID length with N is 32 chars
+            var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
+
             var user = _fixture.Build<User>()
                 .With(u => u.FirstName, "Alex")
                 .With(u => u.LastName, "Player")
-                .With(u => u.UserName, "alexplayer15")
+                .With(u => u.UserName, username)
                 .With(u => u.PasswordHash, "password")
                 .Create();
 
             await _userDbTestHelper.AddTestUserAsync(user);
-            var request = _fixture.Create<LoginRequest>();
+            var request = _fixture.Build<LoginRequest>()
+                .With(lr => lr.UserName, "alexplayer15")
+                .With(lr => lr.Password, "password")
+                .Create();
 
             //Act
             var response = await _apiClient.SendUserLoginRequest(request);

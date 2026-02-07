@@ -14,10 +14,14 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
         {
             _client = new ApiClient(fixture.Client);
 
+            var maxUsernameLength = 22;
+            //GUID length with N is 32 chars
+            var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
+
             _fixture.Customize<SignUpRequest>(c => c
                 .With(x => x.FirstName, "Alex")
                 .With(x => x.LastName, "Player")
-                .With(x => x.UserName, "alexplayer15")
+                .With(x => x.UserName, username)
                 .With(x => x.Password, "password") //what if validation requirements change?
                 .With(x => x.ReEnteredPassword, "password")
             );

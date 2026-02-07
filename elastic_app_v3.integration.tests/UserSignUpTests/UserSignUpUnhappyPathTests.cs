@@ -17,10 +17,13 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
         {
             _client = new ApiClient(fixture.Client);
 
+            var maxUsernameLength = 22;
+            //GUID length with N is 32 chars
+            var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
             _fixture.Customize<SignUpRequest>(c => c
                 .With(x => x.FirstName, "Alex")
                 .With(x => x.LastName, "Player")
-                .With(x => x.UserName, "alexplayer15")
+                .With(x => x.UserName, username)
                 .With(x => x.Password, "password")
                 .With(x => x.ReEnteredPassword, "password")
             );
@@ -48,6 +51,7 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             //Assert
             Assert.Equal(HttpStatusCode.Conflict, httpResponse.StatusCode);
             var error = await _client.GetErrorResponse(httpResponse);
+            Assert.NotNull(error);
             Assert.Equal(ErrorCategory.UserAlreadyExists, error.ErrorCategory);
             Assert.Equal("User.AlreadyExists", error.Code);
         }
@@ -65,6 +69,7 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             //Assert
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
             var error = await _client.GetErrorResponse(httpResponse);
+            Assert.NotNull(error);
             Assert.Equal(ErrorCategory.ValidationError, error.ErrorCategory);
             Assert.Equal("Validation.ValidationError", error.Code); //create constants for error codes
         }

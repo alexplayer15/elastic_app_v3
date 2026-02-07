@@ -40,6 +40,7 @@ namespace elastic_app_v3.Routing
                    : result.Error.ErrorCategory switch
                    {
                        ErrorCategory.ValidationError => TypedResults.BadRequest(result.Error),
+                       ErrorCategory.UserDoesNotExist => TypedResults.NotFound(result.Error),
                        ErrorCategory.SqlTimeoutException => Results.Json(result.Error, statusCode: 504),
                        ErrorCategory.SqlException => Results.Json(result.Error, statusCode: 500),
                        _ => TypedResults.StatusCode(500)

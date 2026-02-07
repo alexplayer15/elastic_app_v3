@@ -16,8 +16,8 @@ namespace elastic_app_v3.Validations
                 .NotEmpty()
                 .WithMessage("UserName cannot be empty")
                 .MinimumLength(6)
-                .MaximumLength(15)
-                .WithMessage("UserName must be between 6 and 15 characters long");
+                .MaximumLength(22)
+                .WithMessage("UserName must be between 6 and 22 characters long");
         }
         public void RuleForPassword()
         {
