@@ -7,6 +7,12 @@
         FROM Users
         WHERE Id = @UserId;";
 
+        public const string GetUserId = @"
+        SELECT Id
+        FROM Users
+        WHERE Username = @Username;
+        ";
+
         public const string InsertUser = @"
         INSERT INTO Users (FirstName, LastName, UserName, PasswordHash)
         OUTPUT INSERTED.Id
@@ -17,5 +23,10 @@
             CASE WHEN EXISTS (SELECT 1 FROM Users WHERE UserName = @UserName)
             THEN 1 ELSE 0 END AS BIT
         );";
+
+        public const string GetUserByUserName = @"
+        SELECT Id, Firstname, Lastname, UserName, PasswordHash, CreatedAt
+        FROM Users
+        WHERE UserName = @UserName;";
     }
 }

@@ -6,5 +6,4 @@
         string UserName,
         DateTime CreatedAt
     );
-
 }

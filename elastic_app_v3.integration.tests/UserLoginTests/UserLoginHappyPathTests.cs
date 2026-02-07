@@ -1,0 +1,50 @@
+﻿using AutoFixture;
+using System.Net;
+using elastic_app_v3.DTOs;
+using elastic_app_v3.integration.tests.SetUp;
+using elastic_app_v3.Domain;
+
+namespace elastic_app_v3.integration.tests.UserLoginTests
+{
+    [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
+    public class UserLoginHappyPathTests
+    {
+        private readonly ApiClient _apiClient;
+        private readonly Fixture _fixture = new();
+        private readonly UserDbTestHelper _userDbTestHelper = new();
+        public UserLoginHappyPathTests(IntegrationTestFixture fixture)
+        {
+            _apiClient = new ApiClient(fixture.Client);
+            _fixture.Customize<LoginRequest>(lr => lr
+                .With(lr => lr.UserName, "alexplayer15")
+                .With(lr => lr.Password, "password")
+            );
+        }
+
+        [Fact]
+        public async Task GivenSignedUpUser_WhenSendUserLoginRequest_ThenReturn200AndLoginCredentials()
+        {
+            //Arrange
+            var user = _fixture.Build<User>()
+                .With(u => u.FirstName, "Alex")
+                .With(u => u.LastName, "Player")
+                .With(u => u.UserName, "alexplayer15")
+                .With(u => u.PasswordHash, "password")
+                .Create();
+
+            await _userDbTestHelper.AddTestUserAsync(user);
+            var request = _fixture.Create<LoginRequest>();
+
+            //Act
+            var response = await _apiClient.SendUserLoginRequest(request);
+
+            //Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var loginResponse = await _apiClient.GetLoginResponse(response);
+            Assert.NotNull(loginResponse);
+            Assert.Equal(3, loginResponse.AccessToken.Split(".").Length);
+            Assert.Equal(60, loginResponse.ExpiresInMinutes);
+            Assert.Equal("Bearer", loginResponse.TokenType);
+        }
+    }
+}

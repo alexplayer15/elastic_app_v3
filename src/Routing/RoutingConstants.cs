@@ -4,9 +4,13 @@
     {
         public const string UserSignUpEndpoint = "/user/signup";
 
-        public const string GetUserByIdEndpoint = "/user/get/{userId}";
+        public const string UserLoginEndpoint = "/user/login";
+
+        public const string GetUserByIdEndpoint = "/user/{userId}";
 
         public const string UserSignUpEndpointOpenApiName = "PostUserSignUp";
+
+        public const string UserLoginEndpointOpenApiName = "PostUseLogin";
 
         public const string GetUserByIdEndpointOpenApiName = "GetUserSignUp";
     }

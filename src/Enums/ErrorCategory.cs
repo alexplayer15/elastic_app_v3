@@ -6,6 +6,8 @@
         None,
         UserDoesNotExist,
         SqlException,
-        SqlTimeoutException
+        SqlTimeoutException,
+        ValidationError,
+        UserLoginCredentialsDoesNotExist
     }
 }
