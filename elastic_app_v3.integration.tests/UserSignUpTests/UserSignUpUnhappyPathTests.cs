@@ -60,8 +60,10 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
         public async Task GivenInValidUserSignUpRequest_WhenSendUserSignUpRequest_ThenReturn400AndValidationError()
         {
             //Arrange
-            var requestBody = _fixture.Create<SignUpRequest>();
-            requestBody.FirstName = string.Empty;
+            var requestBody = _fixture.Create<SignUpRequest>() with
+            {
+                FirstName = string.Empty
+            };
 
             ///Act
             var httpResponse = await _client.SendUserSignupRequest(requestBody);

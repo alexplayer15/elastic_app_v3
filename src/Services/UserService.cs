@@ -60,7 +60,7 @@ namespace elastic_app_v3.Services
                     .MapError(verifyLoginResult => new LoginResponse(string.Empty, string.Empty, string.Empty, null));
             }
             
-            return await _tokenGenerator.Generate(getUserResult.Value);
+            return await _tokenGenerator.Generate(getUserResult.Value); //what if this fails?
         }
         public async Task<Result<GetUserResponse>> GetUserByIdAsync(Guid userId)
         {

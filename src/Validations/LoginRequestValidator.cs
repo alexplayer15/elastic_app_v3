@@ -1,4 +1,6 @@
-﻿using elastic_app_v3.DTOs;
+﻿using elastic_app_v3.Constants;
+using elastic_app_v3.DTOs;
+using elastic_app_v3.Errors;
 using FluentValidation;
 
 namespace elastic_app_v3.Validations
@@ -12,21 +14,23 @@ namespace elastic_app_v3.Validations
         }
         public void RuleForUserName()
         {
-            RuleFor(lr => lr.UserName)
+            RuleFor(sur => sur.UserName)
                 .NotEmpty()
-                .WithMessage("UserName cannot be empty")
-                .MinimumLength(6)
-                .MaximumLength(22)
-                .WithMessage("UserName must be between 6 and 22 characters long");
+                .WithMessage(ErrorMessages.UserNameEmpty)
+                .MinimumLength(ValidationConstants.UserNameMinLength)
+                .WithMessage(ErrorMessages.UserNameTooShortMessage())
+                .MaximumLength(ValidationConstants.UserNameMaxLength)
+                .WithMessage(ErrorMessages.UserNameTooLongMessage());
         }
         public void RuleForPassword()
         {
-            RuleFor(lr => lr.Password)
+            RuleFor(sur => sur.Password)
                 .NotEmpty()
-                .WithMessage("Password cannot be empty")
+                .WithMessage(ErrorMessages.PasswordEmpty)
                 .MinimumLength(8)
+                .WithMessage(ErrorMessages.PasswordTooShortMessage())
                 .MaximumLength(22)
-                .WithMessage("Password must be between 8 and 22 characters long"); // to do: think of validations for password
+                .WithMessage(ErrorMessages.PasswordTooLongMessage()); 
         }
     }
 }

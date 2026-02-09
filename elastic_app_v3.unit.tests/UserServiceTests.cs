@@ -79,8 +79,10 @@ namespace elastic_app_v3.unit.tests
         public async Task GivenInValidSignUpRequest_WhenSignUpAsync_ThenReturnValidationError()
         {
             //Arrange
-            var request = _fixture.Create<SignUpRequest>();
-            request.UserName = string.Empty;
+            var request = _fixture.Create<SignUpRequest>() with
+            {
+                UserName = string.Empty
+            };
 
             _mockSignUpRequestValidator.Validate(request)
             .Returns(new ValidationResult()
