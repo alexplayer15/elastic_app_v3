@@ -60,7 +60,7 @@ namespace elastic_app_v3.unit.tests
             //Arrange
             var request = _fixture.Create<SignUpRequest>();
             _mockSignUpRequestValidator.Validate(request)
-            .Returns(new ValidationResult());
+                .Returns(new ValidationResult());
 
             var user = _fixture.Create<User>();
             var userId = _fixture.Create<Guid>();

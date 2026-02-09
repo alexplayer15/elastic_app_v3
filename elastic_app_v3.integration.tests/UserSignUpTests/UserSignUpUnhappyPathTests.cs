@@ -30,7 +30,6 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
         }
 
         [Fact]
-
         public async Task GivenUserAlreadyExists_WhenSendUserSignUpRequest_ThenReturn409AndUserExistsError()
         {
             //Arrange

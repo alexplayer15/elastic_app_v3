@@ -10,7 +10,6 @@ namespace elastic_app_v3.unit.tests.Validations
     {
         private readonly Fixture _fixture = new();
         private readonly LoginRequestValidator _loginRequestValidator = new();
-
         public LoginRequestValidatorTests()
         {
             _fixture.Customize<LoginRequest>(r => r

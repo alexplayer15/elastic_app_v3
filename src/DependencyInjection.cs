@@ -21,6 +21,7 @@ namespace elastic_app_v3
             services.AddValidatorsFromAssemblyContaining<SignUpRequest>(ServiceLifetime.Scoped);
             services.AddScoped<IValidator<SignUpRequest>, SignUpRequestValidator>();
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
+            services.AddScoped<IValidator<JwtConfig>,  JwtConfigValidator>();
             services.AddScoped<ISecretsManagerClient, SecretsManagerClient>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IUserService, UserService>();

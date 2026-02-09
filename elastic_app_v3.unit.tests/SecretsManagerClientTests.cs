@@ -33,7 +33,7 @@ namespace elastic_app_v3.unit.tests
                 SecretString = expectedSecretString
             });
 
-            var secretName = "BANANA-MANGO-PINEAPPLE-CHERRY-GUAVA";
+            var secretName = "JwtConfig";
 
             //Act
             var secretStringResponse = await _secretsManagerClient.GetSecretString(secretName);
@@ -53,7 +53,7 @@ namespace elastic_app_v3.unit.tests
                 SecretBinary = new MemoryStream()
             });
 
-            var secretName = "BANANA-MANGO-PINEAPPLE-CHERRY-GUAVA";
+            var secretName = "JwtConfig";
 
             //Act & Assert
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -77,7 +77,7 @@ namespace elastic_app_v3.unit.tests
                     SecretString = null
                 });
 
-            var secretName = "BANANA-MANGO-PINEAPPLE-CHERRY-GUAVA";
+            var secretName = "JwtConfig";
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -98,7 +98,7 @@ namespace elastic_app_v3.unit.tests
                 .GetSecretValueAsync(Arg.Any<GetSecretValueRequest>())
                 .Throws(new ResourceNotFoundException());
 
-            var secretName = "BANANA-MANGO-PINEAPPLE-CHERRY-GUAVA";
+            var secretName = "JwtConfig";
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ResourceNotFoundException>(

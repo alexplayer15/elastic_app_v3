@@ -34,7 +34,7 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
 
             await _userDbTestHelper.AddTestUserAsync(user);
             var request = _fixture.Build<LoginRequest>()
-                .With(lr => lr.UserName, "alexplayer15")
+                .With(lr => lr.UserName, username)
                 .With(lr => lr.Password, "password")
                 .Create();
 
