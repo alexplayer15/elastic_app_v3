@@ -4,7 +4,7 @@ using elastic_app_v3.DTOs;
 using elastic_app_v3.Errors;
 using elastic_app_v3.Validations;
 
-namespace elastic_app_v3.unit.tests
+namespace elastic_app_v3.unit.tests.Validations
 {
     public class LoginRequestValidatorTests
     {

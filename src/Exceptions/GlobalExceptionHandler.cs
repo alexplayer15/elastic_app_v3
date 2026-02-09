@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace elastic_app_v3.Exceptions

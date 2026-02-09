@@ -20,7 +20,7 @@ namespace elastic_app_v3.SecretsManager
 
                 if(response.SecretBinary is not null)
                 {
-                    throw new Exception();
+                    throw new InvalidOperationException("A secret binary is present where only a secret string is expected");
                 }
 
                 if(!string.IsNullOrEmpty(response.SecretString))
