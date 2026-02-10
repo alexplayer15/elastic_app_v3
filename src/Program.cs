@@ -2,6 +2,11 @@ using elastic_app_v3;
 using elastic_app_v3.Exceptions;
 using elastic_app_v3.Routing;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using elastic_app_v3.Config;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +25,18 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     new JsonStringEnumConverter());
 });
 
-builder.Services.ConfigureServices(builder.Configuration);
+builder.Services.ConfigureServices();
+
+builder.Services.ConfigureOptions(builder.Configuration);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer();
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -34,6 +50,9 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 
 UserEndpoints.Map(app);
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 

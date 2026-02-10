@@ -6,11 +6,11 @@ services:
         dockerfile: Dockerfile
     environment:
       - ASPNETCORE_URLS=http://+:8081
+      - ASPENTCORE_ENVIRONMENT=Integration
     ports:
       - "8081:8081"
     depends_on: 
       - sqlserver-local
-      - localstack
   sqlserver-local:
     build:
       context: ./Mock/User
@@ -35,21 +35,6 @@ services:
       start_period: 10s
     secrets:
         - MSSQL_SA_PASSWORD
-  localstack:
-    container_name: localstack
-    hostname: localstack
-    image: localstack/localstack:2.0
-    ports:
-      - '4566:4566'
-      - '4510-4559:4510-4559'
-    environment:
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - AWS_ACCESS_KEY_ID=DUMMYIDEXAMPLE
-      - AWS_SECRET_ACCESS_KEY=DUMMYEXAMPLEKEY
-      - REGION=eu-west-2
-    volumes:
-      - ./Mock/LocalStack:/etc/localstack/init/ready.d
-      - '/var/run/docker.sock:/var/run/docker.sock'
 secrets:
   MSSQL_SA_PASSWORD:
     file: .mssql-sa-password

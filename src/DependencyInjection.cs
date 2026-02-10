@@ -4,50 +4,51 @@ using elastic_app_v3.Config;
 using FluentValidation;
 using elastic_app_v3.DTOs;
 using elastic_app_v3.Validations;
-using Amazon.SecretsManager;
-using Microsoft.Extensions.Options;
-using Amazon.Runtime;
 using elastic_app_v3.Tokens;
-using elastic_app_v3.SecretsManager;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace elastic_app_v3
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureServices(this IServiceCollection services)
         {
-            services.Configure<UserSettings>(configuration.GetSection("UserSettings"));
-            services.Configure<SecretsManagerSettings>(configuration.GetSection("SecretsManagerSettings"));
             services.AddValidatorsFromAssemblyContaining<SignUpRequest>(ServiceLifetime.Scoped);
             services.AddScoped<IValidator<SignUpRequest>, SignUpRequestValidator>();
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
-            services.AddScoped<IValidator<JwtConfig>,  JwtConfigValidator>();
-            services.AddScoped<ISecretsManagerClient, SecretsManagerClient>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IUserService, UserService>();
             services.AddSingleton<IUserRepository, UserRepository>();
-            services.ConfigureSecretsManager();
 
             return services;
         }
-        public static IServiceCollection ConfigureSecretsManager(this IServiceCollection services)
+        public static IServiceCollection ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            return services.AddSingleton<IAmazonSecretsManager>(sp =>
-            {
-                var secretsManagerSettings = sp
-                    .GetRequiredService<IOptions<SecretsManagerSettings>>()
-                    .Value;
+            services.Configure<UserSettings>(configuration.GetSection("UserSettings"));
 
-                var secretsManagerConfiguration = new AmazonSecretsManagerConfig
+            services.AddOptions<JwtConfigOptions>()
+                .Bind(configuration.GetSection(JwtConfigOptions.JwtConfig))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+                .Configure<IOptions<JwtConfigOptions>>((options, jwtConfigOptions) =>
                 {
-                    ServiceURL = secretsManagerSettings.ServiceUrl,
-                    AuthenticationRegion = secretsManagerSettings.AuthenticationRegion,
-                };
+                    var jwtConfig = jwtConfigOptions.Value;
 
-                return new AmazonSecretsManagerClient(
-                    new BasicAWSCredentials("DUMMYACCESSKEY", "DUMMYSECRETKEY"),
-                    secretsManagerConfiguration);
-            });
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtConfig.Issuer,
+                        ValidAudience = jwtConfig.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtConfig.PrivateKey)),
+                    };
+                });
+
+            return services;
         }
     }
 }
