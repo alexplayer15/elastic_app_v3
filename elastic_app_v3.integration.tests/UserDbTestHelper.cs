@@ -28,19 +28,20 @@ namespace elastic_app_v3.integration.tests
                 throw new Exception("Something went wrong adding test user", ex);
             }
         }
-        public async Task<Guid> GetUserIdAsync(string username)
+
+        public async Task DeleteTestUserAsync(string userName)
         {
             try
             {
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
-                return await connection.QuerySingleAsync<Guid>(SqlConstants.GetUserId, new { Username = username });
+                await connection.ExecuteScalarAsync<Guid>(SqlConstants.DeleteUser, new { UserName = userName });
             }
             catch (Exception ex)
             {
-                throw new Exception("Something went wrong adding test user", ex);
+                throw new Exception("Something went wrong deleting test user", ex);
             }
-        }
+        }   
 
         //to do: find a better way to do this
         private static UserSettings SetUserSetting() => new()

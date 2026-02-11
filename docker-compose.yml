@@ -6,7 +6,7 @@ services:
         dockerfile: Dockerfile
     environment:
       - ASPNETCORE_URLS=http://+:8081
-      - ASPENTCORE_ENVIRONMENT=Integration
+      - ASPNETCORE_ENVIRONMENT=Integration
     ports:
       - "8081:8081"
     depends_on: 

@@ -3,10 +3,6 @@ using elastic_app_v3.Exceptions;
 using elastic_app_v3.Routing;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using elastic_app_v3.Config;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 

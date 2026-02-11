@@ -2,6 +2,7 @@
 using elastic_app_v3.Services;
 using elastic_app_v3.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace elastic_app_v3.Routing
 {
@@ -51,15 +52,21 @@ namespace elastic_app_v3.Routing
             .WithOpenApi();
 
             app.MapGet(RoutingConstants.GetUserByIdEndpoint, async Task<IResult> (
-                Guid userId,
+                ClaimsPrincipal user,
                 [FromServices] IUserService userService) =>
             {
+                var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (!Guid.TryParse(userIdClaim, out var userId))
+                    return TypedResults.Unauthorized();
+
                 var result = await userService.GetUserByIdAsync(userId);
 
                 return result.IsSuccess
                     ? TypedResults.Ok(result.Value)
                     : TypedResults.NotFound(result.Error);
             })
+            .RequireAuthorization()
             .WithName(RoutingConstants.GetUserByIdEndpointOpenApiName)
             .WithOpenApi();
         }

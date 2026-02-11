@@ -6,7 +6,7 @@
 
         public const string UserLoginEndpoint = "/user/login";
 
-        public const string GetUserByIdEndpoint = "/user/{userId}";
+        public const string GetUserByIdEndpoint = "/user/me";
 
         public const string UserSignUpEndpointOpenApiName = "PostUserSignUp";
 

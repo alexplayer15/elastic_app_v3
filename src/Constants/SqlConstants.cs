@@ -10,13 +10,16 @@
         public const string GetUserId = @"
         SELECT Id
         FROM Users
-        WHERE Username = @Username;
-        ";
+        WHERE Username = @Username;";
 
         public const string InsertUser = @"
         INSERT INTO Users (FirstName, LastName, UserName, PasswordHash)
         OUTPUT INSERTED.Id
         VALUES (@FirstName, @LastName, @UserName, @PasswordHash);";
+
+        public const string DeleteUser = @"
+        DELETE FROM Users
+        WHERE Username = @Username;";
 
         public const string CheckIfUserExists = @"
         SELECT CAST(

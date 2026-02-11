@@ -52,6 +52,13 @@ namespace elastic_app_v3.Repositories
             UserSchema? user;
             try
             {
+                var userExists = await CheckIfUserNameExistsAsync(loginRequest.UserName);
+
+                if (!userExists)
+                {
+                    return Result<UserSchema>.Failure(UserErrors.UserDoesNotExistError);
+                }
+
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     await connection.OpenAsync();

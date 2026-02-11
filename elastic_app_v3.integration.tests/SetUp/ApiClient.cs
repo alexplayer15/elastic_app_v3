@@ -5,6 +5,7 @@ using elastic_app_v3.Routing;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Net.Http.Headers;
 
 namespace elastic_app_v3.integration.tests.SetUp
 {
@@ -17,11 +18,14 @@ namespace elastic_app_v3.integration.tests.SetUp
 
             return await _client.PostAsJsonAsync(uri, request);
         }
-        public async Task<HttpResponseMessage> SendGetUserByIdRequest(Guid id)
+        public async Task<HttpResponseMessage> SendGetUserByIdRequest(string token)
         {
-            var uri = $"/user/{id}";
+            var request = new HttpRequestMessage(HttpMethod.Get, RoutingConstants.GetUserByIdEndpoint);
 
-            return await _client.GetAsync(uri);
+            request.Headers.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+
+            return await _client.SendAsync(request);
         }
         public async Task<HttpResponseMessage> SendUserLoginRequest(LoginRequest loginRequest)
         {

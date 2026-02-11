@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using AutoFixture;
+using elastic_app_v3.Enums;
+using elastic_app_v3.Domain;
 using elastic_app_v3.DTOs;
 using elastic_app_v3.integration.tests.SetUp;
 
@@ -14,9 +16,10 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
         public UserLoginUnhappyPathTests(IntegrationTestFixture fixture)
         {
             _apiClient = new ApiClient(fixture.Client);
+
             var maxUsernameLength = 22;
-            //GUID length with N is 32 chars
             var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
+
             _fixture.Customize<LoginRequest>(lr => lr
                 .With(lr => lr.UserName, username)
                 .With(lr => lr.Password, "password")
@@ -36,6 +39,34 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var errorResponse = await _apiClient.GetErrorResponse(response);
             Assert.NotNull(errorResponse);
+            Assert.Equal(ErrorCategory.UserDoesNotExist, errorResponse.ErrorCategory);
+        }
+
+        [Fact]
+        public async Task GivenSignedUpUserEnteringWrongPassword_WhenSendUserLoginRequest_ThenReturnUnauthorized()
+        {
+            //Arrange
+            var request = _fixture.Create<LoginRequest>() with
+            {
+                Password = "passwoooooord",
+            };
+
+            var user = _fixture.Build<User>()
+                .With(u => u.FirstName, "Alex")
+                .With(u => u.LastName, "Player")
+                .With(u => u.UserName, request.UserName)
+                .With(u => u.PasswordHash, "password")
+                .Create();
+
+            await _userDbTestHelper.AddTestUserAsync(user);
+
+            //Act
+            var response = await _apiClient.SendUserLoginRequest(request);
+
+            //Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            //var errorResponse = await _apiClient.GetErrorResponse(response);
+            //Assert.NotNull(errorResponse);
         }
     }
 }

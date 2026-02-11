@@ -42,14 +42,5 @@ namespace elastic_app_v3.Errors
 
         public const string ReEnteredPasswordEmpty = "ReEnteredPassword cannot be empty";
         public const string ReEnteredPasswordNotMatching = "Password must match ReEnteredPassword";
-
-        public const string PrivateKeyEmpty = "PrivateKey cannot be empty";
-
-        public const string ExpirationZeroOrNegative = "ExpirationInMinutes must be greater than 0";
-        public const string ExpirationTooLong = "ExpirationInMinutes must not be longer than a day";
-
-        public const string IssuerEmpty = "Issuer cannot be empty";
-
-        public const string AudienceEmpty = "Audience cannot be empty";
     }
 }
