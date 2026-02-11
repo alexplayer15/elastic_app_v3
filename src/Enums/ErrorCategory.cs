@@ -8,7 +8,7 @@
         SqlException,
         SqlTimeoutException,
         ValidationError,
-        UserLoginCredentialsDoesNotExist,
-        JwtConfigValidation
+        JwtConfigValidation,
+        IncorrectPassword   
     }
 }

@@ -28,13 +28,11 @@ namespace elastic_app_v3.unit.tests
 
             _tokenGenerator = new TokenGenerator(jwtOptions);
 
-            _fixture.Customize<UserSchema>(u => u
-                .With(u => u.Id, Guid.NewGuid())
+            _fixture.Customize<User>(u => u
                 .With(u => u.FirstName, "Alex")
                 .With(u => u.LastName, "Player")
                 .With(u => u.UserName, "alexplayer15")
                 .With(u => u.PasswordHash, "password")
-                .With(u => u.CreatedAt, DateTime.UtcNow)
             );
         }
 
@@ -42,10 +40,10 @@ namespace elastic_app_v3.unit.tests
         public async Task GivenValidJwtConfig_WhenGenerate_ThenReturnAccessToken()
         {
             //Arrange
-            var userSchema = _fixture.Create<UserSchema>();
+            var user = _fixture.Create<User>();
 
             //Act
-            var tokenResult = await _tokenGenerator.Generate(userSchema);
+            var tokenResult = await _tokenGenerator.Generate(user);
 
             //Assert
             Assert.True(tokenResult.IsSuccess);

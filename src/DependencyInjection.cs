@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using elastic_app_v3.Domain;
 
 namespace elastic_app_v3
 {
@@ -21,6 +23,7 @@ namespace elastic_app_v3
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddSingleton<IUserRepository, UserRepository>();
 
             return services;

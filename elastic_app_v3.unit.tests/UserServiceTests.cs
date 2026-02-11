@@ -9,6 +9,7 @@ using FluentValidation.Results;
 using elastic_app_v3.Domain;
 using elastic_app_v3.Errors;
 using elastic_app_v3.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace elastic_app_v3.unit.tests
 {
@@ -20,6 +21,7 @@ namespace elastic_app_v3.unit.tests
         private readonly IValidator<LoginRequest> _mockLoginRequestValidator
             = Substitute.For<IValidator<LoginRequest>>();
         private readonly ITokenGenerator _mockTokenGenerator = Substitute.For<ITokenGenerator>();
+        private readonly IPasswordHasher<User> _mockPasswordHasher = Substitute.For<IPasswordHasher<User>>();
 
         private readonly IUserService _userService;
 
@@ -30,6 +32,7 @@ namespace elastic_app_v3.unit.tests
                 _mockUserRepository,
                 _mockSignUpRequestValidator,
                 _mockLoginRequestValidator,
+                _mockPasswordHasher,
                 _mockTokenGenerator
             );
 
@@ -45,13 +48,6 @@ namespace elastic_app_v3.unit.tests
                 .With(lr => lr.UserName, "alexplayer15")
                 .With(lr => lr.Password, "password")
             );
-
-            _fixture.Customize<User>(u => u
-                .With(u => u.FirstName, "Alex")
-                .With(u => u.LastName, "Player")
-                .With(u => u.UserName, "alexplayer15")
-                .With(u => u.PasswordHash, "password")
-            );
         }
 
         [Fact]
@@ -59,12 +55,16 @@ namespace elastic_app_v3.unit.tests
         {
             //Arrange
             var request = _fixture.Create<SignUpRequest>();
+
             _mockSignUpRequestValidator.Validate(request)
                 .Returns(new ValidationResult());
 
-            var user = _fixture.Create<User>();
             var userId = _fixture.Create<Guid>();
-            _mockUserRepository.AddAsync(user)
+
+            _mockPasswordHasher.HashPassword(Arg.Any<User>(), request.Password) 
+                .Returns("hashedPassword");
+
+            _mockUserRepository.AddAsync(Arg.Any<User>())
                 .Returns(Result<Guid>.Success(userId));
 
             //Act
@@ -106,11 +106,14 @@ namespace elastic_app_v3.unit.tests
         {
             //Arrange
             var request = _fixture.Create<SignUpRequest>();
+
             _mockSignUpRequestValidator.Validate(request)
             .Returns(new ValidationResult());
 
-            var user = _fixture.Create<User>();
-            _mockUserRepository.AddAsync(user)
+            _mockPasswordHasher.HashPassword(Arg.Any<User>(), request.Password)
+                .Returns("hashedPassword");
+
+            _mockUserRepository.AddAsync(Arg.Any<User>())
                 .Returns(Result<Guid>.Failure(UserErrors.UserAlreadyExistsError("alexplayer15")));
 
             //Act
@@ -188,7 +191,7 @@ namespace elastic_app_v3.unit.tests
                 .Returns(Result<UserSchema>.Success(userSchema));
 
             var accessToken = Guid.NewGuid().ToString();
-            _mockTokenGenerator.Generate(userSchema)
+            _mockTokenGenerator.Generate(Arg.Any<User>())
                 .Returns(Result<LoginResponse>.Success(new LoginResponse
                 (accessToken, string.Empty, "Bearer", 60)
                 ));

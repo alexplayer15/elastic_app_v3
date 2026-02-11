@@ -27,8 +27,7 @@ namespace elastic_app_v3.Routing
                         _ => TypedResults.StatusCode(500)
                     };
             })
-            .WithName(RoutingConstants.UserSignUpEndpointOpenApiName)
-            .WithOpenApi();
+            .WithName(RoutingConstants.UserSignUpEndpointOpenApiName);
 
             app.MapPost(RoutingConstants.UserLoginEndpoint, async Task<IResult> (
                 [FromBody] LoginRequest request,
@@ -43,13 +42,13 @@ namespace elastic_app_v3.Routing
                        ErrorCategory.ValidationError => TypedResults.BadRequest(result.Error),
                        ErrorCategory.JwtConfigValidation => Results.Json(result.Error, statusCode: 500),
                        ErrorCategory.UserDoesNotExist => TypedResults.NotFound(result.Error),
+                       ErrorCategory.IncorrectPassword => Results.Json(result.Error, statusCode: 401),
                        ErrorCategory.SqlTimeoutException => Results.Json(result.Error, statusCode: 504),
                        ErrorCategory.SqlException => Results.Json(result.Error, statusCode: 500),
                        _ => TypedResults.StatusCode(500)
                    };
             })
-            .WithName(RoutingConstants.UserLoginEndpointOpenApiName)
-            .WithOpenApi();
+            .WithName(RoutingConstants.UserLoginEndpointOpenApiName);
 
             app.MapGet(RoutingConstants.GetUserByIdEndpoint, async Task<IResult> (
                 ClaimsPrincipal user,
@@ -67,8 +66,7 @@ namespace elastic_app_v3.Routing
                     : TypedResults.NotFound(result.Error);
             })
             .RequireAuthorization()
-            .WithName(RoutingConstants.GetUserByIdEndpointOpenApiName)
-            .WithOpenApi();
+            .WithName(RoutingConstants.GetUserByIdEndpointOpenApiName);
         }
     }
 }

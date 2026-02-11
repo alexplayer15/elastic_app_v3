@@ -13,7 +13,7 @@ namespace elastic_app_v3.Tokens
     public sealed class TokenGenerator(IOptions<JwtConfigOptions> jwtConfig) : ITokenGenerator
     {
         private readonly JwtConfigOptions _jwtConfig = jwtConfig.Value;  
-        public Task<Result<LoginResponse>> Generate(UserSchema userSchema)
+        public Task<Result<LoginResponse>> Generate(User user)
         {
             var securityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_jwtConfig.PrivateKey));
@@ -25,7 +25,7 @@ namespace elastic_app_v3.Tokens
             {
                 Subject = new ClaimsIdentity(
                 [
-                    new Claim(JwtRegisteredClaimNames.Sub, userSchema.Id.ToString())
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
                 ]),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtConfig.ExpirationInMinutes),
                 SigningCredentials = credentials,

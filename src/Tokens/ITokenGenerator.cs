@@ -6,6 +6,6 @@ namespace elastic_app_v3.Tokens
 {
     public interface ITokenGenerator
     {
-        Task<Result<LoginResponse>> Generate(UserSchema userSchema);
+        Task<Result<LoginResponse>> Generate(User user);
     }
 }
