@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Identity;
 using elastic_app_v3.Domain;
 
@@ -50,6 +51,23 @@ namespace elastic_app_v3
                             Encoding.UTF8.GetBytes(jwtConfig.PrivateKey)),
                     };
                 });
+
+            return services;
+        }
+        public static IServiceCollection ConfigureApiVersioning(this IServiceCollection services)
+        {
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1);
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
+                options.AssumeDefaultVersionWhenUnspecified = true;
+            });
+            //.AddApiExplorer(options =>
+            //{
+            //    options.GroupNameFormat = "'v'V";
+            //    options.SubstituteApiVersionInUrl = true;
+            //});
 
             return services;
         }

@@ -1,16 +1,28 @@
-﻿using elastic_app_v3.DTOs;
-using elastic_app_v3.Services;
+﻿using System.Security.Claims;
+using Asp.Versioning;
+using Asp.Versioning.Builder;
+using elastic_app_v3.DTOs;
 using elastic_app_v3.Enums;
+using elastic_app_v3.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace elastic_app_v3.Routing
 {
     public static class UserEndpoints
     {
+        private const string ElasticAppBaseRoute = "/elastic-app/v{version:apiVersion}";
         public static void Map(WebApplication app)
         {
-            app.MapPost(RoutingConstants.UserSignUpEndpoint, async Task<IResult> (
+            ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+                .HasApiVersion(new ApiVersion(1))
+                .ReportApiVersions()
+                .Build();
+
+            var elasticAppApi = app
+               .MapGroup(ElasticAppBaseRoute)
+               .WithApiVersionSet(apiVersionSet);
+
+            elasticAppApi.MapPost(RoutingConstants.UserSignUpEndpoint, async Task<IResult> (
                 [FromBody] SignUpRequest request,
                 [FromServices] IUserService userService) =>
             {
@@ -27,9 +39,10 @@ namespace elastic_app_v3.Routing
                         _ => TypedResults.StatusCode(500)
                     };
             })
-            .WithName(RoutingConstants.UserSignUpEndpointOpenApiName);
+            .WithName(RoutingConstants.UserSignUpEndpointOpenApiName)
+            .MapToApiVersion(1);
 
-            app.MapPost(RoutingConstants.UserLoginEndpoint, async Task<IResult> (
+            elasticAppApi.MapPost(RoutingConstants.UserLoginEndpoint, async Task<IResult> (
                 [FromBody] LoginRequest request,
                 [FromServices] IUserService userService) =>
             {
@@ -48,9 +61,10 @@ namespace elastic_app_v3.Routing
                        _ => TypedResults.StatusCode(500)
                    };
             })
-            .WithName(RoutingConstants.UserLoginEndpointOpenApiName);
+            .WithName(RoutingConstants.UserLoginEndpointOpenApiName)
+            .MapToApiVersion(1);
 
-            app.MapGet(RoutingConstants.GetUserByIdEndpoint, async Task<IResult> (
+            elasticAppApi.MapGet(RoutingConstants.GetUserByIdEndpoint, async Task<IResult> (
                 ClaimsPrincipal user,
                 [FromServices] IUserService userService) =>
             {
@@ -66,7 +80,8 @@ namespace elastic_app_v3.Routing
                     : TypedResults.NotFound(result.Error);
             })
             .RequireAuthorization()
-            .WithName(RoutingConstants.GetUserByIdEndpointOpenApiName);
+            .WithName(RoutingConstants.GetUserByIdEndpointOpenApiName)
+            .MapToApiVersion(1);
         }
     }
 }

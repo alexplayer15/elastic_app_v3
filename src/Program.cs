@@ -25,6 +25,8 @@ builder.Services.ConfigureServices();
 
 builder.Services.ConfigureOptions(builder.Configuration);
 
+builder.Services.ConfigureApiVersioning();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -2,6 +2,8 @@
 {
     public static class RoutingConstants
     {
+        public const string Base = "/elastic-app/v1";
+
         public const string UserSignUpEndpoint = "/user/signup";
 
         public const string UserLoginEndpoint = "/user/login";

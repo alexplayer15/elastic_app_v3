@@ -63,14 +63,17 @@ namespace elastic_app_v3.Services
             if (!getUserResult.IsSuccess)
             {
                 return getUserResult
-                    .MapError(_ => new LoginResponse(string.Empty, string.Empty, string.Empty, null));
+                    .MapError(_ => new LoginResponse(string.Empty, string.Empty, string.Empty, null)); //seems off to map this all with empty values
             }
 
             var user = new User(
                 getUserResult.Value.FirstName,
                 getUserResult.Value.LastName,
                 getUserResult.Value.UserName
-            );
+            )
+            {
+                Id = getUserResult.Value.Id
+            };
 
             var verifiedHashResult = _passwordHasher.VerifyHashedPassword(user, getUserResult.Value.PasswordHash, request.Password);
 
@@ -78,8 +81,6 @@ namespace elastic_app_v3.Services
             {
                 return Result<LoginResponse>.Failure(LoginErrors.IncorrectPasswordError);
             }
-
-            user.Id = getUserResult.Value.Id;
 
             return await _tokenGenerator.Generate(user); //what if this fails?
         }

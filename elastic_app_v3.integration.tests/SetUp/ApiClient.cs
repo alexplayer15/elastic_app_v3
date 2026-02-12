@@ -14,13 +14,14 @@ namespace elastic_app_v3.integration.tests.SetUp
         private readonly HttpClient _client = client;
         public async Task<HttpResponseMessage> SendUserSignupRequest(SignUpRequest request)
         {
-            var uri = RoutingConstants.UserSignUpEndpoint;
+            var uri = $"{RoutingConstants.Base}{RoutingConstants.UserSignUpEndpoint}";
 
             return await _client.PostAsJsonAsync(uri, request);
         }
         public async Task<HttpResponseMessage> SendGetUserByIdRequest(string token)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, RoutingConstants.GetUserByIdEndpoint);
+            var uri = $"{RoutingConstants.Base}{RoutingConstants.GetUserByIdEndpoint}";
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
 
             request.Headers.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
@@ -29,7 +30,7 @@ namespace elastic_app_v3.integration.tests.SetUp
         }
         public async Task<HttpResponseMessage> SendUserLoginRequest(LoginRequest loginRequest)
         {
-            var uri = "/user/login";
+            var uri = $"{RoutingConstants.Base}{RoutingConstants.UserLoginEndpoint}";
 
             return await _client.PostAsJsonAsync(uri, loginRequest);
         }
