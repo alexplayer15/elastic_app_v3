@@ -42,7 +42,7 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
                 .With(u => u.PasswordHash, requestBody.Password)
                 .Create();
 
-            await _userDbTestHelper.AddTestUserAsync(user);
+            await _userDbTestHelper.AddTestUserAsync(user, requestBody.Password);
 
             //Act
             var httpResponse = await _client.SendUserSignupRequest(requestBody);

@@ -55,10 +55,10 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
                 .With(u => u.FirstName, "Alex")
                 .With(u => u.LastName, "Player")
                 .With(u => u.UserName, request.UserName)
-                .With(u => u.PasswordHash, "password")
+                .Without(u => u.PasswordHash)
                 .Create();
 
-            await _userDbTestHelper.AddTestUserAsync(user);
+            await _userDbTestHelper.AddTestUserAsync(user, "password");
 
             //Act
             var response = await _apiClient.SendUserLoginRequest(request);

@@ -25,10 +25,10 @@ namespace elastic_app_v3.integration.tests.GetUserTests
                 .With(u => u.FirstName, "Alex")
                 .With(u => u.LastName, "Player")
                 .With(u => u.UserName, username)
-                .With(u => u.PasswordHash, password)
+                .Without(u => u.PasswordHash)
                 .Create();
 
-            await _userDbTestHelper.AddTestUserAsync(user);
+            await _userDbTestHelper.AddTestUserAsync(user, password);
 
             var loginRequest = _fixture.Build<LoginRequest>()
                 .With(u => u.UserName, username)
@@ -61,10 +61,10 @@ namespace elastic_app_v3.integration.tests.GetUserTests
                 .With(u => u.FirstName, "Alex")
                 .With(u => u.LastName, "Player")
                 .With(u => u.UserName, username)
-                .With(u => u.PasswordHash, password)
+                .Without(u => u.PasswordHash)
                 .Create();
 
-            await _userDbTestHelper.AddTestUserAsync(user);
+            await _userDbTestHelper.AddTestUserAsync(user, password);
 
             var loginRequest = _fixture.Build<LoginRequest>()
                 .With(u => u.UserName, username)

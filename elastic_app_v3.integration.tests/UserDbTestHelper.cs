@@ -3,6 +3,7 @@ using elastic_app_v3.Constants;
 using elastic_app_v3.Domain;
 using Microsoft.Data.SqlClient;
 using Dapper;
+using Microsoft.AspNetCore.Identity;
 
 namespace elastic_app_v3.integration.tests
 {
@@ -10,18 +11,21 @@ namespace elastic_app_v3.integration.tests
     {
         public UserSettings UserSettings { get; private set; }
         private readonly string _connectionString;
+        private readonly IPasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
         public UserDbTestHelper()
         {
             UserSettings = SetUserSetting();
             _connectionString = UserSettings.GetConnectionString();
         }
-        public async Task AddTestUserAsync(User user)
+        public async Task AddTestUserAsync(User user, string password)
         {
+            var userWithHashedPassword = AddHashedPasswordToTestUser(user, password);
+
             try
             {
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
-                await connection.ExecuteScalarAsync<Guid>(SqlConstants.InsertUser, user);
+                await connection.ExecuteScalarAsync<Guid>(SqlConstants.InsertUser, userWithHashedPassword);
             }
             catch (Exception ex)
             {
@@ -41,7 +45,16 @@ namespace elastic_app_v3.integration.tests
             {
                 throw new Exception("Something went wrong deleting test user", ex);
             }
-        }   
+        }  
+        
+        private User AddHashedPasswordToTestUser(User user, string password)
+        {
+            var hashedPassword = _passwordHasher.HashPassword(user, password);
+
+            user.SetPasswordHash(hashedPassword);
+
+            return user;
+        }
 
         //to do: find a better way to do this
         private static UserSettings SetUserSetting() => new()

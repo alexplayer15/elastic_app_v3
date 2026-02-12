@@ -24,18 +24,19 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
             var maxUsernameLength = 22;
             //GUID length with N is 32 chars
             var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
+            var password = "password";
 
             var user = _fixture.Build<User>()
                 .With(u => u.FirstName, "Alex")
                 .With(u => u.LastName, "Player")
                 .With(u => u.UserName, username)
-                .With(u => u.PasswordHash, "password")
+                .Without(u => u.PasswordHash)
                 .Create();
 
-            await _userDbTestHelper.AddTestUserAsync(user);
+            await _userDbTestHelper.AddTestUserAsync(user, password);
             var request = _fixture.Build<LoginRequest>()
                 .With(lr => lr.UserName, username)
-                .With(lr => lr.Password, "password")
+                .With(lr => lr.Password, password)
                 .Create();
 
             //Act

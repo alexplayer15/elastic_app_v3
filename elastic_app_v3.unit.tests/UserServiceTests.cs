@@ -190,6 +190,10 @@ namespace elastic_app_v3.unit.tests
             _mockUserRepository.GetUserByUsernameAsync(request)
                 .Returns(Result<UserSchema>.Success(userSchema));
 
+            _mockPasswordHasher.VerifyHashedPassword(
+                Arg.Any<User>(), userSchema.PasswordHash, request.Password)
+                .Returns(PasswordVerificationResult.Success);
+
             var accessToken = Guid.NewGuid().ToString();
             _mockTokenGenerator.Generate(Arg.Any<User>())
                 .Returns(Result<LoginResponse>.Success(new LoginResponse
