@@ -5,6 +5,8 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /source
 
+COPY Directory.Packages.props .
+
 COPY src/elastic_app_v3.api/elastic_app_v3.api.csproj src/elastic_app_v3.api/
 COPY src/elastic_app_v3.application/elastic_app_v3.application.csproj src/elastic_app_v3.application/
 COPY src/elastic_app_v3.infrastructure/elastic_app_v3.infrastructure.csproj src/elastic_app_v3.infrastructure/

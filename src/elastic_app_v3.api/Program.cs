@@ -1,4 +1,3 @@
-
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using elastic_app_v3.api.Routing;
@@ -52,5 +51,5 @@ app.UseAuthorization();
 app.UseHttpsRedirection();
 
 app.Run();
-public partial class Program { }
+
 
