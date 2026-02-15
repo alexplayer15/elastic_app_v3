@@ -9,6 +9,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Integration
     ports:
       - "8081:8081"
+    healthcheck:
+      test: wget -q --tries=1 --spider http://localhost:8081/elastic-app/v1/health/ready || exit 1
+      interval: 5s
+      retries: 10
+      start_period: 5s
     depends_on: 
       - sqlserver-local
   sqlserver-local:

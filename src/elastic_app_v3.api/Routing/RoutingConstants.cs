@@ -1,0 +1,21 @@
+﻿namespace elastic_app_v3.api.Routing
+{
+    public static class RoutingConstants
+    {
+        public const string Base = "/elastic-app/v1";
+
+        public const string UserSignUpEndpoint = "/user/signup";
+
+        public const string UserLoginEndpoint = "/user/login";
+
+        public const string GetUserByIdEndpoint = "/user/me";
+
+        public const string UserSignUpEndpointOpenApiName = "PostUserSignUp";
+
+        public const string UserLoginEndpointOpenApiName = "PostUseLogin";
+
+        public const string GetUserByIdEndpointOpenApiName = "GetUserSignUp";
+
+        public const string ShallowHealthCheckEndpoint = "/health/ready";
+    }
+}
