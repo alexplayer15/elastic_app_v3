@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
+using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.domain.Result;
 using elastic_app_v3.integration.tests.SetUp;
 using System.Net;
 
@@ -51,8 +51,7 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             Assert.Equal(HttpStatusCode.Conflict, httpResponse.StatusCode);
             var error = await _client.GetErrorResponse(httpResponse);
             Assert.NotNull(error);
-            Assert.Equal(ErrorCategory.UserAlreadyExists, error.ErrorCategory);
-            Assert.Equal("User.AlreadyExists", error.Code);
+            Assert.Equal(ErrorCodes.UserAlreadyExistsError, error.Code);
         }
 
         [Fact]
@@ -71,8 +70,7 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
             var error = await _client.GetErrorResponse(httpResponse);
             Assert.NotNull(error);
-            Assert.Equal(ErrorCategory.ValidationError, error.ErrorCategory);
-            Assert.Equal("Validation.ValidationError", error.Code); //create constants for error codes
+            Assert.Equal(ErrorCodes.ValidationError, error.Code);
         }
     }
 }

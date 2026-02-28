@@ -3,7 +3,7 @@ using AutoFixture;
 using elastic_app_v3.integration.tests.SetUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs;
-using elastic_app_v3.domain.Result;
+using elastic_app_v3.api.Errors;
 
 namespace elastic_app_v3.integration.tests.UserLoginTests
 {
@@ -39,7 +39,7 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var errorResponse = await _apiClient.GetErrorResponse(response);
             Assert.NotNull(errorResponse);
-            Assert.Equal(ErrorCategory.UserDoesNotExist, errorResponse.ErrorCategory);
+            Assert.Equal(ErrorCodes.UserDoesNotExistError, errorResponse.Code);
         }
 
         [Fact]
@@ -65,8 +65,9 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
 
             //Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-            //var errorResponse = await _apiClient.GetErrorResponse(response);
-            //Assert.NotNull(errorResponse);
+            var errorResponse = await _apiClient.GetErrorResponse(response);
+            Assert.NotNull(errorResponse);
+            Assert.Equal(ErrorCodes.IncorrectPasswordError, errorResponse.Code);
         }
     }
 }

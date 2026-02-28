@@ -1,11 +1,10 @@
 using elastic_app_v3.api.Routing;
-
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Net.Http.Headers;
 using elastic_app_v3.application.DTOs;
-using elastic_app_v3.domain.Result;
+using elastic_app_v3.api.Errors;
 
 namespace elastic_app_v3.integration.tests.SetUp
 {
@@ -61,14 +60,14 @@ namespace elastic_app_v3.integration.tests.SetUp
 
             return JsonSerializer.Deserialize<LoginResponse>(contentString, JsonOptions);
         }
-        public async Task<Error?> GetErrorResponse(HttpResponseMessage response)
+        public async Task<ApiError?> GetErrorResponse(HttpResponseMessage response)
         {
             var contentString = await response.Content.ReadAsStringAsync();
 
             if (string.IsNullOrWhiteSpace(contentString))
                 return null;
 
-            return JsonSerializer.Deserialize<Error>(contentString, JsonOptions);
+            return JsonSerializer.Deserialize<ApiError>(contentString, JsonOptions);
         }
 
         private static readonly JsonSerializerOptions JsonOptions = new()

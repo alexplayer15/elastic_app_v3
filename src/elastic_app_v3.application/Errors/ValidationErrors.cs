@@ -1,16 +1,9 @@
-﻿using elastic_app_v3.domain.Result;
+﻿using FluentResults;
 
 namespace elastic_app_v3.application.Errors
 {
-    public static class ValidationErrors
+    public sealed class ValidationError(string ErrorDescription) : Error()
     {
-        public static Error ValidationError(string errorDescription)
-        {
-            return new Error("Validation.ValidationError", ErrorCategory.ValidationError, errorDescription);
-        }
-        public static Error JwtConfigValidationError(string errorDescription)
-        {
-            return new Error("Validation.JwtConfigValidationError", ErrorCategory.JwtConfigValidation, errorDescription);
-        }
+        public readonly string ErrorDescription = ErrorDescription;
     }
 }

@@ -9,6 +9,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Http" />
+		<PackageReference Include="FluentResults" />
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="FluentValidation.AspNetCore" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />

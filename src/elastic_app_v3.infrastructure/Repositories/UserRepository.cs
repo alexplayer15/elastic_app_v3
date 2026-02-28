@@ -1,14 +1,12 @@
 ﻿using Dapper;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.domain.Abstractions;
-using elastic_app_v3.application.DTOs;
 using elastic_app_v3.application.Errors;
 using elastic_app_v3.infrastructure.Config;
 using elastic_app_v3.infrastructure.Constants;
-using elastic_app_v3.infrastructure.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
-using elastic_app_v3.domain.Result;
+using FluentResults;
 
 namespace elastic_app_v3.infrastructure.Repositories
 {
@@ -24,7 +22,7 @@ namespace elastic_app_v3.infrastructure.Repositories
 
                 if (userExists)
                 {
-                    return Result<Guid>.Failure(UserErrors.UserAlreadyExistsError(userName));
+                    return Result.Fail(new UserAlreadyExistsError());
                 }
 
                 Guid userId;
@@ -34,15 +32,15 @@ namespace elastic_app_v3.infrastructure.Repositories
                     userId = await connection.ExecuteScalarAsync<Guid>(SqlConstants.InsertUser, user);
                 }
 
-                return Result<Guid>.Success(userId);
+                return Result.Ok(userId);
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
-                return Result<Guid>.Failure(DataBaseErrors.SqlDatabaseError(ex.Message));
+                throw;
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException)
             {
-                return Result<Guid>.Failure(DataBaseErrors.SqlTimeoutError(ex.Message));
+                throw; //to do: think how best to handle this;
             }
             catch (Exception)
             {
@@ -64,23 +62,23 @@ namespace elastic_app_v3.infrastructure.Repositories
                 };
                 if (user == null)
                 {
-                    return Result<User>.Failure(UserErrors.UserDoesNotExistError);
+                    return Result.Fail(new UserDoesNotExistError());
                 }
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
-                return Result<User>.Failure(DataBaseErrors.SqlDatabaseError(ex.Message));
+                throw;
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException)
             {
-                return Result<User>.Failure(DataBaseErrors.SqlTimeoutError(ex.Message));
+                throw; //to do: think how best to handle this;
             }
             catch (Exception)
             {
                 throw;
             }
 
-            return Result<User>.Success(user);
+            return Result.Ok(user);
         }
         public async Task<Result<User>> GetUserByIdAsync(Guid userId)
         {
@@ -97,23 +95,23 @@ namespace elastic_app_v3.infrastructure.Repositories
                 };
                 if (user == null)
                 {
-                    return Result<User>.Failure(UserErrors.UserDoesNotExistError);
+                    return Result.Fail(new UserDoesNotExistError());
                 }
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
-                return Result<User>.Failure(DataBaseErrors.SqlDatabaseError(ex.Message));
+                throw;
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException)
             {
-                return Result<User>.Failure(DataBaseErrors.SqlTimeoutError(ex.Message));
+                throw; //to do: think how best to handle this;
             }
             catch (Exception)
             {
                 throw;
             }
 
-            return Result<User>.Success(user);
+            return Result.Ok(user);
         }
         private async Task<bool> CheckIfUserNameExistsAsync(string userName)
         {

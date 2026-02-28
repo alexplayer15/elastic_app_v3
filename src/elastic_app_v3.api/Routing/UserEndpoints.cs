@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
+using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs;
 using elastic_app_v3.application.Services;
-using elastic_app_v3.domain.Result;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,16 +29,7 @@ namespace elastic_app_v3.api.Routing
             {
                 var result = await userService.SignUpAsync(request);
 
-                return result.IsSuccess
-                    ? TypedResults.Ok(result.Value)
-                    : result.Error.ErrorCategory switch
-                    {
-                        ErrorCategory.ValidationError => TypedResults.BadRequest(result.Error),
-                        ErrorCategory.UserAlreadyExists => TypedResults.Conflict(result.Error),
-                        ErrorCategory.SqlTimeoutException => Results.Json(result.Error, statusCode: 504),
-                        ErrorCategory.SqlException => Results.Json(result.Error, statusCode: 500),
-                        _ => TypedResults.StatusCode(500)
-                    };
+                return result.ToApiResponse(RoutingConstants.UserSignUpEndpoint);
             })
             .WithName(RoutingConstants.UserSignUpEndpointOpenApiName)
             .MapToApiVersion(1);
@@ -49,18 +40,7 @@ namespace elastic_app_v3.api.Routing
             {
                 var result = await userService.LoginAsync(request);
 
-                return result.IsSuccess
-                   ? TypedResults.Ok(result.Value)
-                   : result.Error.ErrorCategory switch
-                   {
-                       ErrorCategory.ValidationError => TypedResults.BadRequest(result.Error),
-                       ErrorCategory.JwtConfigValidation => Results.Json(result.Error, statusCode: 500),
-                       ErrorCategory.UserDoesNotExist => TypedResults.NotFound(result.Error),
-                       ErrorCategory.IncorrectPassword => Results.Json(result.Error, statusCode: 401),
-                       ErrorCategory.SqlTimeoutException => Results.Json(result.Error, statusCode: 504),
-                       ErrorCategory.SqlException => Results.Json(result.Error, statusCode: 500),
-                       _ => TypedResults.StatusCode(500)
-                   };
+                return result.ToApiResponse(RoutingConstants.UserLoginEndpoint);
             })
             .WithName(RoutingConstants.UserLoginEndpointOpenApiName)
             .MapToApiVersion(1);
@@ -76,9 +56,7 @@ namespace elastic_app_v3.api.Routing
 
                 var result = await userService.GetUserByIdAsync(userId);
 
-                return result.IsSuccess
-                    ? TypedResults.Ok(result.Value)
-                    : TypedResults.NotFound(result.Error);
+                return result.ToApiResponse(RoutingConstants.GetUserByIdEndpoint);
             })
             .RequireAuthorization()
             .WithName(RoutingConstants.GetUserByIdEndpointOpenApiName)

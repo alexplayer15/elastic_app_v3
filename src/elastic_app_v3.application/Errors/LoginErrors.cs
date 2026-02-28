@@ -1,9 +1,6 @@
-﻿using elastic_app_v3.domain.Result;
+﻿using FluentResults;
 
 namespace elastic_app_v3.application.Errors
 {
-    public static class LoginErrors
-    {
-        public static Error IncorrectPasswordError = new("Login.IncorrectPassword", ErrorCategory.IncorrectPassword, "Incorrect password");
-    }
+    public sealed class IncorrectPasswordError() : Error("Incorrect password");
 }

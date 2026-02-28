@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs;
 using elastic_app_v3.application.Errors;
-using elastic_app_v3.domain.Result;
+using FluentResults;
 
 namespace elastic_app_v3.application.Services
 {
@@ -30,7 +30,7 @@ namespace elastic_app_v3.application.Services
                 var errorDescription = string.Join("; ",
                     validationResult.Errors.Select(e => e.ErrorMessage));
 
-                return Result<SignUpResponse>.Failure(ValidationErrors.ValidationError(errorDescription));
+                return Result.Fail(new ValidationError(errorDescription));
             }
 
             var user = new User
@@ -56,27 +56,27 @@ namespace elastic_app_v3.application.Services
                 var errorDescription = string.Join("; ",
                   validationResult.Errors.Select(e => e.ErrorMessage));
 
-                return Result<LoginResponse>.Failure(ValidationErrors.ValidationError(errorDescription)); // could split validation errors based on endpoint
+                return Result.Fail(new ValidationError(errorDescription));
             }
 
             var getUserResult = await _userDbRepository.GetUserByUsernameAsync(request.UserName);
 
             if (!getUserResult.IsSuccess)
             {
-                return getUserResult
-                    .MapError(_ => new LoginResponse(string.Empty, string.Empty, string.Empty, null)); //seems off to map this all with empty values
+                return getUserResult.ToResult<LoginResponse>();
             }
 
             var verifiedHashResult = _passwordHasher.VerifyHashedPassword(getUserResult.Value, getUserResult.Value.PasswordHash, request.Password);
 
             if(verifiedHashResult == PasswordVerificationResult.Failed)
             {
-                return Result<LoginResponse>.Failure(LoginErrors.IncorrectPasswordError);
+                return Result.Fail(new IncorrectPasswordError());
             }
 
-            var tokenResult = _tokenGenerator.Generate(getUserResult.Value); //what if this fails?
+            var tokenResult = _tokenGenerator.Generate(getUserResult.Value); //what if this fails? 
 
-            return tokenResult.Map(tokens => new LoginResponse(tokens.AccessToken, tokens.RefreshToken, "Bearer", tokens.ExpiresInMinutes));
+            return tokenResult
+                .Map(tokens => new LoginResponse(tokens.AccessToken, tokens.RefreshToken, "Bearer", tokens.ExpiresInMinutes));
         }
         public async Task<Result<GetUserResponse>> GetUserByIdAsync(Guid userId)
         {

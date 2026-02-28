@@ -3,7 +3,7 @@ using System.Net;
 using elastic_app_v3.integration.tests.SetUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs;
-using elastic_app_v3.domain.Result;
+using elastic_app_v3.api.Errors;
 
 namespace elastic_app_v3.integration.tests.GetUserTests
 {
@@ -85,7 +85,7 @@ namespace elastic_app_v3.integration.tests.GetUserTests
 
             var errorResponse = await _apiClient.GetErrorResponse(httpResponse);
             Assert.NotNull(errorResponse);
-            Assert.Equal(ErrorCategory.UserDoesNotExist, errorResponse.ErrorCategory);
+            Assert.Equal(ErrorCodes.UserDoesNotExistError, errorResponse.Code);
         }
     }
 }

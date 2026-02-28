@@ -3,13 +3,11 @@ using FluentValidation;
 using NSubstitute;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
-using elastic_app_v3.infrastructure.Repositories;
 using elastic_app_v3.application.Services;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs;
 using elastic_app_v3.application.Errors;
-using elastic_app_v3.infrastructure.Models;
-using elastic_app_v3.domain.Result;
+using FluentResults;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain;
 
@@ -67,7 +65,7 @@ namespace elastic_app_v3.unit.tests
                 .Returns("hashedPassword");
 
             _mockUserRepository.AddAsync(Arg.Any<User>())
-                .Returns(Result<Guid>.Success(userId));
+                .Returns(Result.Ok(userId));
 
             //Act
             var signUpResult = await _userService.SignUpAsync(request);
@@ -97,10 +95,8 @@ namespace elastic_app_v3.unit.tests
 
             //Assert
             Assert.False(signUpResult.IsSuccess);
-            Assert.NotNull(signUpResult.Error);
-            Assert.Equal("Validation.ValidationError", signUpResult.Error.Code); //could change this code to reflect field which failed
-            Assert.Equal(ErrorCategory.ValidationError, signUpResult.Error.ErrorCategory); //do we need code and category? How would consumer use the code?
-            Assert.Equal(ErrorMessages.UserNameEmpty, signUpResult.Error.Message);
+            Assert.Single(signUpResult.Errors);
+            Assert.IsType<ValidationError>(signUpResult.Errors[0]);   
         }
 
         [Fact]
@@ -116,17 +112,15 @@ namespace elastic_app_v3.unit.tests
                 .Returns("hashedPassword");
 
             _mockUserRepository.AddAsync(Arg.Any<User>())
-                .Returns(Result<Guid>.Failure(UserErrors.UserAlreadyExistsError("alexplayer15")));
+                .Returns(Result.Fail(new UserAlreadyExistsError()));
 
             //Act
             var signUpResult = await _userService.SignUpAsync(request);
 
             //Assert
             Assert.False(signUpResult.IsSuccess);
-            Assert.NotNull(signUpResult.Error);
-            Assert.Equal("User.AlreadyExists", signUpResult.Error.Code);
-            Assert.Equal(ErrorCategory.UserAlreadyExists, signUpResult.Error.ErrorCategory);
-            Assert.Equal("User with username: alexplayer15 already exists", signUpResult.Error.Message);
+            Assert.Single(signUpResult.Errors);
+            Assert.IsType<UserAlreadyExistsError>(signUpResult.Errors[0]);
         }
 
         [Fact]
@@ -146,9 +140,8 @@ namespace elastic_app_v3.unit.tests
 
             //Assert
             Assert.False(loginResult.IsSuccess);
-            Assert.NotNull(loginResult.Error);
-            Assert.Equal(ErrorCategory.ValidationError, loginResult.Error.ErrorCategory);
-            Assert.Equal(ErrorMessages.UserNameEmpty, loginResult.Error.Message);
+            Assert.Single(loginResult.Errors);
+            Assert.IsType<ValidationError>(loginResult.Errors[0]);
         }
 
         [Fact]
@@ -160,15 +153,15 @@ namespace elastic_app_v3.unit.tests
             .Returns(new ValidationResult());
 
             _mockUserRepository.GetUserByUsernameAsync(request.UserName)
-                .Returns(Result<User>.Failure(UserErrors.UserDoesNotExistError));
+                .Returns(Result.Fail(new UserDoesNotExistError()));
 
             //Act
             var loginResult = await _userService.LoginAsync(request);
 
             //Assert
             Assert.False(loginResult.IsSuccess);
-            Assert.NotNull(loginResult.Error);
-            Assert.Equal(ErrorCategory.UserDoesNotExist, loginResult.Error.ErrorCategory);
+            Assert.Single(loginResult.Errors);
+            Assert.IsType<UserDoesNotExistError>(loginResult.Errors[0]);
         }
 
         [Fact]
@@ -189,7 +182,7 @@ namespace elastic_app_v3.unit.tests
                 .Create();
 
             _mockUserRepository.GetUserByUsernameAsync(request.UserName)
-                .Returns(Result<User>.Success(user));
+                .Returns(Result.Ok(user));
 
             _mockPasswordHasher.VerifyHashedPassword(
                 Arg.Any<User>(), user.PasswordHash, request.Password)
@@ -197,9 +190,9 @@ namespace elastic_app_v3.unit.tests
 
             var accessToken = Guid.NewGuid().ToString();
             _mockTokenGenerator.Generate(Arg.Any<User>())
-                .Returns(Result<JwtToken>.Success(new JwtToken
-                (accessToken, string.Empty, "Bearer", 60)
-                ));
+                .Returns(Result.Ok(new JwtToken
+                (accessToken, string.Empty, "Bearer", 60))
+            );
 
             //Act
             var loginResult = await _userService.LoginAsync(request);
@@ -210,6 +203,46 @@ namespace elastic_app_v3.unit.tests
             Assert.Equal(accessToken, loginResult.Value.AccessToken);
             Assert.Equal(60, loginResult.Value.ExpiresInMinutes);
             Assert.Equal("Bearer", loginResult.Value.TokenType);
+        }
+
+        [Fact]
+        public async Task GivenExistingUser_WhenGetUserByIdAsync_ThenReturnUser()
+        {
+            //Arrange
+            var userId = _fixture.Create<Guid>();
+            var user = _fixture.Create<User>();
+
+            _mockUserRepository.GetUserByIdAsync(userId)
+                .Returns(Result.Ok(user));
+
+            //Act
+            var result = await _userService.GetUserByIdAsync(userId);
+
+            //Assert
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Value);
+            Assert.Equal(result.Value.FirstName, user.FirstName);
+            Assert.Equal(result.Value.LastName, user.LastName);
+            Assert.Equal(result.Value.UserName, user.UserName);
+        }
+
+        [Fact]
+        public async Task GivenNonExistingUser_WhenGetUserByIdAsync_ThenReturnUserDoesNotExistError()
+        {
+            //Arrange
+            var userId = _fixture.Create<Guid>();
+            var user = _fixture.Create<User>();
+
+            _mockUserRepository.GetUserByIdAsync(userId)
+                .Returns(Result.Fail(new UserDoesNotExistError()));
+
+            //Act
+            var result = await _userService.GetUserByIdAsync(userId);
+
+            //Assert
+            Assert.False(result.IsSuccess);
+            Assert.Single(result.Errors);
+            Assert.IsType<UserDoesNotExistError>(result.Errors[0]);
         }
     }
 }

@@ -1,14 +1,12 @@
 ﻿using System.Security.Claims;
 using System.Text;
-using elastic_app_v3.application.DTOs;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
 using elastic_app_v3.infrastructure.Config;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.domain.Result;
+using FluentResults;
 using elastic_app_v3.domain.Abstractions;
-using elastic_app_v3.infrastructure.Models;
 using elastic_app_v3.domain;
 
 namespace elastic_app_v3.infrastructure.Tokens
@@ -39,7 +37,7 @@ namespace elastic_app_v3.infrastructure.Tokens
             var handler = new JsonWebTokenHandler();
             var token = handler.CreateToken(descriptor);
 
-            return Result<JwtToken>.Success(
+            return Result.Ok(
                     new JwtToken(token, 
                     string.Empty, 
                     "Bearer",
