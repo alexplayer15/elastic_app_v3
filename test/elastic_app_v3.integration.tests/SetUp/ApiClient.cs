@@ -33,6 +33,12 @@ namespace elastic_app_v3.integration.tests.SetUp
 
             return await _client.PostAsJsonAsync(uri, loginRequest);
         }
+        public async Task<HttpResponseMessage> SendPaymentRequest(PaymentRequest request)
+        {
+            var uri = $"{RoutingConstants.Base}{RoutingConstants.PaymentEndpoint}";
+
+            return await _client.PostAsJsonAsync(uri, request);
+        }
         public async Task<SignUpResponse?> GetSignUpResponse(HttpResponseMessage response)
         {
             var contentString = await response.Content.ReadAsStringAsync();

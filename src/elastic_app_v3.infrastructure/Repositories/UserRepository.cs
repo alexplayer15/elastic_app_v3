@@ -13,11 +13,11 @@ using Polly.Registry;
 namespace elastic_app_v3.infrastructure.Repositories
 {
     public class UserRepository(
-        IOptions<ElasticDatabaseSettings> userSettings,
+        IOptions<ElasticDatabaseSettings> elasticDatabaseSettings,
         ResiliencePipelineProvider<string> resiliencePipelineProvider
     ) : IUserRepository
     {
-        private readonly string _connectionString = userSettings.Value.GetConnectionString();
+        private readonly string _connectionString = elasticDatabaseSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline 
             = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.UserResiliencePolicyKey);
         public async Task<Result<Guid>> AddAsync(User user, CancellationToken cancellationToken)

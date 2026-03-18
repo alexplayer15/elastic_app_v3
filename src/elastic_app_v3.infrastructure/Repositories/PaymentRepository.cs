@@ -12,10 +12,10 @@ using elastic_app_v3.infrastructure.Constants;
 namespace elastic_app_v3.infrastructure.Repositories
 {
     public class PaymentRepository(
-        IOptions<PaymentSettings> paymentSettings,
+        IOptions<ElasticDatabaseSettings> elasticDatabaseSettings,
         ResiliencePipelineProvider<string> resiliencePipelineProvider) : IPaymentRepository
     {
-        private readonly string _connectionString = paymentSettings.Value.GetConnectionString();
+        private readonly string _connectionString = elasticDatabaseSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline
             = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.UserResiliencePolicyKey);
         public async Task<Result<Guid>> AddPayment(Payment payment, CancellationToken cancellationToken)
@@ -32,7 +32,7 @@ namespace elastic_app_v3.infrastructure.Repositories
 
                     var command = new CommandDefinition(
                         PaymentSqlConstants.AddPayment,
-                        new { Payment = payment },
+                        payment,
                         cancellationToken: token);
 
                     return await connection.ExecuteScalarAsync<Guid>(command);
