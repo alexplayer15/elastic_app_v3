@@ -7,6 +7,6 @@ namespace elastic_app_v3.domain.Abstractions
     {
         Task<Result<Guid>> AddAsync(User user);
         Task<Result<User>> GetUserByUsernameAsync(string userName);
-        Task<Result<User>> GetUserByIdAsync(Guid userId);
+        Task<Result<User>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
     }
 }

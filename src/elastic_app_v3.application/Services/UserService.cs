@@ -46,7 +46,7 @@ namespace elastic_app_v3.application.Services
 
             var idResult = await _userDbRepository.AddAsync(user);
 
-            return idResult.Map(id => new SignUpResponse(id));
+            return idResult.Map(id => new SignUpResponse(id)); //what happens if repo fails?
         }
         public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
         {
@@ -63,7 +63,7 @@ namespace elastic_app_v3.application.Services
 
             if (!getUserResult.IsSuccess)
             {
-                return getUserResult.ToResult<LoginResponse>();
+                return getUserResult.ToResult<LoginResponse>(); //this doesn't look right, test it
             }
 
             var verifiedHashResult = _passwordHasher.VerifyHashedPassword(getUserResult.Value, getUserResult.Value.PasswordHash, request.Password);
@@ -78,9 +78,9 @@ namespace elastic_app_v3.application.Services
             return tokenResult
                 .Map(tokens => new LoginResponse(tokens.AccessToken, tokens.RefreshToken, "Bearer", tokens.ExpiresInMinutes));
         }
-        public async Task<Result<GetUserResponse>> GetUserByIdAsync(Guid userId)
+        public async Task<Result<GetUserResponse>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
         {
-            var userResult = await _userDbRepository.GetUserByIdAsync(userId);
+            var userResult = await _userDbRepository.GetUserByIdAsync(userId, cancellationToken);
 
             return userResult
                 .Map(user => new GetUserResponse(user.FirstName, user.LastName, user.UserName));

@@ -47,19 +47,31 @@ namespace elastic_app_v3.api.Routing
 
             elasticAppApi.MapGet(RoutingConstants.GetUserByIdEndpoint, async Task<IResult> (
                 ClaimsPrincipal user,
-                [FromServices] IUserService userService) =>
+                [FromServices] IUserService userService,
+                CancellationToken cancellationToken) =>
             {
                 var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (!Guid.TryParse(userIdClaim, out var userId))
                     return TypedResults.Unauthorized();
 
-                var result = await userService.GetUserByIdAsync(userId);
+                var result = await userService.GetUserByIdAsync(userId, cancellationToken);
 
                 return result.ToApiResponse(RoutingConstants.GetUserByIdEndpoint);
             })
             .RequireAuthorization()
             .WithName(RoutingConstants.GetUserByIdEndpointOpenApiName)
+            .MapToApiVersion(1);
+
+            elasticAppApi.MapPost(RoutingConstants.PaymentEndpoint, async Task<IResult> (
+                [FromBody] PaymentRequest request,
+                [FromServices] IPaymentService paymentService,
+                CancellationToken cancellationToken) => 
+            {
+                var result = await paymentService.AddPayment(request, cancellationToken);
+
+                return result.ToApiResponse(RoutingConstants.PaymentEndpoint);
+            })
             .MapToApiVersion(1);
 
             elasticAppApi

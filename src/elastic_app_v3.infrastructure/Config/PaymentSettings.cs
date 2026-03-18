@@ -1,8 +1,8 @@
 ﻿namespace elastic_app_v3.infrastructure.Config
 {
-    public class UserSettings
+    public class PaymentSettings
     {
-        public const string UserAppSettingsName = "UserSettings";
+        public const string PaymentAppSettingsName = "PaymentSettings";
         public string Server { get; set; } = string.Empty;
         public string User { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
@@ -12,7 +12,7 @@
         public string GetConnectionString()
         {
             return $"Server={Server},{Port};User={User};Password={Password};" +
-                   $"Database={Database};TrustServerCertificate={TrustServerCertificate};";
+                    $"Database={Database};TrustServerCertificate={TrustServerCertificate};";
         }
     }
 }

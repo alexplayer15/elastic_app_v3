@@ -1,6 +1,6 @@
 ﻿namespace elastic_app_v3.infrastructure.Constants
 {
-    public static class SqlConstants
+    public static class UserSqlConstants
     {
         public const string GetUserById = @"
         SELECT Id, Firstname, Lastname, Username, PasswordHash, CreatedAt

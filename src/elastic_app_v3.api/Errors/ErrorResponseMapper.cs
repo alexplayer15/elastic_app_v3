@@ -10,7 +10,8 @@ namespace elastic_app_v3.api.Errors
         {
             { RoutingConstants.UserSignUpEndpoint, GetSignUpErrorResponse },
             { RoutingConstants.UserLoginEndpoint, GetLoginErrorResponse  },
-            { RoutingConstants.GetUserByIdEndpoint, GetUserByIdErrorResponse }
+            { RoutingConstants.GetUserByIdEndpoint, GetUserByIdErrorResponse },
+            { RoutingConstants.PaymentEndpoint, GetPaymentErrorResponse }
         };
         public static IResult GetErrorResponseByEndpoint(
             Error internalError,
@@ -48,7 +49,6 @@ namespace elastic_app_v3.api.Errors
 
             return Results.Json(apiError, statusCode: statusCode);
         }
-
         private static IResult GetUserByIdErrorResponse(Error internalError)
         {
             (int statusCode, string errorCode) = internalError switch
@@ -61,6 +61,16 @@ namespace elastic_app_v3.api.Errors
 
             return Results.Json(apiError, statusCode: statusCode);
         }
+        private static IResult GetPaymentErrorResponse(Error internalError)
+        {
+            (int statusCode, string errorCode) = internalError switch
+            {
+                _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
+            };
 
+            var apiError = new ApiError(errorCode, internalError.Message);
+
+            return Results.Json(apiError, statusCode: statusCode);
+        }
     }
 }

@@ -10,6 +10,8 @@
 
         public const string GetUserByIdEndpoint = "/user/me";
 
+        public const string PaymentEndpoint = "/payment";
+
         public const string UserSignUpEndpointOpenApiName = "PostUserSignUp";
 
         public const string UserLoginEndpointOpenApiName = "PostUseLogin";

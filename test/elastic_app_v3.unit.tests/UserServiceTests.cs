@@ -85,10 +85,10 @@ namespace elastic_app_v3.unit.tests
             };
 
             _mockSignUpRequestValidator.Validate(request)
-            .Returns(new ValidationResult()
-            {
-                Errors = { new ValidationFailure("UserName", ErrorMessages.UserNameEmpty) }
-            });
+                .Returns(new ValidationResult()
+                {
+                    Errors = { new ValidationFailure("UserName", ErrorMessages.UserNameEmpty) }
+                });
 
             //Act
             var signUpResult = await _userService.SignUpAsync(request);
@@ -106,7 +106,7 @@ namespace elastic_app_v3.unit.tests
             var request = _fixture.Create<SignUpRequest>();
 
             _mockSignUpRequestValidator.Validate(request)
-            .Returns(new ValidationResult());
+                .Returns(new ValidationResult());
 
             _mockPasswordHasher.HashPassword(Arg.Any<User>(), request.Password)
                 .Returns("hashedPassword");
@@ -130,10 +130,10 @@ namespace elastic_app_v3.unit.tests
             var request = _fixture.Create<LoginRequest>();
 
             _mockLoginRequestValidator.Validate(request)
-            .Returns(new ValidationResult()
-            {
-                Errors = { new ValidationFailure("UserName", ErrorMessages.UserNameEmpty) }
-            });
+                .Returns(new ValidationResult()
+                {
+                    Errors = { new ValidationFailure("UserName", ErrorMessages.UserNameEmpty) }
+                });
 
             //Act
             var loginResult = await _userService.LoginAsync(request);
@@ -212,11 +212,11 @@ namespace elastic_app_v3.unit.tests
             var userId = _fixture.Create<Guid>();
             var user = _fixture.Create<User>();
 
-            _mockUserRepository.GetUserByIdAsync(userId)
+            _mockUserRepository.GetUserByIdAsync(userId, CancellationToken.None)
                 .Returns(Result.Ok(user));
 
             //Act
-            var result = await _userService.GetUserByIdAsync(userId);
+            var result = await _userService.GetUserByIdAsync(userId, CancellationToken.None); //better alternative to provide empty cancellation token in tests?
 
             //Assert
             Assert.True(result.IsSuccess);
@@ -231,13 +231,12 @@ namespace elastic_app_v3.unit.tests
         {
             //Arrange
             var userId = _fixture.Create<Guid>();
-            var user = _fixture.Create<User>();
 
-            _mockUserRepository.GetUserByIdAsync(userId)
+            _mockUserRepository.GetUserByIdAsync(userId, CancellationToken.None)
                 .Returns(Result.Fail(new UserDoesNotExistError()));
 
             //Act
-            var result = await _userService.GetUserByIdAsync(userId);
+            var result = await _userService.GetUserByIdAsync(userId, CancellationToken.None);
 
             //Assert
             Assert.False(result.IsSuccess);

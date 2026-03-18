@@ -7,6 +7,6 @@ namespace elastic_app_v3.application.Services
     {
         Task<Result<SignUpResponse>> SignUpAsync(SignUpRequest request);
         Task<Result<LoginResponse>> LoginAsync(LoginRequest request);
-        Task<Result<GetUserResponse>> GetUserByIdAsync(Guid userId);
+        Task<Result<GetUserResponse>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
     }
 }

@@ -25,7 +25,7 @@ namespace elastic_app_v3.integration.tests
             {
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
-                await connection.ExecuteScalarAsync<Guid>(SqlConstants.InsertUser, userWithHashedPassword);
+                await connection.ExecuteScalarAsync<Guid>(UserSqlConstants.InsertUser, userWithHashedPassword);
             }
             catch (Exception ex)
             {
@@ -39,7 +39,7 @@ namespace elastic_app_v3.integration.tests
             {
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
-                await connection.ExecuteScalarAsync<Guid>(SqlConstants.DeleteUser, new { UserName = userName });
+                await connection.ExecuteScalarAsync<Guid>(UserSqlConstants.DeleteUser, new { UserName = userName });
             }
             catch (Exception ex)
             {
