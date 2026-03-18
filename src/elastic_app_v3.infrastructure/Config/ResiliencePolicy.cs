@@ -2,7 +2,7 @@
 
 namespace elastic_app_v3.infrastructure.Config
 {
-    public class UserResiliencePolicy
+    public class ResiliencePolicy
     {
         public const string UserResiliencePolicyKey = "UserResiliencePolicyKey";
 

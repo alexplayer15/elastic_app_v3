@@ -21,7 +21,7 @@ namespace elastic_app_v3.application.Services
         private readonly IValidator<LoginRequest> _loginRequestValidator = loginRequestValidator;
         private readonly ITokenGenerator _tokenGenerator = tokenGenerator;
         private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
-        public async Task<Result<SignUpResponse>> SignUpAsync(SignUpRequest request)
+        public async Task<Result<SignUpResponse>> SignUpAsync(SignUpRequest request, CancellationToken cancellationToken)
         {
             var validationResult = _signUpRequestValidator.Validate(request);
 
@@ -44,9 +44,9 @@ namespace elastic_app_v3.application.Services
 
             user.SetPasswordHash(hashedPassword);
 
-            var idResult = await _userDbRepository.AddAsync(user);
+            var idResult = await _userDbRepository.AddAsync(user, cancellationToken);
 
-            return idResult.Map(id => new SignUpResponse(id)); //what happens if repo fails?
+            return idResult.Map(id => new SignUpResponse(id));
         }
         public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
         {
@@ -63,7 +63,7 @@ namespace elastic_app_v3.application.Services
 
             if (!getUserResult.IsSuccess)
             {
-                return getUserResult.ToResult<LoginResponse>(); //this doesn't look right, test it
+                return getUserResult.ToResult<LoginResponse>();
             }
 
             var verifiedHashResult = _passwordHasher.VerifyHashedPassword(getUserResult.Value, getUserResult.Value.PasswordHash, request.Password);

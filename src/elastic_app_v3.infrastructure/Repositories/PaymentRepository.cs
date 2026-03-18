@@ -17,7 +17,7 @@ namespace elastic_app_v3.infrastructure.Repositories
     {
         private readonly string _connectionString = paymentSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline
-            = resiliencePipelineProvider.GetPipeline(UserResiliencePolicy.UserResiliencePolicyKey);
+            = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.UserResiliencePolicyKey);
         public async Task<Result<Guid>> AddPayment(Payment payment, CancellationToken cancellationToken)
         {
             Guid paymentId = Guid.Empty;

@@ -53,8 +53,8 @@ namespace elastic_app_v3.infrastructure
                     };
                 });
 
-            services.AddOptions<UserResiliencePolicy>(UserResiliencePolicy.UserResiliencePolicySettings)
-                .Bind(configuration.GetSection(UserResiliencePolicy.UserResiliencePolicySettings))
+            services.AddOptions<ResiliencePolicy>(ResiliencePolicy.UserResiliencePolicySettings)
+                .Bind(configuration.GetSection(ResiliencePolicy.UserResiliencePolicySettings))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
@@ -62,9 +62,12 @@ namespace elastic_app_v3.infrastructure
         }
         private static IServiceCollection AddResilienceConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            return services.AddResiliencePipeline(UserResiliencePolicy.UserResiliencePolicyKey, (builder, context) =>
+            return services.AddResiliencePipeline(ResiliencePolicy.UserResiliencePolicyKey, (builder, context) =>
             {
-                var options = context.GetOptions<UserResiliencePolicy>(UserResiliencePolicy.UserResiliencePolicySettings);
+                var options = context.GetOptions<ResiliencePolicy>(ResiliencePolicy.UserResiliencePolicySettings);
+
+                var loggerFactory = context.ServiceProvider.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger("ResiliencePolicyLogger");
 
                 builder
                     .AddTimeout(TimeSpan.FromSeconds(options.TimeoutInMilliseconds))
@@ -76,8 +79,18 @@ namespace elastic_app_v3.infrastructure
                         BackoffType = DelayBackoffType.Exponential,
                         UseJitter = true,
                         MaxRetryAttempts = options.MaxRetryAttempts,
-                        Delay = TimeSpan.FromSeconds(options.Delay)
-                        //add observability on retry attempts and delays between retries
+                        Delay = TimeSpan.FromSeconds(options.Delay),
+                        OnRetry = retryArguments =>
+                        {
+                            logger.LogWarning(
+                                "Retrying due to {ExceptionType}: {Message}. Attempt {RetryAttempt} of {MaxRetryAttempts}.",
+                                retryArguments.Outcome.Exception?.GetType().Name,
+                                retryArguments.Outcome.Exception?.Message,
+                                retryArguments.AttemptNumber + 1,
+                                options.MaxRetryAttempts);
+
+                            return ValueTask.CompletedTask;
+                        },
                     })
                     .AddTimeout(TimeSpan.FromSeconds(options.InnerTimeoutInMilliseconds))
                     .AddCircuitBreaker(new CircuitBreakerStrategyOptions
@@ -90,7 +103,27 @@ namespace elastic_app_v3.infrastructure
                         SamplingDuration = TimeSpan.FromSeconds(options.SampleDuration),
                         MinimumThroughput = options.MinimumThroughput,
                         BreakDuration = TimeSpan.FromSeconds(options.BreakDuration),
-                        //to do: add observability on state of circuit breaker
+                        OnOpened = circuitBreakerArguments =>
+                        {
+                            logger.LogError(
+                                circuitBreakerArguments.Outcome.Exception,
+                                "Circuit breaker OPENED for {BreakDuration}",
+                                circuitBreakerArguments.BreakDuration);
+
+                            return ValueTask.CompletedTask;
+                        },
+
+                        OnClosed = args =>
+                        {
+                            logger.LogInformation("Circuit breaker CLOSED (normal operation resumed)");
+                            return ValueTask.CompletedTask;
+                        },
+
+                        OnHalfOpened = args =>
+                        {
+                            logger.LogWarning("Circuit breaker HALF-OPEN (testing recovery)");
+                            return ValueTask.CompletedTask;
+                        }
                     });
             });
         }

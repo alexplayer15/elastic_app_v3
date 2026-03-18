@@ -64,11 +64,11 @@ namespace elastic_app_v3.unit.tests
             _mockPasswordHasher.HashPassword(Arg.Any<User>(), request.Password) 
                 .Returns("hashedPassword");
 
-            _mockUserRepository.AddAsync(Arg.Any<User>())
+            _mockUserRepository.AddAsync(Arg.Any<User>(), CancellationToken.None)
                 .Returns(Result.Ok(userId));
 
             //Act
-            var signUpResult = await _userService.SignUpAsync(request);
+            var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);
 
             //Assert
             Assert.True(signUpResult.IsSuccess);
@@ -91,7 +91,7 @@ namespace elastic_app_v3.unit.tests
                 });
 
             //Act
-            var signUpResult = await _userService.SignUpAsync(request);
+            var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);
 
             //Assert
             Assert.False(signUpResult.IsSuccess);
@@ -111,11 +111,11 @@ namespace elastic_app_v3.unit.tests
             _mockPasswordHasher.HashPassword(Arg.Any<User>(), request.Password)
                 .Returns("hashedPassword");
 
-            _mockUserRepository.AddAsync(Arg.Any<User>())
+            _mockUserRepository.AddAsync(Arg.Any<User>(), CancellationToken.None)
                 .Returns(Result.Fail(new UserAlreadyExistsError()));
 
             //Act
-            var signUpResult = await _userService.SignUpAsync(request);
+            var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);
 
             //Assert
             Assert.False(signUpResult.IsSuccess);

@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Dapper;
+﻿using Dapper;
 using elastic_app_v3.application.Errors;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
@@ -20,27 +19,35 @@ namespace elastic_app_v3.infrastructure.Repositories
     {
         private readonly string _connectionString = userSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline 
-            = resiliencePipelineProvider.GetPipeline(UserResiliencePolicy.UserResiliencePolicyKey);
-        public async Task<Result<Guid>> AddAsync(User user)
+            = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.UserResiliencePolicyKey);
+        public async Task<Result<Guid>> AddAsync(User user, CancellationToken cancellationToken)
         {
+            Guid userId;
             try
             {
                 var userName = user.UserName;
-                var userExists = await CheckIfUserNameExistsAsync(userName);
+                var userExists = await CheckIfUserNameExistsAsync(userName, cancellationToken);
 
                 if (userExists)
                 {
                     return Result.Fail(new UserAlreadyExistsError());
                 }
 
-                Guid userId;
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    await connection.OpenAsync();
-                    userId = await connection.ExecuteScalarAsync<Guid>(UserSqlConstants.InsertUser, user);
-                }
+                userId = await _resiliencePipeline.ExecuteAsync(
+                    async token =>
+                    {
+                        using var connection = new SqlConnection(_connectionString);
+                        await connection.OpenAsync(token);
 
-                return Result.Ok(userId);
+                        var command = new CommandDefinition(
+                            UserSqlConstants.InsertUser,
+                            user,
+                            cancellationToken: token
+                        );
+
+                        return await connection.ExecuteScalarAsync<Guid>(command);
+                    }, cancellationToken);
+   
             }
             catch (SqlException)
             {
@@ -54,6 +61,8 @@ namespace elastic_app_v3.infrastructure.Repositories
             {
                 throw;
             }
+
+            return Result.Ok(userId);
         }
         public async Task<Result<User>> GetUserByUsernameAsync(string userName)
         {
@@ -103,7 +112,8 @@ namespace elastic_app_v3.infrastructure.Repositories
                         var command = new CommandDefinition(
                             UserSqlConstants.GetUserById,
                             new { UserId = userId },
-                            cancellationToken: token);
+                            cancellationToken: token
+                        );
 
                         return await connection.QuerySingleOrDefaultAsync<User>(command);
                     },
@@ -128,11 +138,22 @@ namespace elastic_app_v3.infrastructure.Repositories
 
             return Result.Ok(user);
         }
-        private async Task<bool> CheckIfUserNameExistsAsync(string userName)
+        private async Task<bool> CheckIfUserNameExistsAsync(string userName, CancellationToken cancellationToken)
         {
-            using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-            return await connection.ExecuteScalarAsync<bool>(UserSqlConstants.CheckIfUserExists, new { UserName = userName });
+            return await _resiliencePipeline.ExecuteAsync(
+                async token =>
+                {
+                     using var connection = new SqlConnection(_connectionString);
+                     await connection.OpenAsync(token);
+
+                    var command = new CommandDefinition(
+                        UserSqlConstants.CheckIfUserExists,
+                        new { UserName = userName },
+                        cancellationToken: token
+                    );
+                    return await connection.ExecuteScalarAsync<bool>(command);
+                },
+                cancellationToken);
         }
     }
 }

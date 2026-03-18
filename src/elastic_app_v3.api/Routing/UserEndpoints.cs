@@ -25,9 +25,10 @@ namespace elastic_app_v3.api.Routing
 
             elasticAppApi.MapPost(RoutingConstants.UserSignUpEndpoint, async Task<IResult> (
                 [FromBody] SignUpRequest request,
-                [FromServices] IUserService userService) =>
+                [FromServices] IUserService userService,
+                CancellationToken cancellationToken) =>
             {
-                var result = await userService.SignUpAsync(request);
+                var result = await userService.SignUpAsync(request, cancellationToken);
 
                 return result.ToApiResponse(RoutingConstants.UserSignUpEndpoint);
             })
