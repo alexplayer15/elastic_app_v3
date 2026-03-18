@@ -7,15 +7,11 @@ using elastic_app_v3.application.DTOs;
 namespace elastic_app_v3.integration.tests.UserLoginTests
 {
     [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
-    public class UserLoginHappyPathTests
+    public class UserLoginHappyPathTests(IntegrationTestFixture fixture)
     {
-        private readonly ApiClient _apiClient;
+        private readonly ApiClient _apiClient = new(fixture.Client);
         private readonly Fixture _fixture = new();
         private readonly UserDbTestHelper _userDbTestHelper = new();
-        public UserLoginHappyPathTests(IntegrationTestFixture fixture)
-        {
-            _apiClient = new ApiClient(fixture.Client);
-        }
 
         [Fact]
         public async Task GivenSignedUpUser_WhenSendUserLoginRequest_ThenReturn200AndLoginCredentials()

@@ -9,13 +9,13 @@ namespace elastic_app_v3.integration.tests
 {
     public class UserDbTestHelper
     {
-        public UserSettings UserSettings { get; private set; }
+        public ElasticDatabaseSettings ElasticDatabaseSettings { get; private set; }
         private readonly string _connectionString;
         private readonly IPasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
         public UserDbTestHelper()
         {
-            UserSettings = SetUserSetting();
-            _connectionString = UserSettings.GetConnectionString();
+            ElasticDatabaseSettings = SetElasticDatabaseSettings();
+            _connectionString = ElasticDatabaseSettings.GetConnectionString();
         }
         public async Task AddTestUserAsync(User user, string password)
         {
@@ -57,9 +57,9 @@ namespace elastic_app_v3.integration.tests
         }
 
         //to do: find a better way to do this
-        private static UserSettings SetUserSetting() => new()
+        private static ElasticDatabaseSettings SetElasticDatabaseSettings() => new()
         {
-            Database = "Users",
+            Database = "Elastic",
             Server = "localhost",
             Port = 1433,
             User = "SA",

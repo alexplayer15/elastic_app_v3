@@ -13,7 +13,7 @@ using Polly.Registry;
 namespace elastic_app_v3.infrastructure.Repositories
 {
     public class UserRepository(
-        IOptions<UserSettings> userSettings,
+        IOptions<ElasticDatabaseSettings> userSettings,
         ResiliencePipelineProvider<string> resiliencePipelineProvider
     ) : IUserRepository
     {

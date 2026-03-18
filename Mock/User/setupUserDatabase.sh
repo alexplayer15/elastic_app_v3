@@ -15,7 +15,7 @@ else
   echo "Using password from environment variable."
 fi
 
-/opt/mssql-tools18/bin/sqlcmd -C -U sa -P "$PASSWORD" -S "$SQLHOST" -i /docker-entrypoint-initdb.d/userDataSampleSchema.sql
+/opt/mssql-tools18/bin/sqlcmd -C -U sa -P "$PASSWORD" -S "$SQLHOST" -i /docker-entrypoint-initdb.d/elasticDatabaseSetup.sql
 
     if [ $? -eq 0 ]
     then

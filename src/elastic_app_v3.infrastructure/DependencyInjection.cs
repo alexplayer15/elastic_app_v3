@@ -31,7 +31,7 @@ namespace elastic_app_v3.infrastructure
         }
         private static IServiceCollection ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<UserSettings>(configuration.GetSection(UserSettings.UserAppSettingsName));
+            services.Configure<ElasticDatabaseSettings>(configuration.GetSection(ElasticDatabaseSettings.UserAppSettingsName));
             services.Configure<PaymentSettings>(configuration.GetSection(PaymentSettings.PaymentAppSettingsName));
 
             services.AddOptions<JwtConfigOptions>()

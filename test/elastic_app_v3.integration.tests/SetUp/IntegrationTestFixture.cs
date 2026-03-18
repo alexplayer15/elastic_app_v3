@@ -8,14 +8,14 @@ namespace elastic_app_v3.integration.tests.SetUp
     {
         private readonly CustomWebApplicationFactory<Program> _factory;
         public HttpClient Client { get; }
-        public UserSettings UserSettings { get; private set; }
+        public ElasticDatabaseSettings ElasticDatabaseSettings { get; private set; }
         private readonly string _connectionString;
         public IntegrationTestFixture()
         {
             _factory = new CustomWebApplicationFactory<Program>();
             Client = _factory.CreateClient();
-            UserSettings = SetUserSetting();
-            _connectionString = UserSettings.GetConnectionString();
+            ElasticDatabaseSettings = SetElasticDatabaseSettings();
+            _connectionString = ElasticDatabaseSettings.GetConnectionString();
         }
         public async Task InitializeAsync()
         {
@@ -33,9 +33,10 @@ namespace elastic_app_v3.integration.tests.SetUp
                 throw new Exception("Something went wrong while clearing up the test data", ex);
             }
         }
-        private static UserSettings SetUserSetting() => new()
+        //why is this in fixture and helper?
+        private static ElasticDatabaseSettings SetElasticDatabaseSettings() => new()
         {
-            Database = "Users",
+            Database = "Elastic",
             Server = "localhost",
             Port = 1433,
             User = "SA",

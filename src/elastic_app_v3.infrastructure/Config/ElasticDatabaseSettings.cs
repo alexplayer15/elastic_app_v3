@@ -1,8 +1,8 @@
 ﻿namespace elastic_app_v3.infrastructure.Config
 {
-    public class UserSettings
+    public class ElasticDatabaseSettings
     {
-        public const string UserAppSettingsName = "UserSettings";
+        public const string UserAppSettingsName = "ElasticDatabaseSettings";
         public string Server { get; set; } = string.Empty;
         public string User { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
