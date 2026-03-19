@@ -51,21 +51,15 @@ END;
 GO
 
 -- 5. Create IdempotencyKeys table if it does not exist
-IF NOT EXISTS (
-    SELECT 1 
-    FROM sys.tables 
-    WHERE name = 'IdempotencyKeys'
-)
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'IdempotencyKeys')
 BEGIN
     CREATE TABLE IdempotencyKeys (
-        Id UNIQUEIDENTIFIER NOT NULL 
-            CONSTRAINT PK_IdempotencyKeys PRIMARY KEY 
-            DEFAULT NEWID(),
-
-        IdempotencyKey NVARCHAR(450) NOT NULL, 
-        CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
-
-        CONSTRAINT UQ_IdempotencyKey UNIQUE (IdempotencyKey)
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_IdempotencyKeys PRIMARY KEY DEFAULT NEWID(),
+        IdempotencyKey NVARCHAR(450) NOT NULL,
+        PaymentId UNIQUEIDENTIFIER NOT NULL,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+        CONSTRAINT UQ_IdempotencyKey UNIQUE (IdempotencyKey),
+        CONSTRAINT UQ_PaymentId UNIQUE (PaymentId)
     );
 END;
 GO

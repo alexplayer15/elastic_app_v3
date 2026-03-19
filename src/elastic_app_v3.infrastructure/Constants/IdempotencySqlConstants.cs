@@ -3,13 +3,12 @@
     public static class IdempotencySqlConstants
     {
         public const string CheckIfIdempotencyKeyExists = @"
-        SELECT CAST(
-            CASE WHEN EXISTS (SELECT 1 FROM IdempotencyKeys WHERE IdempotencyKey = @IdempotencyKey)
-            THEN 1 ELSE 0 END AS BIT
-        );";
+        SELECT IdempotencyKey, PaymentId
+        FROM IdempotencyKeys
+        WHERE IdempotencyKey = @IdempotencyKey;";
 
         public const string InsertIdempotencyKey = @"
-        INSERT INTO IdempotencyKeys (IdempotencyKey)
-        VALUES (@IdempotencyKey);";
+        INSERT INTO IdempotencyKeys (IdempotencyKey, PaymentId)
+        VALUES (@IdempotencyKey, @PaymentId);";
     }
 }

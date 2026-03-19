@@ -8,6 +8,7 @@ using Polly.Registry;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using elastic_app_v3.infrastructure.Constants;
+using elastic_app_v3.infrastructure.Models;
 
 namespace elastic_app_v3.infrastructure.Repositories
 {
@@ -38,11 +39,11 @@ namespace elastic_app_v3.infrastructure.Repositories
                         transaction: transaction,
                         cancellationToken: token
                     );
-                    var paymentExists = await connection.ExecuteScalarAsync<bool>(checkIdempotencyKeyExistsCommand);
+                    var idempotencyRecord = await connection.QueryFirstOrDefaultAsync<IdempotencyKeySchema>(checkIdempotencyKeyExistsCommand);
 
-                    if (paymentExists)
+                    if (idempotencyRecord is not null && idempotencyRecord.IdempotencyKey is not null)
                     {
-                        throw new InvalidOperationException("A payment with the same idempotency key already exists."); //temporary solution
+                        return idempotencyRecord.PaymentId;
                     }
 
                     var insertPaymentCommand = new CommandDefinition(
@@ -53,9 +54,11 @@ namespace elastic_app_v3.infrastructure.Repositories
 
                     paymentId = await connection.ExecuteScalarAsync<Guid>(insertPaymentCommand);
 
+                    var idempotencyKeySchema = new IdempotencyKeySchema(idempotencyKey, paymentId);
+
                     var insertIdempotencyKeyCommand = new CommandDefinition(
                         IdempotencySqlConstants.InsertIdempotencyKey,
-                        new { IdempotencyKey = idempotencyKey },
+                        idempotencyKeySchema,
                         transaction: transaction,
                         cancellationToken: token);
 
