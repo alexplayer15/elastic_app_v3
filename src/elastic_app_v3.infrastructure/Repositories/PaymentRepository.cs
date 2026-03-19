@@ -18,7 +18,7 @@ namespace elastic_app_v3.infrastructure.Repositories
         private readonly string _connectionString = elasticDatabaseSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline
             = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.UserResiliencePolicyKey);
-        public async Task<Result<Guid>> AddPayment(Payment payment, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> AddPaymentAsync(Payment payment, string idempotencyKey, CancellationToken cancellationToken)
         {
             Guid paymentId = Guid.Empty;
             try
@@ -30,12 +30,40 @@ namespace elastic_app_v3.infrastructure.Repositories
 
                     await connection.OpenAsync(token);
 
-                    var command = new CommandDefinition(
+                    await using var transaction = await connection.BeginTransactionAsync(token);
+
+                    var checkIdempotencyKeyExistsCommand = new CommandDefinition(
+                        IdempotencySqlConstants.CheckIfIdempotencyKeyExists,
+                        new { IdempotencyKey = idempotencyKey },
+                        transaction: transaction,
+                        cancellationToken: token
+                    );
+                    var paymentExists = await connection.ExecuteScalarAsync<bool>(checkIdempotencyKeyExistsCommand);
+
+                    if (paymentExists)
+                    {
+                        throw new InvalidOperationException("A payment with the same idempotency key already exists."); //temporary solution
+                    }
+
+                    var insertPaymentCommand = new CommandDefinition(
                         PaymentSqlConstants.AddPayment,
                         payment,
+                        transaction: transaction,
                         cancellationToken: token);
 
-                    return await connection.ExecuteScalarAsync<Guid>(command);
+                    paymentId = await connection.ExecuteScalarAsync<Guid>(insertPaymentCommand);
+
+                    var insertIdempotencyKeyCommand = new CommandDefinition(
+                        IdempotencySqlConstants.InsertIdempotencyKey,
+                        new { IdempotencyKey = idempotencyKey },
+                        transaction: transaction,
+                        cancellationToken: token);
+
+                    await connection.ExecuteAsync(insertIdempotencyKeyCommand);
+
+                    await transaction.CommitAsync(token);
+
+                    return paymentId;
                 },
                 cancellationToken);
 

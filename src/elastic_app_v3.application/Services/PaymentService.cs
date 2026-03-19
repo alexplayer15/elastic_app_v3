@@ -10,8 +10,12 @@ namespace elastic_app_v3.application.Services
         private readonly IPaymentRepository _paymentRepository = paymentRepository;
         public async Task<Result<PaymentResponse>> AddPayment(
             PaymentRequest request,
-            CancellationToken cancellationToken)
+            string idempotencyKey,
+            CancellationToken cancellationToken
+        )
         {
+            //to do: payment request validations
+
             var payment = new Payment()
             {
                 Amount = request.Amount, 
@@ -19,7 +23,11 @@ namespace elastic_app_v3.application.Services
                 Currency = request.Currency
             };
 
-            var result = await _paymentRepository.AddPayment(payment, cancellationToken);
+            var result = await _paymentRepository.AddPaymentAsync(
+                payment, 
+                idempotencyKey,
+                cancellationToken
+            );
 
             return result.Map(id => new PaymentResponse(id));
         }

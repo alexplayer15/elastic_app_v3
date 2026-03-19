@@ -22,10 +22,13 @@ namespace elastic_app_v3.integration.tests
                 .Create();
 
             //Act
-            var response = await _apiClient.SendPaymentRequest(request);
+            var response = await _apiClient.SendPaymentRequest(request, Guid.NewGuid().ToString());
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var paymentResponse = await _apiClient.GetPaymentResponse(response);
+            Assert.NotNull(paymentResponse);
+            Assert.NotEqual(Guid.Empty, paymentResponse.Id);
         }
     }
 }

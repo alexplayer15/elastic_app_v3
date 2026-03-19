@@ -66,10 +66,16 @@ namespace elastic_app_v3.api.Routing
 
             elasticAppApi.MapPost(RoutingConstants.PaymentEndpoint, async Task<IResult> (
                 [FromBody] PaymentRequest request,
+                [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
                 [FromServices] IPaymentService paymentService,
                 CancellationToken cancellationToken) => 
             {
-                var result = await paymentService.AddPayment(request, cancellationToken);
+                if (string.IsNullOrWhiteSpace(idempotencyKey))
+                {
+                    return Results.BadRequest("Missing Idempotency-Key header");
+                }
+
+                var result = await paymentService.AddPayment(request, idempotencyKey, cancellationToken);
 
                 return result.ToApiResponse(RoutingConstants.PaymentEndpoint);
             })

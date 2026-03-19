@@ -33,11 +33,20 @@ namespace elastic_app_v3.integration.tests.SetUp
 
             return await _client.PostAsJsonAsync(uri, loginRequest);
         }
-        public async Task<HttpResponseMessage> SendPaymentRequest(PaymentRequest request)
+        public async Task<HttpResponseMessage> SendPaymentRequest(
+            PaymentRequest request,
+            string idempotencyKey)
         {
             var uri = $"{RoutingConstants.Base}{RoutingConstants.PaymentEndpoint}";
 
-            return await _client.PostAsJsonAsync(uri, request);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = JsonContent.Create(request)
+            };
+
+            httpRequest.Headers.Add("Idempotency-Key", idempotencyKey);
+
+            return await _client.SendAsync(httpRequest);
         }
         public async Task<SignUpResponse?> GetSignUpResponse(HttpResponseMessage response)
         {
@@ -74,6 +83,15 @@ namespace elastic_app_v3.integration.tests.SetUp
                 return null;
 
             return JsonSerializer.Deserialize<ApiError>(contentString, JsonOptions);
+        }
+        public async Task<PaymentResponse?> GetPaymentResponse(HttpResponseMessage response)
+        {
+            var contentString = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(contentString))
+                return null;
+
+            return JsonSerializer.Deserialize<PaymentResponse>(contentString, JsonOptions);
         }
 
         private static readonly JsonSerializerOptions JsonOptions = new()

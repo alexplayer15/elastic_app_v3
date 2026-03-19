@@ -5,6 +5,10 @@ namespace elastic_app_v3.application.Services
 {
     public interface IPaymentService
     {
-        Task<Result<PaymentResponse>> AddPayment(PaymentRequest request, CancellationToken cancellationToken);
+        Task<Result<PaymentResponse>> AddPayment(
+            PaymentRequest request,
+            string idempotencyKey,
+            CancellationToken cancellationToken
+        );
     }
 }
