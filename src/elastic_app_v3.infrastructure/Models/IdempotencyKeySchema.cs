@@ -2,6 +2,7 @@
 {
     public sealed record IdempotencyKeySchema(
         string IdempotencyKey,
-        Guid PaymentId
+        Guid PaymentId,
+        DateTime CreatedAt
     );
 }

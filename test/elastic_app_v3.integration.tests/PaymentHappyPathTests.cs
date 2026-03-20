@@ -1,7 +1,7 @@
-﻿using elastic_app_v3.integration.tests.SetUp;
+﻿using System.Net;
 using AutoFixture;
-using System.Net;
 using elastic_app_v3.application.DTOs;
+using elastic_app_v3.integration.tests.SetUp;
 
 namespace elastic_app_v3.integration.tests
 {
@@ -29,6 +29,36 @@ namespace elastic_app_v3.integration.tests
             var paymentResponse = await _apiClient.GetPaymentResponse(response);
             Assert.NotNull(paymentResponse);
             Assert.NotEqual(Guid.Empty, paymentResponse.Id);
+        }
+
+        [Fact]
+        public async Task GivenDuplicateValidPaymentRequest_WhenSendPaymentRequest_ThenReturnIdenticalPaymentResponse()
+        {
+            //Arrange 
+            var request = _fixture.Build<PaymentRequest>()
+                .With(p => p.Amount, 100)
+                .With(p => p.Currency, "GBP")
+                .With(p => p.Status, "ACCEPTED")
+                .Create();
+
+            var idempotencyKey = Guid.NewGuid().ToString();
+
+            //Act
+            var firstResponse = await _apiClient.SendPaymentRequest(request, idempotencyKey);
+
+            //Assert
+            Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+            var firstPaymentResponse = await _apiClient.GetPaymentResponse(firstResponse);
+            Assert.NotNull(firstPaymentResponse);
+
+            //Act 
+            var secondResponse = await _apiClient.SendPaymentRequest(request, idempotencyKey);
+
+            //Assert
+            Assert.Equal(firstResponse.StatusCode, secondResponse.StatusCode);
+            var secondPaymentResponse = await _apiClient.GetPaymentResponse(secondResponse);
+            Assert.NotNull(secondPaymentResponse);
+            Assert.Equal(firstPaymentResponse.Id, secondPaymentResponse.Id);
         }
     }
 }

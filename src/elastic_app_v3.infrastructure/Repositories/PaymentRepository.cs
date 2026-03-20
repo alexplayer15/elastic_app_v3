@@ -41,7 +41,9 @@ namespace elastic_app_v3.infrastructure.Repositories
                     );
                     var idempotencyRecord = await connection.QueryFirstOrDefaultAsync<IdempotencyKeySchema>(checkIdempotencyKeyExistsCommand);
 
-                    if (idempotencyRecord is not null && idempotencyRecord.IdempotencyKey is not null)
+                    if (idempotencyRecord is not null
+                        && idempotencyRecord.IdempotencyKey is not null
+                        && DateTime.UtcNow - idempotencyRecord.CreatedAt <= TimeSpan.FromMinutes(10))
                     {
                         return idempotencyRecord.PaymentId;
                     }
@@ -54,7 +56,7 @@ namespace elastic_app_v3.infrastructure.Repositories
 
                     paymentId = await connection.ExecuteScalarAsync<Guid>(insertPaymentCommand);
 
-                    var idempotencyKeySchema = new IdempotencyKeySchema(idempotencyKey, paymentId);
+                    var idempotencyKeySchema = new IdempotentPaymentData(idempotencyKey, paymentId);
 
                     var insertIdempotencyKeyCommand = new CommandDefinition(
                         IdempotencySqlConstants.InsertIdempotencyKey,

@@ -57,7 +57,7 @@ BEGIN
         Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_IdempotencyKeys PRIMARY KEY DEFAULT NEWID(),
         IdempotencyKey NVARCHAR(450) NOT NULL,
         PaymentId UNIQUEIDENTIFIER NOT NULL,
-        CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
         CONSTRAINT UQ_IdempotencyKey UNIQUE (IdempotencyKey),
         CONSTRAINT UQ_PaymentId UNIQUE (PaymentId)
     );

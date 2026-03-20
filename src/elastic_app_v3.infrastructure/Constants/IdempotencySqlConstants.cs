@@ -3,7 +3,7 @@
     public static class IdempotencySqlConstants
     {
         public const string CheckIfIdempotencyKeyExists = @"
-        SELECT IdempotencyKey, PaymentId
+        SELECT IdempotencyKey, PaymentId, CreatedAt
         FROM IdempotencyKeys
         WHERE IdempotencyKey = @IdempotencyKey;";
 
