@@ -2,8 +2,13 @@
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using elastic_app_v3.api.Errors;
-using elastic_app_v3.application.DTOs;
-using elastic_app_v3.application.Services;
+using elastic_app_v3.application.DTOs.Login;
+using elastic_app_v3.application.DTOs.Payment;
+using elastic_app_v3.application.DTOs.SingUp;
+using elastic_app_v3.application.DTOs.Subscription;
+using elastic_app_v3.application.Services.Identity;
+using elastic_app_v3.application.Services.Payments;
+using elastic_app_v3.application.Services.Webhook;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -78,6 +83,16 @@ namespace elastic_app_v3.api.Routing
                 var result = await paymentService.AddPayment(request, idempotencyKey, cancellationToken);
 
                 return result.ToApiResponse(RoutingConstants.PaymentEndpoint);
+            })
+            .MapToApiVersion(1);
+
+            elasticAppApi.MapPost(RoutingConstants.SubscribeEndpoint, async Task<IResult> (
+                [FromBody] SubscribeRequest request,
+                [FromServices] IWebhookService webhookService,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await webhookService.SubscribeAsync(request, cancellationToken);
+                return result.ToApiResponse(RoutingConstants.SubscribeEndpoint);
             })
             .MapToApiVersion(1);
 

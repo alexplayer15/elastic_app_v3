@@ -1,5 +1,5 @@
 ﻿using elastic_app_v3.application.Constants;
-using elastic_app_v3.application.DTOs;
+using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.application.Errors;
 using FluentValidation;
 

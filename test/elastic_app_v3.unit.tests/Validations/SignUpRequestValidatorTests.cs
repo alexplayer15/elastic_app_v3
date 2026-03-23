@@ -1,8 +1,8 @@
 using AutoFixture;
 using FluentValidation.TestHelper;
-using elastic_app_v3.application.DTOs;
 using elastic_app_v3.application.Errors;
 using elastic_app_v3.application.Validations;
+using elastic_app_v3.application.DTOs.SingUp;
 
 namespace elastic_app_v3.unit.tests.Validations
 {

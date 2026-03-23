@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using AutoFixture;
-using elastic_app_v3.application.DTOs;
+using elastic_app_v3.application.DTOs.SingUp;
 using elastic_app_v3.integration.tests.SetUp;
 
 namespace elastic_app_v3.integration.tests.UserSignUpTests

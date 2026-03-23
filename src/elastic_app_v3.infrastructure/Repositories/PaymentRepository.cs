@@ -74,7 +74,9 @@ namespace elastic_app_v3.infrastructure.Repositories
         }
         public async Task<Result<Guid>> CheckIfIdempotencyKeyExists(string idempotencyKey, CancellationToken cancellation)
         {
-            var idempotencyRecord = await _resiliencePipeline.ExecuteAsync(
+            try
+            {
+                var idempotencyRecord = await _resiliencePipeline.ExecuteAsync(
                 async token =>
                 {
                     await using var connection = new SqlConnection(_connectionString);
@@ -85,17 +87,31 @@ namespace elastic_app_v3.infrastructure.Repositories
                         cancellationToken: token
                     );
                     return await connection.QueryFirstOrDefaultAsync<IdempotencyKeySchema>(checkIdempotencyKeyExistsCommand);
-                 },
+                },
                 cancellation);
 
-            if (idempotencyRecord is not null
-                      && idempotencyRecord.IdempotencyKey is not null
-                      && DateTime.UtcNow - idempotencyRecord.CreatedAt <= TimeSpan.FromMinutes(10))
+                if (idempotencyRecord is not null
+                          && idempotencyRecord.IdempotencyKey is not null
+                          && DateTime.UtcNow - idempotencyRecord.CreatedAt <= TimeSpan.FromMinutes(10))
+                {
+                    return idempotencyRecord.PaymentId;
+                }
+
+                return Result.Ok<Guid>(Guid.Empty);
+            }
+            catch (SqlException)
             {
-                return idempotencyRecord.PaymentId;
+                throw;
+            }
+            catch (TimeoutException)
+            {
+                throw; //to do: think how best to handle this;
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
-            return Result.Ok<Guid>(Guid.Empty);
         }
     }
 

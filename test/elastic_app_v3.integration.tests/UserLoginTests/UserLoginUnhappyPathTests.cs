@@ -2,8 +2,8 @@
 using AutoFixture;
 using elastic_app_v3.integration.tests.SetUp;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.application.DTOs;
 using elastic_app_v3.api.Errors;
+using elastic_app_v3.application.DTOs.Login;
 
 namespace elastic_app_v3.integration.tests.UserLoginTests
 {

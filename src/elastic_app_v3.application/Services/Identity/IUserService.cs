@@ -1,7 +1,9 @@
 ﻿using elastic_app_v3.application.DTOs;
+using elastic_app_v3.application.DTOs.Login;
+using elastic_app_v3.application.DTOs.SingUp;
 using FluentResults;
 
-namespace elastic_app_v3.application.Services
+namespace elastic_app_v3.application.Services.Identity
 {
     public interface IUserService
     {

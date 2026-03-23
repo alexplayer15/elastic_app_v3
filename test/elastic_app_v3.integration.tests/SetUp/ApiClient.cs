@@ -5,6 +5,10 @@ using System.Text.Json.Serialization;
 using System.Net.Http.Headers;
 using elastic_app_v3.application.DTOs;
 using elastic_app_v3.api.Errors;
+using elastic_app_v3.application.DTOs.Payment;
+using elastic_app_v3.application.DTOs.Login;
+using elastic_app_v3.application.DTOs.SingUp;
+using elastic_app_v3.application.DTOs.Subscription;
 
 namespace elastic_app_v3.integration.tests.SetUp
 {
@@ -27,11 +31,11 @@ namespace elastic_app_v3.integration.tests.SetUp
 
             return await _client.SendAsync(request);
         }
-        public async Task<HttpResponseMessage> SendUserLoginRequest(LoginRequest loginRequest)
+        public async Task<HttpResponseMessage> SendUserLoginRequest(LoginRequest request)
         {
             var uri = $"{RoutingConstants.Base}{RoutingConstants.UserLoginEndpoint}";
 
-            return await _client.PostAsJsonAsync(uri, loginRequest);
+            return await _client.PostAsJsonAsync(uri, request);
         }
         public async Task<HttpResponseMessage> SendPaymentRequest(
             PaymentRequest request,
@@ -47,6 +51,12 @@ namespace elastic_app_v3.integration.tests.SetUp
             httpRequest.Headers.Add("Idempotency-Key", idempotencyKey);
 
             return await _client.SendAsync(httpRequest);
+        }
+        public async Task<HttpResponseMessage> SendSubscribeRequest(SubscribeRequest request)
+        {
+            var uri = $"{RoutingConstants.Base}{RoutingConstants.SubscribeEndpoint}";
+
+            return await _client.PostAsJsonAsync(uri, request);
         }
         public async Task<SignUpResponse?> GetSignUpResponse(HttpResponseMessage response)
         {
@@ -92,6 +102,15 @@ namespace elastic_app_v3.integration.tests.SetUp
                 return null;
 
             return JsonSerializer.Deserialize<PaymentResponse>(contentString, JsonOptions);
+        }
+        public async Task<SubscribeResponse?> GetSubscribeResponse(HttpResponseMessage response)
+        {
+            var contentString = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(contentString))
+                return null;
+
+            return JsonSerializer.Deserialize<SubscribeResponse>(contentString, JsonOptions);
         }
 
         private static readonly JsonSerializerOptions JsonOptions = new()

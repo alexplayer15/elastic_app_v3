@@ -1,9 +1,9 @@
-﻿using elastic_app_v3.application.DTOs;
+﻿using elastic_app_v3.application.DTOs.Payment;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using FluentResults;
 
-namespace elastic_app_v3.application.Services
+namespace elastic_app_v3.application.Services.Payments
 {
     public class PaymentService(IPaymentRepository paymentRepository) : IPaymentService
     {

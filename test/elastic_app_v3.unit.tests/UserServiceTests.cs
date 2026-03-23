@@ -3,13 +3,14 @@ using FluentValidation;
 using NSubstitute;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
-using elastic_app_v3.application.Services;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.application.DTOs;
 using elastic_app_v3.application.Errors;
 using FluentResults;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain;
+using elastic_app_v3.application.DTOs.Login;
+using elastic_app_v3.application.DTOs.SingUp;
+using elastic_app_v3.application.Services.Identity;
 
 namespace elastic_app_v3.unit.tests
 {

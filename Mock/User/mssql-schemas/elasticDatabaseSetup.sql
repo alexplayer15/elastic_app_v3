@@ -63,3 +63,13 @@ BEGIN
     );
 END;
 GO
+
+-- 5. Create Subscriptions table if it does not exist
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Subscriptions')
+BEGIN
+    CREATE TABLE Subscriptions (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Subscriptions PRIMARY KEY DEFAULT NEWID(),
+        [Url] NVARCHAR(255) NOT NULL,
+    );
+END;
+GO
