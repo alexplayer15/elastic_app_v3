@@ -16,6 +16,13 @@ namespace elastic_app_v3.application.Services
         {
             //to do: payment request validations
 
+            var existingPayment = await _paymentRepository.CheckIfIdempotencyKeyExists(idempotencyKey, cancellationToken);
+
+            if(existingPayment.Value != Guid.Empty)
+            {
+                return existingPayment.Map(id => new PaymentResponse(id));
+            }
+
             var payment = new Payment()
             {
                 Amount = request.Amount, 

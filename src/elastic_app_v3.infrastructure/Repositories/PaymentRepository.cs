@@ -33,21 +33,6 @@ namespace elastic_app_v3.infrastructure.Repositories
 
                     await using var transaction = await connection.BeginTransactionAsync(token);
 
-                    var checkIdempotencyKeyExistsCommand = new CommandDefinition(
-                        IdempotencySqlConstants.CheckIfIdempotencyKeyExists,
-                        new { IdempotencyKey = idempotencyKey },
-                        transaction: transaction,
-                        cancellationToken: token
-                    );
-                    var idempotencyRecord = await connection.QueryFirstOrDefaultAsync<IdempotencyKeySchema>(checkIdempotencyKeyExistsCommand);
-
-                    if (idempotencyRecord is not null
-                        && idempotencyRecord.IdempotencyKey is not null
-                        && DateTime.UtcNow - idempotencyRecord.CreatedAt <= TimeSpan.FromMinutes(10))
-                    {
-                        return idempotencyRecord.PaymentId;
-                    }
-
                     var insertPaymentCommand = new CommandDefinition(
                         PaymentSqlConstants.AddPayment,
                         payment,
@@ -87,5 +72,32 @@ namespace elastic_app_v3.infrastructure.Repositories
                 throw;
             }
         }
+        public async Task<Result<Guid>> CheckIfIdempotencyKeyExists(string idempotencyKey, CancellationToken cancellation)
+        {
+            var idempotencyRecord = await _resiliencePipeline.ExecuteAsync(
+                async token =>
+                {
+                    await using var connection = new SqlConnection(_connectionString);
+                    await connection.OpenAsync(token);
+                    var checkIdempotencyKeyExistsCommand = new CommandDefinition(
+                        IdempotencySqlConstants.CheckIfIdempotencyKeyExists,
+                        new { IdempotencyKey = idempotencyKey },
+                        cancellationToken: token
+                    );
+                    return await connection.QueryFirstOrDefaultAsync<IdempotencyKeySchema>(checkIdempotencyKeyExistsCommand);
+                 },
+                cancellation);
+
+            if (idempotencyRecord is not null
+                      && idempotencyRecord.IdempotencyKey is not null
+                      && DateTime.UtcNow - idempotencyRecord.CreatedAt <= TimeSpan.FromMinutes(10))
+            {
+                return idempotencyRecord.PaymentId;
+            }
+
+            return Result.Ok<Guid>(Guid.Empty);
+        }
     }
+
+
 }
