@@ -69,7 +69,21 @@ IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Subscriptions')
 BEGIN
     CREATE TABLE Subscriptions (
         Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Subscriptions PRIMARY KEY DEFAULT NEWID(),
-        [Url] NVARCHAR(255) NOT NULL,
+        [Url] NVARCHAR(255) NOT NULL
+    );
+END;
+GO
+
+-- 5. Create SubscriptionTopics table if it does not exist
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'SubscriptionTopics')
+BEGIN
+    CREATE TABLE SubscriptionTopics (
+        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_SubscriptionTopics PRIMARY KEY DEFAULT NEWID(),
+        SubscriptionId UNIQUEIDENTIFIER NOT NULL,
+        [Name] NVARCHAR(255) NOT NULL,
+        CONSTRAINT FK_SubscriptionTopics_Subscription FOREIGN KEY (SubscriptionId)
+            REFERENCES Subscriptions(Id)
+            ON DELETE CASCADE
     );
 END;
 GO

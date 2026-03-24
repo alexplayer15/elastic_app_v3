@@ -36,7 +36,7 @@ namespace elastic_app_v3.infrastructure.Repositories
                     var insertPaymentCommand = new CommandDefinition(
                         PaymentSqlConstants.AddPayment,
                         payment,
-                        transaction: transaction,
+                        transaction,
                         cancellationToken: token);
 
                     paymentId = await connection.ExecuteScalarAsync<Guid>(insertPaymentCommand);
@@ -46,7 +46,7 @@ namespace elastic_app_v3.infrastructure.Repositories
                     var insertIdempotencyKeyCommand = new CommandDefinition(
                         IdempotencySqlConstants.InsertIdempotencyKey,
                         idempotencyKeySchema,
-                        transaction: transaction,
+                        transaction,
                         cancellationToken: token);
 
                     await connection.ExecuteAsync(insertIdempotencyKeyCommand);

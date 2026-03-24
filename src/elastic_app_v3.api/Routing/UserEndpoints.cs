@@ -4,6 +4,7 @@ using Asp.Versioning.Builder;
 using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.application.DTOs.Payment;
+using elastic_app_v3.application.DTOs.PublishMessage;
 using elastic_app_v3.application.DTOs.SingUp;
 using elastic_app_v3.application.DTOs.Subscription;
 using elastic_app_v3.application.Services.Identity;
@@ -93,6 +94,17 @@ namespace elastic_app_v3.api.Routing
             {
                 var result = await webhookService.SubscribeAsync(request, cancellationToken);
                 return result.ToApiResponse(RoutingConstants.SubscribeEndpoint);
+            })
+            .MapToApiVersion(1);
+
+            elasticAppApi.MapPost(RoutingConstants.PublishEndpoint, async Task<IResult>(
+                [FromBody] PublishRequest request,
+                [FromServices] IWebhookService webhookService,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await webhookService.PublishAsync(request, cancellationToken);
+
+                return result.ToApiResponse(RoutingConstants.PublishEndpoint);
             })
             .MapToApiVersion(1);
 

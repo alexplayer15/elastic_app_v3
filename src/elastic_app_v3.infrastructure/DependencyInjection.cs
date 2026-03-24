@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
+using elastic_app_v3.infrastructure.Clients;
 using elastic_app_v3.infrastructure.Config;
 using elastic_app_v3.infrastructure.Repositories;
 using elastic_app_v3.infrastructure.Tokens;
@@ -24,6 +25,7 @@ namespace elastic_app_v3.infrastructure
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IPaymentRepository, PaymentRepository>();
             services.AddSingleton<ISubscriptionRepository, SubscriptionRepository>(); //singleton correct here?
+            services.AddHttpClient<IWebhookClient, WebhookClient>();
             services.AddHealthChecks();
             services.ConfigureOptions(configuration);
             services.AddResilienceConfiguration(configuration);

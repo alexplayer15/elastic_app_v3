@@ -14,6 +14,8 @@
 
         public const string SubscribeEndpoint = "/subscribe";
 
+        public const string PublishEndpoint = "/publish";
+
         public const string UserSignUpEndpointOpenApiName = "PostUserSignUp";
 
         public const string UserLoginEndpointOpenApiName = "PostUseLogin";
