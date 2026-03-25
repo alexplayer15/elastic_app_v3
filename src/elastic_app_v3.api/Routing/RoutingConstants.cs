@@ -12,8 +12,6 @@
 
         public const string PaymentEndpoint = "/payment";
 
-        public const string SubscribeEndpoint = "/subscribe";
-
         public const string UserSignUpEndpointOpenApiName = "PostUserSignUp";
 
         public const string UserLoginEndpointOpenApiName = "PostUseLogin";

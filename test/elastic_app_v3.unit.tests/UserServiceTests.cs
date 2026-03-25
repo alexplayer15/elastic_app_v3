@@ -120,6 +120,9 @@ namespace elastic_app_v3.unit.tests
             _mockUserRepository.AddAsync(Arg.Any<User>(), CancellationToken.None)
                 .Returns(Result.Fail(new UserAlreadyExistsError()));
 
+            _mockEventProducer.PublishAsync(nameof(UserSignedUp), Arg.Any<UserSignedUp>())
+                .Returns(Task.CompletedTask);
+
             //Act
             var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);
 

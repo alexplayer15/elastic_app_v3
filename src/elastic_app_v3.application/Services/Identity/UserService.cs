@@ -51,7 +51,10 @@ namespace elastic_app_v3.application.Services.Identity
 
             var idResult = await _userDbRepository.AddAsync(user, cancellationToken);
 
-            await _eventProducer.PublishAsync(nameof(UserSignedUp), new UserSignedUp(idResult.Value)); //migrate to CDC later
+            if(idResult.IsSuccess)
+            {
+                await _eventProducer.PublishAsync(nameof(UserSignedUp), new UserSignedUp(idResult.Value)); //migrate to CDC later
+            }  
 
             return idResult.Map(id => new SignUpResponse(id));
         }

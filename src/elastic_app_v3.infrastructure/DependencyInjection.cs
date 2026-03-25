@@ -24,7 +24,6 @@ namespace elastic_app_v3.infrastructure
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IPaymentRepository, PaymentRepository>();
-            services.AddSingleton<ISubscriptionRepository, SubscriptionRepository>(); //singleton correct here?
             services.AddScoped<IEventProducer, EventProducer>();
             services.AddHealthChecks();
             services.ConfigureOptions(configuration);

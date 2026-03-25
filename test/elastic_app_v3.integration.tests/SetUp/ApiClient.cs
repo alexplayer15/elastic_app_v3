@@ -52,12 +52,6 @@ namespace elastic_app_v3.integration.tests.SetUp
 
             return await _client.SendAsync(httpRequest);
         }
-        public async Task<HttpResponseMessage> SendSubscribeRequest(SubscribeRequest request)
-        {
-            var uri = $"{RoutingConstants.Base}{RoutingConstants.SubscribeEndpoint}";
-
-            return await _client.PostAsJsonAsync(uri, request);
-        }
         public async Task<SignUpResponse?> GetSignUpResponse(HttpResponseMessage response)
         {
             var contentString = await response.Content.ReadAsStringAsync();
