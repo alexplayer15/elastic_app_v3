@@ -1,4 +1,4 @@
-﻿namespace elastic_app_v3.infrastructure.Constants
+﻿namespace elastic_app_v3.infrastructure.SqlQueryConstants
 {
     public static class UserSqlConstants
     {
@@ -12,7 +12,7 @@
         FROM Users
         WHERE Username = @Username;";
 
-        public const string InsertUser = @"
+        public const string AddUser = @"
         INSERT INTO Users (FirstName, LastName, UserName, PasswordHash)
         OUTPUT INSERTED.Id
         VALUES (@FirstName, @LastName, @UserName, @PasswordHash);";

@@ -11,7 +11,6 @@ using elastic_app_v3.domain;
 using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.application.DTOs.SingUp;
 using elastic_app_v3.application.Services.Identity;
-using elastic_app_v3.domain.Events;
 
 namespace elastic_app_v3.unit.tests
 {
@@ -24,7 +23,6 @@ namespace elastic_app_v3.unit.tests
             = Substitute.For<IValidator<LoginRequest>>();
         private readonly ITokenGenerator _mockTokenGenerator = Substitute.For<ITokenGenerator>();
         private readonly IPasswordHasher<User> _mockPasswordHasher = Substitute.For<IPasswordHasher<User>>();
-        private readonly IEventProducer _mockEventProducer = Substitute.For<IEventProducer>();
         private readonly IUserService _userService;
 
         private readonly Fixture _fixture = new();
@@ -35,8 +33,7 @@ namespace elastic_app_v3.unit.tests
                 _mockSignUpRequestValidator,
                 _mockLoginRequestValidator,
                 _mockPasswordHasher,
-                _mockTokenGenerator,
-                _mockEventProducer
+                _mockTokenGenerator
             );
 
             _fixture.Customize<SignUpRequest>(c => c
@@ -69,9 +66,6 @@ namespace elastic_app_v3.unit.tests
 
             _mockUserRepository.AddAsync(Arg.Any<User>(), CancellationToken.None)
                 .Returns(Result.Ok(userId));
-
-            _mockEventProducer.PublishAsync(nameof(UserSignedUp), Arg.Any<UserSignedUp>())
-                .Returns(Task.CompletedTask);
 
             //Act
             var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);
@@ -119,9 +113,6 @@ namespace elastic_app_v3.unit.tests
 
             _mockUserRepository.AddAsync(Arg.Any<User>(), CancellationToken.None)
                 .Returns(Result.Fail(new UserAlreadyExistsError()));
-
-            _mockEventProducer.PublishAsync(nameof(UserSignedUp), Arg.Any<UserSignedUp>())
-                .Returns(Task.CompletedTask);
 
             //Act
             var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);

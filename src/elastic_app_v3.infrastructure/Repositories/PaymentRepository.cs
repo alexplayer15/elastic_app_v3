@@ -7,8 +7,8 @@ using Polly;
 using Polly.Registry;
 using Dapper;
 using Microsoft.Data.SqlClient;
-using elastic_app_v3.infrastructure.Constants;
 using elastic_app_v3.infrastructure.Models;
+using elastic_app_v3.infrastructure.SqlQueryConstants;
 
 namespace elastic_app_v3.infrastructure.Repositories
 {

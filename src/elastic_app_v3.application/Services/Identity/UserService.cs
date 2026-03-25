@@ -16,8 +16,7 @@ namespace elastic_app_v3.application.Services.Identity
         IValidator<SignUpRequest> signUpRequestValidator,
         IValidator<LoginRequest> loginRequestValidator,
         IPasswordHasher<User> passwordHasher,
-        ITokenGenerator tokenGenerator,
-        IEventProducer eventProducer
+        ITokenGenerator tokenGenerator
     ) : IUserService
     {
         private readonly IUserRepository _userDbRepository = userDbRepository;
@@ -25,7 +24,6 @@ namespace elastic_app_v3.application.Services.Identity
         private readonly IValidator<LoginRequest> _loginRequestValidator = loginRequestValidator;
         private readonly ITokenGenerator _tokenGenerator = tokenGenerator;
         private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
-        private readonly IEventProducer _eventProducer = eventProducer;
         public async Task<Result<SignUpResponse>> SignUpAsync(SignUpRequest request, CancellationToken cancellationToken)
         {
             var validationResult = _signUpRequestValidator.Validate(request);
@@ -50,11 +48,6 @@ namespace elastic_app_v3.application.Services.Identity
             user.SetPasswordHash(hashedPassword);
 
             var idResult = await _userDbRepository.AddAsync(user, cancellationToken);
-
-            if(idResult.IsSuccess)
-            {
-                await _eventProducer.PublishAsync(nameof(UserSignedUp), new UserSignedUp(idResult.Value)); //migrate to CDC later
-            }  
 
             return idResult.Map(id => new SignUpResponse(id));
         }

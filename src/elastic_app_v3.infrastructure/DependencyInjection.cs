@@ -2,7 +2,6 @@
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.infrastructure.Config;
-using elastic_app_v3.infrastructure.Events;
 using elastic_app_v3.infrastructure.Repositories;
 using elastic_app_v3.infrastructure.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,8 +22,7 @@ namespace elastic_app_v3.infrastructure
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddSingleton<IUserRepository, UserRepository>();
-            services.AddSingleton<IPaymentRepository, PaymentRepository>();
-            services.AddScoped<IEventProducer, EventProducer>();
+            services.AddSingleton<IPaymentRepository, PaymentRepository>(); //singleton correct here?
             services.AddHealthChecks();
             services.ConfigureOptions(configuration);
             services.AddResilienceConfiguration(configuration);

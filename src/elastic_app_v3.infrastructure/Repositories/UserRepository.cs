@@ -1,9 +1,11 @@
-﻿using Dapper;
+﻿using System.Text.Json;
+using Dapper;
 using elastic_app_v3.application.Errors;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
+using elastic_app_v3.domain.Events;
 using elastic_app_v3.infrastructure.Config;
-using elastic_app_v3.infrastructure.Constants;
+using elastic_app_v3.infrastructure.SqlQueryConstants;
 using FluentResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
@@ -39,13 +41,36 @@ namespace elastic_app_v3.infrastructure.Repositories
                         using var connection = new SqlConnection(_connectionString);
                         await connection.OpenAsync(token);
 
-                        var command = new CommandDefinition(
-                            UserSqlConstants.InsertUser,
+                        using var transaction = connection.BeginTransaction();
+
+                        var addUserCommand = new CommandDefinition(
+                            UserSqlConstants.AddUser,
                             user,
+                            transaction,
                             cancellationToken: token
                         );
 
-                        return await connection.ExecuteScalarAsync<Guid>(command);
+                        var userId = await connection.ExecuteScalarAsync<Guid>(addUserCommand);
+
+                        var userSignedUpEvent = new UserSignedUpEvent(userId);
+
+                        var outboxCommand = new CommandDefinition(
+                            OutboxEventSqlConstants.AddUserSignedUpEvent,
+                            new
+                            {
+                                Type = nameof(UserSignedUpEvent),
+                                Payload = JsonSerializer.Serialize(userSignedUpEvent)
+                            },
+                            transaction: transaction,
+                            cancellationToken: cancellationToken
+                        );
+
+                        await connection.ExecuteAsync(outboxCommand);
+
+                        await transaction.CommitAsync(token);
+
+                        return userId;
+
                     }, cancellationToken);
    
             }

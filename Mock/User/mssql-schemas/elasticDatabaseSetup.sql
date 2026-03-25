@@ -30,6 +30,31 @@ BEGIN
 END;
 GO
 
+-- 3. Create Outbox table if it does not exist
+IF NOT EXISTS (
+    SELECT 1 
+    FROM sys.tables 
+    WHERE name = 'OutboxEvents'
+)
+BEGIN
+    CREATE TABLE OutboxEvents (
+        Id UNIQUEIDENTIFIER NOT NULL 
+            CONSTRAINT PK_OutboxEvents PRIMARY KEY 
+            DEFAULT NEWID(),
+
+        [Type] NVARCHAR(200) NOT NULL,
+
+        Payload NVARCHAR(MAX) NOT NULL,
+
+        OccurredOnUtc DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+
+        ProcessedOnUtc DATETIME2 NULL,
+
+        Error NVARCHAR(MAX) NULL
+    );
+END;
+GO
+
 -- 4. Create Payments table if it does not exist
 IF NOT EXISTS (
     SELECT 1 
@@ -60,30 +85,6 @@ BEGIN
         CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
         CONSTRAINT UQ_IdempotencyKey UNIQUE (IdempotencyKey),
         CONSTRAINT UQ_PaymentId UNIQUE (PaymentId)
-    );
-END;
-GO
-
--- 5. Create Subscriptions table if it does not exist
-IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Subscriptions')
-BEGIN
-    CREATE TABLE Subscriptions (
-        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Subscriptions PRIMARY KEY DEFAULT NEWID(),
-        [Url] NVARCHAR(255) NOT NULL
-    );
-END;
-GO
-
--- 5. Create SubscriptionTopics table if it does not exist
-IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'SubscriptionTopics')
-BEGIN
-    CREATE TABLE SubscriptionTopics (
-        Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_SubscriptionTopics PRIMARY KEY DEFAULT NEWID(),
-        SubscriptionId UNIQUEIDENTIFIER NOT NULL,
-        [Name] NVARCHAR(255) NOT NULL,
-        CONSTRAINT FK_SubscriptionTopics_Subscription FOREIGN KEY (SubscriptionId)
-            REFERENCES Subscriptions(Id)
-            ON DELETE CASCADE
     );
 END;
 GO

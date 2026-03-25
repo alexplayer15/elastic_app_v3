@@ -26,8 +26,8 @@ public class EventConsumer : BackgroundService
     }
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        await _kafkaTopicManager.EnsureTopicExistsAsync("UserSignedUp");
-        _consumer.Subscribe("UserSignedUp");
+        await _kafkaTopicManager.EnsureTopicExistsAsync("UserSignedUpEvent");
+        _consumer.Subscribe("UserSignedUpEvent");
         try
         {
             while (!cancellationToken.IsCancellationRequested)

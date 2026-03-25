@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elastic_app_v3.unit.tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elastic_app_v3.dashboard", "elastic_app_v3.dashboard\elastic_app_v3.dashboard.csproj", "{EC509B57-A1AE-49F9-8FA8-CBAAA4F6F6EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elastic_app_v3.background_worker", "elastic_app_v3.background_worker\elastic_app_v3.background_worker.csproj", "{085842E7-2539-45BE-B6AE-955C8D633564}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{EC509B57-A1AE-49F9-8FA8-CBAAA4F6F6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC509B57-A1AE-49F9-8FA8-CBAAA4F6F6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC509B57-A1AE-49F9-8FA8-CBAAA4F6F6EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{085842E7-2539-45BE-B6AE-955C8D633564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{085842E7-2539-45BE-B6AE-955C8D633564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{085842E7-2539-45BE-B6AE-955C8D633564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{085842E7-2539-45BE-B6AE-955C8D633564}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

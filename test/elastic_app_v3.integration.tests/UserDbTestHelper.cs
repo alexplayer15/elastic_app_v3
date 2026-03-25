@@ -2,8 +2,8 @@
 using Dapper;
 using Microsoft.AspNetCore.Identity;
 using elastic_app_v3.infrastructure.Config;
-using elastic_app_v3.infrastructure.Constants;
 using elastic_app_v3.domain.Entities;
+using elastic_app_v3.infrastructure.SqlQueryConstants;
 
 namespace elastic_app_v3.integration.tests
 {
@@ -25,7 +25,7 @@ namespace elastic_app_v3.integration.tests
             {
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
-                await connection.ExecuteScalarAsync<Guid>(UserSqlConstants.InsertUser, userWithHashedPassword);
+                await connection.ExecuteScalarAsync<Guid>(UserSqlConstants.AddUser, userWithHashedPassword);
             }
             catch (Exception ex)
             {
