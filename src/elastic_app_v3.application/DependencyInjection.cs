@@ -17,7 +17,7 @@ namespace elastic_app_v3.application
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPaymentService, PaymentService>();
-            services.AddScoped<IWebhookService, WebhookService>();
+            services.AddScoped<ISubscriptionService, SubscriptionService>();
 
             return services;
         }

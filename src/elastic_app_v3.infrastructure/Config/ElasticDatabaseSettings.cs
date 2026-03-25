@@ -2,7 +2,7 @@
 {
     public class ElasticDatabaseSettings
     {
-        public const string UserAppSettingsName = "ElasticDatabaseSettings";
+        public const string ElasticDatabaseSettingsName = "ElasticDatabaseSettings";
         public string Server { get; set; } = string.Empty;
         public string User { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;

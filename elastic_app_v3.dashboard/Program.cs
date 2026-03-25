@@ -1,5 +1,6 @@
-using Asp.Versioning;
-using elastic_app_v3.dashboard.Routing;
+using elastic_app_v3.dashboard;
+using elastic_app_v3.dashboard.Consumer;
+using elastic_app_v3.dashboard.Kafka;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,13 +10,10 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new ApiVersion(1);
-    options.ReportApiVersions = true;
-    options.ApiVersionReader = new UrlSegmentApiVersionReader();
-    options.AssumeDefaultVersionWhenUnspecified = true;
-});
+builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection(KafkaSettings.KafkaSettingsName));
+
+builder.Services.AddScoped<IKafkaTopicManager, KafkaTopicManager>();
+builder.Services.AddHostedService<EventConsumer>();
 
 var app = builder.Build();
 
@@ -24,7 +22,5 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
-DashboardEndpoints.Map(app);
 
 app.Run();

@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.infrastructure.Clients;
 using elastic_app_v3.infrastructure.Config;
+using elastic_app_v3.infrastructure.Events;
 using elastic_app_v3.infrastructure.Repositories;
 using elastic_app_v3.infrastructure.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,7 +25,7 @@ namespace elastic_app_v3.infrastructure
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IPaymentRepository, PaymentRepository>();
             services.AddSingleton<ISubscriptionRepository, SubscriptionRepository>(); //singleton correct here?
-            services.AddHttpClient<IWebhookClient, WebhookClient>();
+            services.AddScoped<IEventProducer, EventProducer>();
             services.AddHealthChecks();
             services.ConfigureOptions(configuration);
             services.AddResilienceConfiguration(configuration);
@@ -34,7 +34,9 @@ namespace elastic_app_v3.infrastructure
         }
         private static IServiceCollection ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<ElasticDatabaseSettings>(configuration.GetSection(ElasticDatabaseSettings.UserAppSettingsName));
+            services.Configure<ElasticDatabaseSettings>(configuration.GetSection(ElasticDatabaseSettings.ElasticDatabaseSettingsName));
+
+            services.Configure<KafkaSettings>(configuration.GetSection(KafkaSettings.KafkaSettingsName));
 
             services.AddOptions<JwtConfigOptions>()
                 .Bind(configuration.GetSection(JwtConfigOptions.JwtConfig))

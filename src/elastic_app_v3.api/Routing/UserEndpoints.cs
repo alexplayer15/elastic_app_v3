@@ -89,22 +89,11 @@ namespace elastic_app_v3.api.Routing
 
             elasticAppApi.MapPost(RoutingConstants.SubscribeEndpoint, async Task<IResult> (
                 [FromBody] SubscribeRequest request,
-                [FromServices] IWebhookService webhookService,
+                [FromServices] ISubscriptionService webhookService,
                 CancellationToken cancellationToken) =>
             {
                 var result = await webhookService.SubscribeAsync(request, cancellationToken);
                 return result.ToApiResponse(RoutingConstants.SubscribeEndpoint);
-            })
-            .MapToApiVersion(1);
-
-            elasticAppApi.MapPost(RoutingConstants.PublishEndpoint, async Task<IResult>(
-                [FromBody] PublishRequest request,
-                [FromServices] IWebhookService webhookService,
-                CancellationToken cancellationToken) =>
-            {
-                var result = await webhookService.PublishAsync(request, cancellationToken);
-
-                return result.ToApiResponse(RoutingConstants.PublishEndpoint);
             })
             .MapToApiVersion(1);
 
