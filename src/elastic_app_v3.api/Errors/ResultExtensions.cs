@@ -13,14 +13,5 @@ namespace elastic_app_v3.api.Errors
                 _ => throw new InvalidOperationException("Unexpected error type")
             };
         }
-        public static IResult ToApiResponse(this Result result, string endpoint)
-        {
-            return result switch
-            {
-                { IsSuccess: true } => TypedResults.Ok(result),
-                { IsFailed: true, Errors: [Error error, ..] } => ErrorResponseMapper.GetErrorResponseByEndpoint(error, endpoint),
-                _ => throw new InvalidOperationException("Unexpected error type")
-            };
-        }
     }
 }

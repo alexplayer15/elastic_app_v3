@@ -1,4 +1,3 @@
-using elastic_app_v3.api.Routing;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,6 +8,7 @@ using elastic_app_v3.application.DTOs.Payment;
 using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.application.DTOs.SingUp;
 using elastic_app_v3.application.DTOs.Subscription;
+using elastic_app_v3.api.Routing.Constants;
 
 namespace elastic_app_v3.integration.tests.SetUp
 {
@@ -17,13 +17,13 @@ namespace elastic_app_v3.integration.tests.SetUp
         private readonly HttpClient _client = client;
         public async Task<HttpResponseMessage> SendUserSignupRequest(SignUpRequest request)
         {
-            var uri = $"{RoutingConstants.Base}{RoutingConstants.UserSignUpEndpoint}";
+            var uri = $"{EndpointConstants.Base}{EndpointConstants.UserSignUpEndpoint}";
 
             return await _client.PostAsJsonAsync(uri, request);
         }
         public async Task<HttpResponseMessage> SendGetUserByIdRequest(string token)
         {
-            var uri = $"{RoutingConstants.Base}{RoutingConstants.GetUserByIdEndpoint}";
+            var uri = $"{EndpointConstants.Base}{EndpointConstants.GetUserByIdEndpoint}";
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
 
             request.Headers.Authorization =
@@ -33,7 +33,7 @@ namespace elastic_app_v3.integration.tests.SetUp
         }
         public async Task<HttpResponseMessage> SendUserLoginRequest(LoginRequest request)
         {
-            var uri = $"{RoutingConstants.Base}{RoutingConstants.UserLoginEndpoint}";
+            var uri = $"{EndpointConstants.Base}{EndpointConstants.UserLoginEndpoint}";
 
             return await _client.PostAsJsonAsync(uri, request);
         }
@@ -41,7 +41,7 @@ namespace elastic_app_v3.integration.tests.SetUp
             PaymentRequest request,
             string idempotencyKey)
         {
-            var uri = $"{RoutingConstants.Base}{RoutingConstants.PaymentEndpoint}";
+            var uri = $"{EndpointConstants.Base}{EndpointConstants.PaymentEndpoint}";
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, uri)
             {

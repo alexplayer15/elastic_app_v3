@@ -43,7 +43,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
-UserEndpoints.Map(app);
+RoutingBase.Map(app);
 
 app.UseAuthentication();
 app.UseAuthorization();
