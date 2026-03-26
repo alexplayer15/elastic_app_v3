@@ -22,9 +22,8 @@ namespace elastic_app_v3.infrastructure.Repositories
         private readonly string _connectionString = elasticDatabaseSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline 
             = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.UserResiliencePolicyKey);
-        public async Task<Result<Guid>> AddAsync(User user, CancellationToken cancellationToken)
+        public async Task<Result> AddAsync(User user, CancellationToken cancellationToken)
         {
-            Guid userId;
             try
             {
                 var userName = user.UserName;
@@ -35,7 +34,7 @@ namespace elastic_app_v3.infrastructure.Repositories
                     return Result.Fail(new UserAlreadyExistsError());
                 }
 
-                userId = await _resiliencePipeline.ExecuteAsync(
+                await _resiliencePipeline.ExecuteAsync(
                     async token =>
                     {
                         using var connection = new SqlConnection(_connectionString);
@@ -69,8 +68,6 @@ namespace elastic_app_v3.infrastructure.Repositories
 
                         await transaction.CommitAsync(token);
 
-                        return userId;
-
                     }, cancellationToken);
    
             }
@@ -87,7 +84,7 @@ namespace elastic_app_v3.infrastructure.Repositories
                 throw;
             }
 
-            return Result.Ok(userId);
+            return Result.Ok();
         }
         public async Task<Result<User>> GetUserByUsernameAsync(string userName)
         {

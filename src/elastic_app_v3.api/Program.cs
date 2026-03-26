@@ -48,8 +48,6 @@ RoutingBase.Map(app);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
-
 app.Run();
 
 

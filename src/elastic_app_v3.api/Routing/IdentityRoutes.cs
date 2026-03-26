@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using elastic_app_v3.api.Errors;
 using elastic_app_v3.api.Routing.Constants;
-using elastic_app_v3.application.DTOs.SingUp;
 using elastic_app_v3.application.Services.Identity;
 using elastic_app_v3.application.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
+using elastic_app_v3.application.DTOs.SignUp;
 
 namespace elastic_app_v3.api.Routing;
 public static class IdentityRoutes

@@ -9,8 +9,8 @@ using FluentResults;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.application.DTOs.SingUp;
 using elastic_app_v3.application.Services.Identity;
+using elastic_app_v3.application.DTOs.SignUp;
 
 namespace elastic_app_v3.unit.tests
 {
@@ -65,14 +65,13 @@ namespace elastic_app_v3.unit.tests
                 .Returns("hashedPassword");
 
             _mockUserRepository.AddAsync(Arg.Any<User>(), CancellationToken.None)
-                .Returns(Result.Ok(userId));
+                .Returns(Result.Ok());
 
             //Act
             var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);
 
             //Assert
             Assert.True(signUpResult.IsSuccess);
-            Assert.Equal(userId, signUpResult.Value.UserId);
         }
 
         [Fact]

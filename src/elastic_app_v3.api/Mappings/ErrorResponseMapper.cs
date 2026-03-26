@@ -1,8 +1,9 @@
-﻿using elastic_app_v3.api.Routing.Constants;
+﻿using elastic_app_v3.api.Errors;
+using elastic_app_v3.api.Routing.Constants;
 using elastic_app_v3.application.Errors;
 using FluentResults;
 
-namespace elastic_app_v3.api.Errors;
+namespace elastic_app_v3.api.Mappings;
 public static class ErrorResponseMapper
 {
     private static readonly Dictionary<string, Func<Error, IResult>> _errorResponseMap = new()

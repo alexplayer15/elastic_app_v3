@@ -6,9 +6,8 @@ using elastic_app_v3.application.DTOs;
 using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.Payment;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.application.DTOs.SingUp;
-using elastic_app_v3.application.DTOs.Subscription;
 using elastic_app_v3.api.Routing.Constants;
+using elastic_app_v3.application.DTOs.SignUp;
 
 namespace elastic_app_v3.integration.tests.SetUp
 {
@@ -52,15 +51,6 @@ namespace elastic_app_v3.integration.tests.SetUp
 
             return await _client.SendAsync(httpRequest);
         }
-        public async Task<SignUpResponse?> GetSignUpResponse(HttpResponseMessage response)
-        {
-            var contentString = await response.Content.ReadAsStringAsync();
-
-            if (string.IsNullOrWhiteSpace(contentString))
-                return null;
-
-            return JsonSerializer.Deserialize<SignUpResponse>(contentString, JsonOptions);
-        }
         public async Task<GetUserResponse?> GetUserResponse(HttpResponseMessage response)
         {
             var contentString = await response.Content.ReadAsStringAsync();
@@ -96,15 +86,6 @@ namespace elastic_app_v3.integration.tests.SetUp
                 return null;
 
             return JsonSerializer.Deserialize<PaymentResponse>(contentString, JsonOptions);
-        }
-        public async Task<SubscribeResponse?> GetSubscribeResponse(HttpResponseMessage response)
-        {
-            var contentString = await response.Content.ReadAsStringAsync();
-
-            if (string.IsNullOrWhiteSpace(contentString))
-                return null;
-
-            return JsonSerializer.Deserialize<SubscribeResponse>(contentString, JsonOptions);
         }
 
         private static readonly JsonSerializerOptions JsonOptions = new()

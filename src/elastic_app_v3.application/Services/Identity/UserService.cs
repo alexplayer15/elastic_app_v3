@@ -6,8 +6,7 @@ using elastic_app_v3.application.DTOs;
 using elastic_app_v3.application.Errors;
 using FluentResults;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.application.DTOs.SingUp;
-using elastic_app_v3.domain.Events;
+using elastic_app_v3.application.DTOs.SignUp;
 
 namespace elastic_app_v3.application.Services.Identity
 {
@@ -24,7 +23,7 @@ namespace elastic_app_v3.application.Services.Identity
         private readonly IValidator<LoginRequest> _loginRequestValidator = loginRequestValidator;
         private readonly ITokenGenerator _tokenGenerator = tokenGenerator;
         private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
-        public async Task<Result<SignUpResponse>> SignUpAsync(SignUpRequest request, CancellationToken cancellationToken)
+        public async Task<Result> SignUpAsync(SignUpRequest request, CancellationToken cancellationToken)
         {
             var validationResult = _signUpRequestValidator.Validate(request);
 
@@ -47,9 +46,7 @@ namespace elastic_app_v3.application.Services.Identity
 
             user.SetPasswordHash(hashedPassword);
 
-            var idResult = await _userDbRepository.AddAsync(user, cancellationToken);
-
-            return idResult.Map(id => new SignUpResponse(id));
+            return await _userDbRepository.AddAsync(user, cancellationToken);
         }
         public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
         {

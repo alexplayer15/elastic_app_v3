@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using elastic_app_v3.api.Errors;
-using elastic_app_v3.application.DTOs.SingUp;
+using elastic_app_v3.application.DTOs.SignUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.integration.tests.SetUp;
 using System.Net;

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using AutoFixture;
-using elastic_app_v3.application.DTOs.SingUp;
+using elastic_app_v3.application.DTOs.SignUp;
 using elastic_app_v3.integration.tests.SetUp;
 
 namespace elastic_app_v3.integration.tests.UserSignUpTests
@@ -37,11 +37,9 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             var httpResponse = await _client.SendUserSignupRequest(requestBody);
 
             //Assert
-            Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
-
-            var signUpResponse = await _client.GetSignUpResponse(httpResponse);
-            Assert.NotNull(signUpResponse);
-            Assert.NotEqual(Guid.Empty, signUpResponse.UserId);
+            Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
+            var contentString = await httpResponse.Content.ReadAsStringAsync();
+            Assert.Equal(string.Empty, contentString);
         }
     }
 }

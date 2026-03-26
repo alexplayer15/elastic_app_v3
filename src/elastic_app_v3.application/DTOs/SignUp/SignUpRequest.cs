@@ -1,4 +1,4 @@
-﻿namespace elastic_app_v3.application.DTOs.SingUp
+﻿namespace elastic_app_v3.application.DTOs.SignUp
 {
     public sealed record SignUpRequest(
         string FirstName,
