@@ -85,7 +85,7 @@ namespace elastic_app_v3.integration.tests.GetUserTests
 
             var errorResponse = await _apiClient.GetErrorResponse(httpResponse);
             Assert.NotNull(errorResponse);
-            Assert.Equal(ErrorCodes.UserDoesNotExistError, errorResponse.Code);
+            Assert.Equal(ErrorCodes.UserDoesNotExistError, errorResponse.Type);
         }
     }
 }

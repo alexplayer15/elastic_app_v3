@@ -39,7 +39,7 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var errorResponse = await _apiClient.GetErrorResponse(response);
             Assert.NotNull(errorResponse);
-            Assert.Equal(ErrorCodes.UserDoesNotExistError, errorResponse.Code);
+            Assert.Equal(ErrorCodes.UserDoesNotExistError, errorResponse.Type);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             var errorResponse = await _apiClient.GetErrorResponse(response);
             Assert.NotNull(errorResponse);
-            Assert.Equal(ErrorCodes.IncorrectPasswordError, errorResponse.Code);
+            Assert.Equal(ErrorCodes.IncorrectPasswordError, errorResponse.Type);
         }
     }
 }

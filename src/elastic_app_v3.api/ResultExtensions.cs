@@ -1,7 +1,7 @@
 ﻿using elastic_app_v3.api.Mappings;
 using FluentResults;
 
-namespace elastic_app_v3.api.Errors;
+namespace elastic_app_v3.api;
 public static class ResultExtension
 {
     public static IResult ToApiResponse<T>(this Result<T> result, string endpoint)

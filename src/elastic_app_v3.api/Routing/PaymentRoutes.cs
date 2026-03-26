@@ -1,6 +1,5 @@
 ﻿using elastic_app_v3.api.Routing.Constants;
 using elastic_app_v3.application.DTOs.Payment;
-using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.Services.Payments;
 using Microsoft.AspNetCore.Mvc;
 

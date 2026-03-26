@@ -51,7 +51,7 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             Assert.Equal(HttpStatusCode.Conflict, httpResponse.StatusCode);
             var error = await _client.GetErrorResponse(httpResponse);
             Assert.NotNull(error);
-            Assert.Equal(ErrorCodes.UserAlreadyExistsError, error.Code);
+            Assert.Equal(ErrorCodes.UserAlreadyExistsError, error.Type);
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
             var error = await _client.GetErrorResponse(httpResponse);
             Assert.NotNull(error);
-            Assert.Equal(ErrorCodes.ValidationError, error.Code);
+            Assert.Equal(ErrorCodes.ValidationError, error.Type);
         }
     }
 }

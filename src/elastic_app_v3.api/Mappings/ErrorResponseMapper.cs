@@ -2,6 +2,7 @@
 using elastic_app_v3.api.Routing.Constants;
 using elastic_app_v3.application.Errors;
 using FluentResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace elastic_app_v3.api.Mappings;
 public static class ErrorResponseMapper
@@ -31,9 +32,15 @@ public static class ErrorResponseMapper
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
 
-        var apiError = new ApiError(errorCode, internalError.Message);
+        var problemDetails = new ProblemDetails
+        {
+            Type = errorCode,
+            Title = "An error occurred during user sign-up.",
+            Detail = internalError.Message,
+            Status = statusCode
+        };
 
-        return Results.Json(apiError, statusCode: statusCode);
+        return Results.Json(problemDetails, statusCode: statusCode);
     }
     private static IResult GetLoginErrorResponse(Error internalError)
     {
@@ -45,9 +52,15 @@ public static class ErrorResponseMapper
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
 
-        var apiError = new ApiError(errorCode, internalError.Message);
+        var problemDetails = new ProblemDetails
+        {
+            Type = errorCode,
+            Title = "An error occurred during user login.",
+            Detail = internalError.Message,
+            Status = statusCode
+        };
 
-        return Results.Json(apiError, statusCode: statusCode);
+        return Results.Json(problemDetails, statusCode: statusCode);
     }
     private static IResult GetUserByIdErrorResponse(Error internalError)
     {
@@ -57,9 +70,15 @@ public static class ErrorResponseMapper
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
 
-        var apiError = new ApiError(errorCode, internalError.Message);
+        var problemDetails = new ProblemDetails
+        {
+            Type = errorCode,
+            Title = "An error occurred retrieving user.",
+            Detail = internalError.Message,
+            Status = statusCode
+        };
 
-        return Results.Json(apiError, statusCode: statusCode);
+        return Results.Json(problemDetails, statusCode: statusCode);
     }
     private static IResult GetPaymentErrorResponse(Error internalError)
     {
@@ -68,8 +87,14 @@ public static class ErrorResponseMapper
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
 
-        var apiError = new ApiError(errorCode, internalError.Message);
+        var problemDetails = new ProblemDetails
+        {
+            Type = errorCode,
+            Title = "An error occurred during payment.",
+            Detail = internalError.Message,
+            Status = statusCode
+        };
 
-        return Results.Json(apiError, statusCode: statusCode);
+        return Results.Json(problemDetails, statusCode: statusCode);
     }
 }

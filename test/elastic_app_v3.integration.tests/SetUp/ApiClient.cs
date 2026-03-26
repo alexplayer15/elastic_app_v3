@@ -8,6 +8,7 @@ using elastic_app_v3.application.DTOs.Payment;
 using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.api.Routing.Constants;
 using elastic_app_v3.application.DTOs.SignUp;
+using Microsoft.AspNetCore.Mvc;
 
 namespace elastic_app_v3.integration.tests.SetUp
 {
@@ -69,14 +70,14 @@ namespace elastic_app_v3.integration.tests.SetUp
 
             return JsonSerializer.Deserialize<LoginResponse>(contentString, JsonOptions);
         }
-        public async Task<ApiError?> GetErrorResponse(HttpResponseMessage response)
+        public async Task<ProblemDetails?> GetErrorResponse(HttpResponseMessage response)
         {
             var contentString = await response.Content.ReadAsStringAsync();
 
             if (string.IsNullOrWhiteSpace(contentString))
                 return null;
 
-            return JsonSerializer.Deserialize<ApiError>(contentString, JsonOptions);
+            return JsonSerializer.Deserialize<ProblemDetails>(contentString, JsonOptions);
         }
         public async Task<PaymentResponse?> GetPaymentResponse(HttpResponseMessage response)
         {

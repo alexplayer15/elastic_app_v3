@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using elastic_app_v3.api.Errors;
 using elastic_app_v3.api.Routing.Constants;
 using elastic_app_v3.application.Services.Identity;
 using elastic_app_v3.application.DTOs.Login;
