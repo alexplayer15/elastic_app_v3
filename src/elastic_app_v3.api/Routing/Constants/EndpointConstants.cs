@@ -10,6 +10,8 @@
 
         public const string GetUserByIdEndpoint = "/user/me";
 
+        public const string UserProfileEndpoint = "/user/photo";
+
         public const string PaymentEndpoint = "/payment";
 
         public const string ShallowHealthCheckEndpoint = "/health/ready";

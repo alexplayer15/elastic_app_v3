@@ -19,6 +19,14 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+  web:
+    build:
+      context: ./web/elastic_app_v3.web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
   background-worker:
     image: ${DOCKER_REGISTRY-}background-worker
     build:

@@ -23,6 +23,17 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 builder.Services.ConfigureAppServices(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowWeb",
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000")
+                            .WithHeaders("content-type")
+                            .WithMethods(HttpMethod.Post.ToString());
+                      });
+}); // to do: implement reverse proxy
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -43,10 +54,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
-RoutingBase.Map(app);
+app.UseCors("AllowWeb");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+RoutingBase.Map(app);
 
 app.Run();
 

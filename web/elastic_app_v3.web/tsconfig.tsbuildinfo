@@ -1,1 +1,1 @@
-{"root":["./app.ts","./dtos/signuprequest.ts","./dtos/signupresponse.ts"],"version":"6.0.2"}
+{"root":["./app.ts","./dtos/signuprequest.ts","./dtos/signupresponse.d.ts"],"version":"6.0.2"}

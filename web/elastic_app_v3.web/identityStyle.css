@@ -1,0 +1,78 @@
+/* styles.css */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;                /* enables flex layout */
+    justify-content: center;      /* horizontal centering */
+    align-items: center;          /* vertical centering */
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;   /* light background for contrast */
+}
+
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;             /* limits width on larger screens */
+    text-align: center;
+}
+
+/* Form heading */
+.container h1 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;       /* stack label and input */
+    margin-bottom: 1rem;
+    text-align: left;             /* label aligned left */
+}
+
+/* Labels */
+.form-group label {
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Inputs */
+.form-group input {
+    padding: 0.6rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #007bff;  
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+#message {
+    margin-top: 1rem;
+    font-weight: bold;
+}
