@@ -1,6 +1,6 @@
 ﻿using elastic_app_v3.application.Constants;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.application.Errors;
+using elastic_app_v3.application.Errors.Identity;
 using FluentValidation;
 
 namespace elastic_app_v3.application.Validations
@@ -16,21 +16,21 @@ namespace elastic_app_v3.application.Validations
         {
             RuleFor(sur => sur.UserName)
                 .NotEmpty()
-                .WithMessage(ErrorMessages.UserNameEmpty)
+                .WithMessage(IdentityErrorMessages.UserNameEmpty)
                 .MinimumLength(ValidationConstants.UserNameMinLength)
-                .WithMessage(ErrorMessages.UserNameTooShortMessage())
+                .WithMessage(IdentityErrorMessages.UserNameTooShortMessage())
                 .MaximumLength(ValidationConstants.UserNameMaxLength)
-                .WithMessage(ErrorMessages.UserNameTooLongMessage());
+                .WithMessage(IdentityErrorMessages.UserNameTooLongMessage());
         }
         public void RuleForPassword()
         {
             RuleFor(sur => sur.Password)
                 .NotEmpty()
-                .WithMessage(ErrorMessages.PasswordEmpty)
+                .WithMessage(IdentityErrorMessages.PasswordEmpty)
                 .MinimumLength(8)
-                .WithMessage(ErrorMessages.PasswordTooShortMessage())
+                .WithMessage(IdentityErrorMessages.PasswordTooShortMessage())
                 .MaximumLength(22)
-                .WithMessage(ErrorMessages.PasswordTooLongMessage()); 
+                .WithMessage(IdentityErrorMessages.PasswordTooLongMessage()); 
         }
     }
 }

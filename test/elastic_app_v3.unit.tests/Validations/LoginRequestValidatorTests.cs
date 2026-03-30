@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using FluentValidation.TestHelper;
-using elastic_app_v3.application.Errors;
 using elastic_app_v3.application.Validations;
 using elastic_app_v3.application.DTOs.Login;
+using elastic_app_v3.application.Errors.Identity;
 
 namespace elastic_app_v3.unit.tests.Validations
 {
@@ -32,7 +32,7 @@ namespace elastic_app_v3.unit.tests.Validations
 
             // Assert
             result.ShouldHaveValidationErrorFor(r => r.UserName)
-                  .WithErrorMessage(ErrorMessages.UserNameEmpty);
+                  .WithErrorMessage(IdentityErrorMessages.UserNameEmpty);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _loginRequestValidator.TestValidate(loginRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.UserName)
-                .WithErrorMessage(ErrorMessages.UserNameTooShortMessage());
+                .WithErrorMessage(IdentityErrorMessages.UserNameTooShortMessage());
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _loginRequestValidator.TestValidate(loginRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.UserName)
-                .WithErrorMessage(ErrorMessages.UserNameTooLongMessage());
+                .WithErrorMessage(IdentityErrorMessages.UserNameTooLongMessage());
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _loginRequestValidator.TestValidate(loginRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.Password)
-                .WithErrorMessage(ErrorMessages.PasswordEmpty);
+                .WithErrorMessage(IdentityErrorMessages.PasswordEmpty);
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _loginRequestValidator.TestValidate(loginRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.Password)
-                .WithErrorMessage(ErrorMessages.PasswordTooShortMessage());
+                .WithErrorMessage(IdentityErrorMessages.PasswordTooShortMessage());
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _loginRequestValidator.TestValidate(loginRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.Password)
-                .WithErrorMessage(ErrorMessages.PasswordTooLongMessage());
+                .WithErrorMessage(IdentityErrorMessages.PasswordTooLongMessage());
         }
     }
 }

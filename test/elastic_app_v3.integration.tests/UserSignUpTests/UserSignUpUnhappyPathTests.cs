@@ -1,21 +1,22 @@
-﻿using AutoFixture;
+﻿using System.Net;
+using AutoFixture;
 using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.SignUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.integration.tests.SetUp;
-using System.Net;
+using Microsoft.AspNetCore.Mvc;
 
 namespace elastic_app_v3.integration.tests.UserSignUpTests
 {
     [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
     public class UserSignUpUnhappyPathTests
     {
-        private readonly ApiClient _client;
+        private readonly ApiClient _apiClient;
         private readonly Fixture _fixture = new();
         private readonly UserDbTestHelper _userDbTestHelper = new();
         public UserSignUpUnhappyPathTests(IntegrationTestFixture fixture)
         {
-            _client = new ApiClient(fixture.Client);
+            _apiClient = new ApiClient(fixture.Client);
 
             var maxUsernameLength = 22;
             //GUID length with N is 32 chars
@@ -45,11 +46,11 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             await _userDbTestHelper.AddTestUserAsync(user, requestBody.Password);
 
             //Act
-            var httpResponse = await _client.SendUserSignupRequest(requestBody);
+            var httpResponse = await _apiClient.SendUserSignupRequest(requestBody);
 
             //Assert
             Assert.Equal(HttpStatusCode.Conflict, httpResponse.StatusCode);
-            var error = await _client.GetErrorResponse(httpResponse);
+            var error = await _apiClient.GetResponseAsync<ProblemDetails>(httpResponse);
             Assert.NotNull(error);
             Assert.Equal(ErrorCodes.UserAlreadyExistsError, error.Type);
         }
@@ -64,11 +65,11 @@ namespace elastic_app_v3.integration.tests.UserSignUpTests
             };
 
             ///Act
-            var httpResponse = await _client.SendUserSignupRequest(requestBody);
+            var httpResponse = await _apiClient.SendUserSignupRequest(requestBody);
 
             //Assert
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
-            var error = await _client.GetErrorResponse(httpResponse);
+            var error = await _apiClient.GetResponseAsync<ProblemDetails>(httpResponse);
             Assert.NotNull(error);
             Assert.Equal(ErrorCodes.ValidationError, error.Type);
         }

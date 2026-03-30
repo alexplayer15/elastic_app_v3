@@ -1,6 +1,8 @@
 ﻿using elastic_app_v3.api.Errors;
 using elastic_app_v3.api.Routing.Constants;
 using elastic_app_v3.application.Errors;
+using elastic_app_v3.application.Errors.Identity;
+using elastic_app_v3.application.Errors.Profile;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +15,7 @@ public static class ErrorResponseMapper
         { EndpointConstants.UserLoginEndpoint, GetLoginErrorResponse  },
         { EndpointConstants.GetUserByIdEndpoint, GetUserByIdErrorResponse },
         { EndpointConstants.PaymentEndpoint, GetPaymentErrorResponse },
+        { EndpointConstants.UpdateProfileEndpoint, GetUpdateProfileErrorResponse }
     };
     public static IResult GetErrorResponseByEndpoint(
         Error internalError,
@@ -91,6 +94,25 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred during payment.",
+            Detail = internalError.Message,
+            Status = statusCode
+        };
+
+        return Results.Json(problemDetails, statusCode: statusCode);
+    }
+    private static IResult GetUpdateProfileErrorResponse(Error internalError)
+    {
+        (int statusCode, string errorCode) = internalError switch
+        {
+            ValidationError => (StatusCodes.Status400BadRequest, ErrorCodes.ValidationError),
+            NoProfileFoundError => (StatusCodes.Status404NotFound, ErrorCodes.NoProfileFoundError),
+            _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
+        };
+
+        var problemDetails = new ProblemDetails
+        {
+            Type = errorCode,
+            Title = "An error occurred during update profile.",
             Detail = internalError.Message,
             Status = statusCode
         };

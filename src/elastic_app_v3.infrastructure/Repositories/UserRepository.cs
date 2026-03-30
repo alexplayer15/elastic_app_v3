@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Dapper;
 using elastic_app_v3.application.Errors;
+using elastic_app_v3.application.Errors.Identity;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.domain.Events;
@@ -21,7 +22,7 @@ namespace elastic_app_v3.infrastructure.Repositories
     {
         private readonly string _connectionString = elasticDatabaseSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline 
-            = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.UserResiliencePolicyKey);
+            = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.ElasticAppDatabaseResiliencePolicyKey);
         public async Task<Result> AddAsync(User user, CancellationToken cancellationToken)
         {
             try
@@ -49,7 +50,16 @@ namespace elastic_app_v3.infrastructure.Repositories
                             cancellationToken: token
                         );
 
-                        var userId = await connection.ExecuteScalarAsync<Guid>(addUserCommand);
+                        var userId = await connection.ExecuteScalarAsync<Guid>(addUserCommand); //will this continue if the command returns null? When would it return null?
+
+                        var addProfileCommand = new CommandDefinition(
+                            ProfileSqlConstants.AddProfile,
+                            new { UserId = userId },
+                            transaction,
+                            cancellationToken: token
+                        );
+
+                        await connection.ExecuteAsync(addProfileCommand);
 
                         var userSignedUpEvent = new UserSignedUpEvent(userId);
 

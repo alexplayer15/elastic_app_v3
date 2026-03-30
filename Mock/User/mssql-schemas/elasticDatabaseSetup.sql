@@ -30,7 +30,7 @@ BEGIN
 END;
 GO
 
--- 3. Create Outbox table if it does not exist
+-- 4. Create Outbox table if it does not exist
 IF NOT EXISTS (
     SELECT 1 
     FROM sys.tables 
@@ -55,7 +55,7 @@ BEGIN
 END;
 GO
 
--- 4. Create Payments table if it does not exist
+-- 5. Create Payments table if it does not exist
 IF NOT EXISTS (
     SELECT 1 
     FROM sys.tables 
@@ -75,7 +75,7 @@ BEGIN
 END;
 GO
 
--- 5. Create IdempotencyKeys table if it does not exist
+-- 6. Create IdempotencyKeys table if it does not exist
 IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'IdempotencyKeys')
 BEGIN
     CREATE TABLE IdempotencyKeys (
@@ -86,5 +86,36 @@ BEGIN
         CONSTRAINT UQ_IdempotencyKey UNIQUE (IdempotencyKey),
         CONSTRAINT UQ_PaymentId UNIQUE (PaymentId)
     );
+END;
+GO
+
+-- 7. Create Profiles table if it does not exist
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Profiles')
+BEGIN
+    CREATE TABLE Profiles (
+        UserId UNIQUEIDENTIFIER NOT NULL,
+
+        Bio NVARCHAR(250) NULL,
+
+        CONSTRAINT PK_Profiles PRIMARY KEY (UserId),
+
+        CONSTRAINT FK_Profiles_Users 
+            FOREIGN KEY (UserId) 
+            REFERENCES Users(Id)
+            ON DELETE CASCADE
+    );
+END;
+GO
+
+-- 8. Create Languages table if it does not exist
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Languages')
+BEGIN
+    CREATE TABLE Languages (
+        Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+        UserId UNIQUEIDENTIFIER NOT NULL,
+        [Type] NVARCHAR(50) NOT NULL,
+        Proficiency NVARCHAR(50) NOT NULL,
+        CONSTRAINT FK_Languages_User FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
 END;
 GO

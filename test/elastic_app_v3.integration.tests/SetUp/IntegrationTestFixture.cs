@@ -24,7 +24,11 @@ namespace elastic_app_v3.integration.tests.SetUp
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
 
-                var sqlQuery = "DELETE FROM Users;";
+                var sqlQuery = @"
+                DELETE FROM Languages;
+                DELETE FROM Profiles;
+                DELETE FROM Users;
+                ";
 
                 await connection.ExecuteAsync(sqlQuery);
             }

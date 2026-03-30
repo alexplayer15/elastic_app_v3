@@ -4,13 +4,13 @@
     {
         public const string Base = "/elastic-app/v1";
 
-        public const string UserSignUpEndpoint = "/user/signup";
+        public const string UserSignUpEndpoint = "/user/signup"; //does it make sense to have /user/ in these? 
 
         public const string UserLoginEndpoint = "/user/login";
 
         public const string GetUserByIdEndpoint = "/user/me";
 
-        public const string UserProfileEndpoint = "/user/photo";
+        public const string UpdateProfileEndpoint = "/profile";
 
         public const string PaymentEndpoint = "/payment";
 

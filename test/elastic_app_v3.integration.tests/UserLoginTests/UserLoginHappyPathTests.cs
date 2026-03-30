@@ -40,7 +40,7 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var loginResponse = await _apiClient.GetLoginResponse(response);
+            var loginResponse = await _apiClient.GetResponseAsync<LoginResponse>(response);
             Assert.NotNull(loginResponse);
             Assert.Equal(3, loginResponse.AccessToken.Split(".").Length);
             Assert.Equal(60, loginResponse.ExpiresInMinutes);

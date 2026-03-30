@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using elastic_app_v3.application.Handler;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.infrastructure.Config;
@@ -21,10 +22,12 @@ namespace elastic_app_v3.infrastructure
         {
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            services.AddSingleton<IUserRepository, UserRepository>();
-            services.AddSingleton<IPaymentRepository, PaymentRepository>(); //singleton correct here?
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddHealthChecks();
             services.ConfigureOptions(configuration);
+            services.AddMediatRConfiguration();
             services.AddResilienceConfiguration(configuration);
 
             return services;
@@ -61,9 +64,16 @@ namespace elastic_app_v3.infrastructure
 
             return services;
         }
+        private static IServiceCollection AddMediatRConfiguration(this IServiceCollection services)
+        {
+            return services.AddMediatR(configuration =>
+            {
+                configuration.RegisterServicesFromAssembly(typeof(UpdateProfileHandler).Assembly);
+            });
+        }
         private static IServiceCollection AddResilienceConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            return services.AddResiliencePipeline(ResiliencePolicy.UserResiliencePolicyKey, (builder, context) =>
+            return services.AddResiliencePipeline(ResiliencePolicy.ElasticAppDatabaseResiliencePolicyKey, (builder, context) =>
             {
                 var options = context.GetOptions<ResiliencePolicy>(ResiliencePolicy.UserResiliencePolicySettings);
 

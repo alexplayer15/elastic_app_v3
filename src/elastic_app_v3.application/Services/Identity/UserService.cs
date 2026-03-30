@@ -7,6 +7,7 @@ using elastic_app_v3.application.Errors;
 using FluentResults;
 using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.application.DTOs.SignUp;
+using elastic_app_v3.application.Errors.Identity;
 
 namespace elastic_app_v3.application.Services.Identity
 {

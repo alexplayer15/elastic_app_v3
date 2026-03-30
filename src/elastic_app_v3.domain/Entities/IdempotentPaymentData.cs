@@ -3,5 +3,5 @@
     public sealed record IdempotentPaymentData(
         string IdempotencyKey,
         Guid PaymentId
-    );
+    ); //I dont think this is an entity
 }

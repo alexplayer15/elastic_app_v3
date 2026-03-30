@@ -1,6 +1,6 @@
 ﻿using elastic_app_v3.application.Constants;
 using elastic_app_v3.application.DTOs.SignUp;
-using elastic_app_v3.application.Errors;
+using elastic_app_v3.application.Errors.Identity;
 using FluentValidation;
 
 namespace elastic_app_v3.application.Validations
@@ -19,45 +19,45 @@ namespace elastic_app_v3.application.Validations
         {
             RuleFor(sur => sur.FirstName)
                 .NotEmpty()
-                .WithMessage(ErrorMessages.FirstNameEmpty)
+                .WithMessage(IdentityErrorMessages.FirstNameEmpty)
                 .Matches("^[a-zA-z]+$")
-                .WithMessage(ErrorMessages.FirstNameNonAlphabetical);
+                .WithMessage(IdentityErrorMessages.FirstNameNonAlphabetical);
         }
         public void RuleForLastName()
         {
             RuleFor(sur => sur.LastName)
                 .NotEmpty()
-                .WithMessage(ErrorMessages.LastNameEmpty)
+                .WithMessage(IdentityErrorMessages.LastNameEmpty)
                 .Matches("^[a-zA-z]+$")
-                .WithMessage(ErrorMessages.LastNameNonAlphabetical);
+                .WithMessage(IdentityErrorMessages.LastNameNonAlphabetical);
         }
         public void RuleForUserName()
         {
             RuleFor(sur => sur.UserName)
                 .NotEmpty()
-                .WithMessage(ErrorMessages.UserNameEmpty)
+                .WithMessage(IdentityErrorMessages.UserNameEmpty)
                 .MinimumLength(ValidationConstants.UserNameMinLength)
-                .WithMessage(ErrorMessages.UserNameTooShortMessage())
+                .WithMessage(IdentityErrorMessages.UserNameTooShortMessage())
                 .MaximumLength(ValidationConstants.UserNameMaxLength)
-                .WithMessage(ErrorMessages.UserNameTooLongMessage());
+                .WithMessage(IdentityErrorMessages.UserNameTooLongMessage());
         }
         public void RuleForPassword()
         {
             RuleFor(sur => sur.Password)
                 .NotEmpty()
-                .WithMessage(ErrorMessages.PasswordEmpty)
+                .WithMessage(IdentityErrorMessages.PasswordEmpty)
                 .MinimumLength(8)
-                .WithMessage(ErrorMessages.PasswordTooShortMessage())
+                .WithMessage(IdentityErrorMessages.PasswordTooShortMessage())
                 .MaximumLength(22)
-                .WithMessage(ErrorMessages.PasswordTooLongMessage()); // to do: think of validations for password
+                .WithMessage(IdentityErrorMessages.PasswordTooLongMessage()); // to do: think of validations for password
         }
         public void RuleForReEnteredPassword()
         {
             RuleFor(sur => sur.ReEnteredPassword)
                 .NotEmpty()
-                .WithMessage(ErrorMessages.ReEnteredPasswordEmpty)
+                .WithMessage(IdentityErrorMessages.ReEnteredPasswordEmpty)
                 .Must((request, reEnteredPassword) => reEnteredPassword == request.Password)
-                .WithMessage(ErrorMessages.ReEnteredPasswordNotMatching);
+                .WithMessage(IdentityErrorMessages.ReEnteredPasswordNotMatching);
         }
     }
 }

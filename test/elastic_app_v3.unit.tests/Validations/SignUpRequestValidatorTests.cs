@@ -1,8 +1,8 @@
 using AutoFixture;
 using FluentValidation.TestHelper;
-using elastic_app_v3.application.Errors;
 using elastic_app_v3.application.Validations;
 using elastic_app_v3.application.DTOs.SignUp;
+using elastic_app_v3.application.Errors.Identity;
 
 namespace elastic_app_v3.unit.tests.Validations
 {
@@ -36,7 +36,7 @@ namespace elastic_app_v3.unit.tests.Validations
 
             // Assert
             result.ShouldHaveValidationErrorFor(r => r.FirstName)
-                .WithErrorMessage(ErrorMessages.FirstNameEmpty);
+                .WithErrorMessage(IdentityErrorMessages.FirstNameEmpty);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.FirstName)
-                .WithErrorMessage(ErrorMessages.FirstNameNonAlphabetical);
+                .WithErrorMessage(IdentityErrorMessages.FirstNameNonAlphabetical);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.LastName)
-                .WithErrorMessage(ErrorMessages.LastNameEmpty);
+                .WithErrorMessage(IdentityErrorMessages.LastNameEmpty);
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.LastName)
-                .WithErrorMessage(ErrorMessages.LastNameNonAlphabetical);
+                .WithErrorMessage(IdentityErrorMessages.LastNameNonAlphabetical);
         }
 
         [Fact]
@@ -92,7 +92,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.UserName)
-                .WithErrorMessage(ErrorMessages.UserNameEmpty);
+                .WithErrorMessage(IdentityErrorMessages.UserNameEmpty);
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.UserName)
-                .WithErrorMessage(ErrorMessages.UserNameTooShortMessage());
+                .WithErrorMessage(IdentityErrorMessages.UserNameTooShortMessage());
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.UserName)
-                .WithErrorMessage(ErrorMessages.UserNameTooLongMessage());
+                .WithErrorMessage(IdentityErrorMessages.UserNameTooLongMessage());
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.Password)
-                .WithErrorMessage(ErrorMessages.PasswordEmpty);
+                .WithErrorMessage(IdentityErrorMessages.PasswordEmpty);
         }
 
         [Fact]
@@ -148,7 +148,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.Password)
-                .WithErrorMessage(ErrorMessages.PasswordTooShortMessage());
+                .WithErrorMessage(IdentityErrorMessages.PasswordTooShortMessage());
         }
 
         [Fact]
@@ -162,7 +162,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.Password)
-                .WithErrorMessage(ErrorMessages.PasswordTooLongMessage());
+                .WithErrorMessage(IdentityErrorMessages.PasswordTooLongMessage());
         }
 
         [Fact]
@@ -176,7 +176,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.ReEnteredPassword)
-                .WithErrorMessage(ErrorMessages.ReEnteredPasswordEmpty);
+                .WithErrorMessage(IdentityErrorMessages.ReEnteredPasswordEmpty);
         }
 
         [Fact]
@@ -191,7 +191,7 @@ namespace elastic_app_v3.unit.tests.Validations
             var result = _signUpRequestValidator.TestValidate(signUpRequest);
 
             result.ShouldHaveValidationErrorFor(r => r.ReEnteredPassword)
-                .WithErrorMessage(ErrorMessages.ReEnteredPasswordNotMatching);
+                .WithErrorMessage(IdentityErrorMessages.ReEnteredPasswordNotMatching);
         }
     }
 }

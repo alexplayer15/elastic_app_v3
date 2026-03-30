@@ -19,6 +19,7 @@ namespace elastic_app_v3.api.Routing
 
             IdentityRoutes.Map(elasticAppApi);
             PaymentRoutes.Map(elasticAppApi);
+            ProfileRoutes.Map(elasticAppApi);
             HealthCheckRoutes.Map(elasticAppApi);
         }
     }

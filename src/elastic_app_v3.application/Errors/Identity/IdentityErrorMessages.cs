@@ -1,8 +1,8 @@
 ﻿using elastic_app_v3.application.Constants;
 
-namespace elastic_app_v3.application.Errors
+namespace elastic_app_v3.application.Errors.Identity
 {
-    public static class ErrorMessages
+    public static class IdentityErrorMessages
     {
         public const string FirstNameEmpty = "FirstName cannot be empty";
         public const string FirstNameNonAlphabetical = "You can only include alphabetical characters in your FirstName";

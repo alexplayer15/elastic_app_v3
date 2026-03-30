@@ -26,7 +26,7 @@ namespace elastic_app_v3.integration.tests
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var paymentResponse = await _apiClient.GetPaymentResponse(response);
+            var paymentResponse = await _apiClient.GetResponseAsync<PaymentResponse>(response);
             Assert.NotNull(paymentResponse);
             Assert.NotEqual(Guid.Empty, paymentResponse.Id);
         }
@@ -48,7 +48,7 @@ namespace elastic_app_v3.integration.tests
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
-            var firstPaymentResponse = await _apiClient.GetPaymentResponse(firstResponse);
+            var firstPaymentResponse = await _apiClient.GetResponseAsync<PaymentResponse>(firstResponse);
             Assert.NotNull(firstPaymentResponse);
 
             //Act 
@@ -56,7 +56,7 @@ namespace elastic_app_v3.integration.tests
 
             //Assert
             Assert.Equal(firstResponse.StatusCode, secondResponse.StatusCode);
-            var secondPaymentResponse = await _apiClient.GetPaymentResponse(secondResponse);
+            var secondPaymentResponse = await _apiClient.GetResponseAsync<PaymentResponse>(secondResponse);
             Assert.NotNull(secondPaymentResponse);
             Assert.Equal(firstPaymentResponse.Id, secondPaymentResponse.Id);
         }

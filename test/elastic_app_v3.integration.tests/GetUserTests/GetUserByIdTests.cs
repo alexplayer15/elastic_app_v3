@@ -4,6 +4,8 @@ using elastic_app_v3.integration.tests.SetUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.Login;
+using Microsoft.AspNetCore.Mvc;
+using elastic_app_v3.application.DTOs;
 
 namespace elastic_app_v3.integration.tests.GetUserTests
 {
@@ -18,7 +20,9 @@ namespace elastic_app_v3.integration.tests.GetUserTests
         public async Task GivenExistingUserId_WhenSendGetUserById_ThenReturn200AndUser()
         {
             //Arrange
-            var username = "alexplayer15";
+            var maxUsernameLength = 22;
+            //GUID length with N is 32 chars
+            var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
             var password = "password";
 
             var user = _fixture.Build<User>()
@@ -36,7 +40,7 @@ namespace elastic_app_v3.integration.tests.GetUserTests
                 .Create();
 
             var loginResponse = await _apiClient.SendUserLoginRequest(loginRequest);
-            var loginResult = await _apiClient.GetLoginResponse(loginResponse);
+            var loginResult = await _apiClient.GetResponseAsync<LoginResponse>(loginResponse);
             var token = loginResult!.AccessToken;
 
             //Act
@@ -45,7 +49,7 @@ namespace elastic_app_v3.integration.tests.GetUserTests
             //Assert
             Assert.Equal(HttpStatusCode.OK, httpResponse.StatusCode);
 
-            var userResponse = await _apiClient.GetUserResponse(httpResponse);
+            var userResponse = await _apiClient.GetResponseAsync<GetUserResponse>(httpResponse);
             Assert.NotNull(userResponse);
             Assert.Equal(username, userResponse.UserName);
         }
@@ -72,7 +76,7 @@ namespace elastic_app_v3.integration.tests.GetUserTests
                 .Create();
 
             var loginResponse = await _apiClient.SendUserLoginRequest(loginRequest);
-            var loginResult = await _apiClient.GetLoginResponse(loginResponse);
+            var loginResult = await _apiClient.GetResponseAsync<LoginResponse>(loginResponse);
             var token = loginResult!.AccessToken;
 
             await _userDbTestHelper.DeleteTestUserAsync(username);
@@ -83,7 +87,7 @@ namespace elastic_app_v3.integration.tests.GetUserTests
             //Assert
             Assert.Equal(HttpStatusCode.NotFound, httpResponse.StatusCode);
 
-            var errorResponse = await _apiClient.GetErrorResponse(httpResponse);
+            var errorResponse = await _apiClient.GetResponseAsync<ProblemDetails>(httpResponse);
             Assert.NotNull(errorResponse);
             Assert.Equal(ErrorCodes.UserDoesNotExistError, errorResponse.Type);
         }

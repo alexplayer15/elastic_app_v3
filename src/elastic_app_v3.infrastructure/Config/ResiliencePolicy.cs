@@ -4,7 +4,7 @@ namespace elastic_app_v3.infrastructure.Config
 {
     public class ResiliencePolicy
     {
-        public const string UserResiliencePolicyKey = "ResiliencePolicySettings";
+        public const string ElasticAppDatabaseResiliencePolicyKey = "ResiliencePolicySettings";
 
         public const string UserResiliencePolicySettings = "UserResiliencePolicySettings";
         public double Delay { get; set; }
