@@ -2,7 +2,6 @@
 using System.Net;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.e2e.tests.InfraHelpers;
 using elastic_app_v3.e2e.tests.SetUp;
 
