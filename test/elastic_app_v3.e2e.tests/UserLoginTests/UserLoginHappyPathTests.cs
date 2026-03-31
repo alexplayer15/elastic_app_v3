@@ -1,11 +1,12 @@
 ﻿using AutoFixture;
 using System.Net;
-using elastic_app_v3.integration.tests.SetUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.integration.tests.InfraHelpers;
+using elastic_app_v3.application.DTOs.Login;
+using elastic_app_v3.e2e.tests.InfraHelpers;
+using elastic_app_v3.e2e.tests.SetUp;
 
-namespace elastic_app_v3.integration.tests.UserLoginTests
+namespace elastic_app_v3.e2e.tests.UserLoginTests
 {
     [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
     public class UserLoginHappyPathTests(IntegrationTestFixture fixture)

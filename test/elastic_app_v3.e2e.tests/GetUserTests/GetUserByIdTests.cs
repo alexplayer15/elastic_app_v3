@@ -1,14 +1,14 @@
 ﻿using AutoFixture;
 using System.Net;
-using elastic_app_v3.integration.tests.SetUp;
+using elastic_app_v3.e2e.tests.SetUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.application.DTOs;
-using elastic_app_v3.integration.tests.InfraHelpers;
+using elastic_app_v3.e2e.tests.InfraHelpers;
 
-namespace elastic_app_v3.integration.tests.GetUserTests
+namespace elastic_app_v3.e2e.tests.GetUserTests
 {
     [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
     public class GetUserByIdTests(IntegrationTestFixture fixture)

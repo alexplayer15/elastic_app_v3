@@ -8,7 +8,7 @@ using elastic_app_v3.api.Routing.Constants;
 using elastic_app_v3.application.DTOs.SignUp;
 using elastic_app_v3.application.DTOs.Profile;
 
-namespace elastic_app_v3.integration.tests.SetUp
+namespace elastic_app_v3.e2e.tests.SetUp
 {
     public class ApiClient(HttpClient client)
     {

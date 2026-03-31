@@ -2,7 +2,7 @@
 using Dapper;
 using elastic_app_v3.infrastructure.Config;
 
-namespace elastic_app_v3.integration.tests.SetUp
+namespace elastic_app_v3.e2e.tests.SetUp
 {
     public class IntegrationTestFixture : IAsyncLifetime
     {

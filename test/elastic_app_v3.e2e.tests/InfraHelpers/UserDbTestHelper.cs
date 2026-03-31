@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using elastic_app_v3.infrastructure.Config;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.infrastructure.SqlQueryConstants;
-using elastic_app_v3.integration.tests.SetUp;
+using elastic_app_v3.e2e.tests.SetUp;
 
-namespace elastic_app_v3.integration.tests.InfraHelpers
+namespace elastic_app_v3.e2e.tests.InfraHelpers
 {
     public class UserDbTestHelper
     {

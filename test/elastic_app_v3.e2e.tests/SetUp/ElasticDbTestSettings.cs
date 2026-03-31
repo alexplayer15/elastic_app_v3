@@ -1,6 +1,6 @@
 ﻿using elastic_app_v3.infrastructure.Config;
 
-namespace elastic_app_v3.integration.tests.SetUp;
+namespace elastic_app_v3.e2e.tests.SetUp;
 internal static class ElasticDbTestSettings
 {
     public static ElasticDatabaseSettings SetElasticDatabaseTestSettings() => new()

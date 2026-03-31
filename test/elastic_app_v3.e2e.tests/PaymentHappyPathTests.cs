@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using AutoFixture;
 using elastic_app_v3.application.DTOs.Payment;
-using elastic_app_v3.integration.tests.SetUp;
+using elastic_app_v3.e2e.tests.SetUp;
 
-namespace elastic_app_v3.integration.tests
+namespace elastic_app_v3.e2e.tests
 {
     [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
     public class PaymentHappyPathTests(IntegrationTestFixture fixture)

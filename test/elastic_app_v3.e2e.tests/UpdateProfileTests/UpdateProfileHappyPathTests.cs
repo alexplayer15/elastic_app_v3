@@ -2,10 +2,10 @@
 using AutoFixture;
 using elastic_app_v3.application.DTOs.Profile;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.integration.tests.InfraHelpers;
-using elastic_app_v3.integration.tests.SetUp;
+using elastic_app_v3.e2e.tests.InfraHelpers;
+using elastic_app_v3.e2e.tests.SetUp;
 
-namespace elastic_app_v3.integration.tests.UpdateProfileTests;
+namespace elastic_app_v3.e2e.tests.UpdateProfileTests;
 
 [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
 public class UpdateProfileHappyPathTests
