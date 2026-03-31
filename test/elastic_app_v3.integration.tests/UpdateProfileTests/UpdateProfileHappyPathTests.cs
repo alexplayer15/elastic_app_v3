@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using AutoFixture;
-using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.application.DTOs.Profile;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.integration.tests.InfraHelpers;

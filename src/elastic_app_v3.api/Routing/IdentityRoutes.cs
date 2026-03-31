@@ -23,9 +23,9 @@ public static class IdentityRoutes
 
         group.MapPost(EndpointConstants.UserLoginEndpoint, async Task<IResult> (
             [FromBody] LoginRequest request,
-            [FromServices] IUserService userService) =>
+            [FromServices] ILoginService loginService) =>
         {
-            var result = await userService.LoginAsync(request);
+            var result = await loginService.LoginAsync(request);
             return result.ToApiResponse(EndpointConstants.UserLoginEndpoint);
         })
         .WithName(OpenApiConstants.UserLoginEndpointOpenApiName)

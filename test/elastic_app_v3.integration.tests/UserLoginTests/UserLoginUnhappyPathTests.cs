@@ -46,7 +46,7 @@ namespace elastic_app_v3.integration.tests.UserLoginTests
         }
 
         [Fact]
-        public async Task GivenSignedUpUserEnteringWrongPassword_WhenSendUserLoginRequest_ThenReturnUnauthorized()
+        public async Task GivenSignedUpUserEnteredWrongPassword_WhenSendUserLoginRequest_ThenReturnUnauthorized()
         {
             //Arrange
             var request = _fixture.Create<LoginRequest>() with
