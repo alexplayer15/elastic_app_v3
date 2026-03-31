@@ -6,6 +6,7 @@ using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.application.DTOs;
+using elastic_app_v3.integration.tests.InfraHelpers;
 
 namespace elastic_app_v3.integration.tests.GetUserTests
 {

@@ -24,7 +24,7 @@ public static class ProfileRoutes
 
                 var result = await mediator.Send(request, cancellationToken);
 
-                return result.ToApiResponse(EndpointConstants.UpdateProfileEndpoint); // implement success and error handling for endpoint
+                return result.ToApiResponse(EndpointConstants.UpdateProfileEndpoint);
             })
             .RequireAuthorization()
             .MapToApiVersion(1);

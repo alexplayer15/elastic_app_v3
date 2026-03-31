@@ -14,7 +14,7 @@ namespace elastic_app_v3.integration.tests.SetUp
         {
             _factory = new CustomWebApplicationFactory<Program>();
             Client = _factory.CreateClient();
-            ElasticDatabaseSettings = SetElasticDatabaseSettings();
+            ElasticDatabaseSettings = ElasticDbTestSettings.SetElasticDatabaseTestSettings();
             _connectionString = ElasticDatabaseSettings.GetConnectionString();
         }
         public async Task InitializeAsync()
@@ -37,16 +37,6 @@ namespace elastic_app_v3.integration.tests.SetUp
                 throw new Exception("Something went wrong while clearing up the test data", ex);
             }
         }
-        //why is this in fixture and helper?
-        private static ElasticDatabaseSettings SetElasticDatabaseSettings() => new()
-        {
-            Database = "Elastic",
-            Server = "localhost",
-            Port = 1433,
-            User = "SA",
-            Password = "DonutOfChocolate150!",
-            TrustServerCertificate = true
-        };
         public Task DisposeAsync()
         {
             Client.Dispose();

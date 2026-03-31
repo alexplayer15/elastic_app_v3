@@ -14,6 +14,7 @@ public class UpdateProfileRequestValidator : AbstractValidator<UpdateProfileRequ
     {
         RuleFor(x => x.Languages)
             .NotEmpty()
+            .When(x => x.Languages is not null)
             .WithMessage(ProfileErrorMessages.NoLanguagesProvided);
     }
     public void RuleForBlankRequest()

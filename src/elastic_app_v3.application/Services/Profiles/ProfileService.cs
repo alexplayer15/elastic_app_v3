@@ -14,6 +14,11 @@ public class ProfileService(IProfileRepository profileRepository) : IProfileServ
     {
         var profileResult = await _profileRepository.GetProfileByUserId(update.UserId, cancellationToken);
 
+        if (profileResult.IsFailed)
+        {
+            return profileResult.ToResult<UpdateProfileResponse>();
+        }
+
         var profile = profileResult.Value;
         profile.UpdateBio(update.Bio);
         profile.UpdateLanguages(update.Languages);

@@ -4,18 +4,19 @@ using Microsoft.AspNetCore.Identity;
 using elastic_app_v3.infrastructure.Config;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.infrastructure.SqlQueryConstants;
+using elastic_app_v3.integration.tests.SetUp;
 
-namespace elastic_app_v3.integration.tests
+namespace elastic_app_v3.integration.tests.InfraHelpers
 {
     public class UserDbTestHelper
     {
-        public ElasticDatabaseSettings ElasticDatabaseSettings { get; private set; }
+        private readonly ElasticDatabaseSettings _elasticDatabaseSettings;
         private readonly string _connectionString;
         private readonly IPasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
         public UserDbTestHelper()
         {
-            ElasticDatabaseSettings = SetElasticDatabaseSettings();
-            _connectionString = ElasticDatabaseSettings.GetConnectionString();
+            _elasticDatabaseSettings = ElasticDbTestSettings.SetElasticDatabaseTestSettings();
+            _connectionString = _elasticDatabaseSettings.GetConnectionString();
         }
         public async Task AddTestUserAsync(User user, string password)
         {
@@ -25,14 +26,32 @@ namespace elastic_app_v3.integration.tests
             {
                 using var connection = new SqlConnection(_connectionString);
                 await connection.OpenAsync();
-                await connection.ExecuteScalarAsync<Guid>(UserSqlConstants.AddUser, userWithHashedPassword);
+                var userId = await connection.ExecuteScalarAsync<Guid>(UserSqlConstants.AddUser, userWithHashedPassword);
+                await connection.ExecuteAsync(ProfileSqlConstants.AddProfile, new { UserId = userId });
             }
             catch (Exception ex)
             {
                 throw new Exception("Something went wrong adding test user", ex);
             }
         }
+        public async Task<Guid> AddTestUserAsync(User user)
+        {
+            var userWithHashedPassword = AddHashedPasswordToTestUser(user, "password");
 
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+                var userId = await connection.ExecuteScalarAsync<Guid>(UserSqlConstants.AddUser, userWithHashedPassword);
+                await connection.ExecuteAsync(ProfileSqlConstants.AddProfile, new { UserId = userId });
+
+                return userId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Something went wrong adding test user", ex);
+            }
+        }
         public async Task DeleteTestUserAsync(string userName)
         {
             try
@@ -45,8 +64,7 @@ namespace elastic_app_v3.integration.tests
             {
                 throw new Exception("Something went wrong deleting test user", ex);
             }
-        }  
-        
+        }         
         private User AddHashedPasswordToTestUser(User user, string password)
         {
             var hashedPassword = _passwordHasher.HashPassword(user, password);
@@ -55,16 +73,5 @@ namespace elastic_app_v3.integration.tests
 
             return user;
         }
-
-        //to do: find a better way to do this
-        private static ElasticDatabaseSettings SetElasticDatabaseSettings() => new()
-        {
-            Database = "Elastic",
-            Server = "localhost",
-            Port = 1433,
-            User = "SA",
-            Password = "DonutOfChocolate150!",
-            TrustServerCertificate = true
-        };
     }
 }
