@@ -78,7 +78,7 @@ services:
       retries: 5
   sqlserver-local:
     build:
-      context: ./Mock/User
+      context: ./Mock/Elastic
       dockerfile: Dockerfile
     ports:
       - "1433:1433"

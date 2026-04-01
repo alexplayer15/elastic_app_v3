@@ -2,17 +2,17 @@
 using System.Net;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.e2e.tests.InfraHelpers;
 using elastic_app_v3.e2e.tests.SetUp;
+using elastic_app_v3.common.tests.Clients;
 
 namespace elastic_app_v3.e2e.tests.UserLoginTests
 {
-    [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
-    public class UserLoginHappyPathTests(IntegrationTestFixture fixture)
+    [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
+    public class UserLoginHappyPathTests(EndToEndTestFixture fixture)
     {
         private readonly ApiClient _apiClient = new(fixture.Client);
         private readonly Fixture _fixture = new();
-        private readonly UserDbTestHelper _userDbTestHelper = new();
+        private readonly ElasticAppDbClient _userDbTestHelper = new();
 
         [Fact]
         public async Task GivenSignedUpUser_WhenSendUserLoginRequest_ThenReturn200AndLoginCredentials()

@@ -1,4 +1,5 @@
 ﻿using elastic_app_v3.infrastructure.Config;
+using elastic_app_v3.common.tests.Config;
 
 namespace elastic_app_v3.integration.tests.Fixtures;
 public class ElasticAppDbFixture
@@ -6,17 +7,8 @@ public class ElasticAppDbFixture
     public ElasticDatabaseSettings ElasticDatabaseSettings { get; private set; }
     public ElasticAppDbFixture()
     {
-        ElasticDatabaseSettings = SetElasticDatabaseTestSettings();
+        ElasticDatabaseSettings = ElasticAppDbTestSettings.SetElasticDatabaseTestSettings();
     }
-    private static ElasticDatabaseSettings SetElasticDatabaseTestSettings() => new()
-    {
-        Database = "Elastic",
-        Server = "localhost",
-        Port = 1433,
-        User = "SA",
-        Password = "DonutOfChocolate150!",
-        TrustServerCertificate = true
-    };
 }
 
 [CollectionDefinition(TestCollectionConstants.ElasticAppDbTestCollectionName, DisableParallelization = true)]

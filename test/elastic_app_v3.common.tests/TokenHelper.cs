@@ -1,11 +1,11 @@
-﻿using System.Security.Claims;
-using System.Text;
-using elastic_app_v3.e2e.tests.SetUp;
-using elastic_app_v3.infrastructure.Config;
+﻿using elastic_app_v3.infrastructure.Config;
+using elastic_app_v3.common.tests.Config;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
 
-namespace elastic_app_v3.e2e.tests.InfraHelpers;
+namespace elastic_app_v3.common.tests;
 public class TokenHelper
 {
     private static readonly JwtConfigOptions _jwtConfig = TokenTestSettings.SetJwtConfigTestSettings();

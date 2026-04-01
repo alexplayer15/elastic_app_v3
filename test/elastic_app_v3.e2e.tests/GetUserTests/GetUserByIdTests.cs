@@ -6,15 +6,15 @@ using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.application.DTOs;
-using elastic_app_v3.e2e.tests.InfraHelpers;
+using elastic_app_v3.common.tests.Clients;
 
 namespace elastic_app_v3.e2e.tests.GetUserTests
 {
-    [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
-    public class GetUserByIdTests(IntegrationTestFixture fixture)
+    [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
+    public class GetUserByIdTests(EndToEndTestFixture fixture)
     {
         private readonly ApiClient _apiClient = new(fixture.Client);
-        private readonly UserDbTestHelper _userDbTestHelper = new();
+        private readonly ElasticAppDbClient _userDbTestHelper = new();
         private readonly Fixture _fixture = new();
 
         [Fact]

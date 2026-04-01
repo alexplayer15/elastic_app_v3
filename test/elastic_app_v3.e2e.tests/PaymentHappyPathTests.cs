@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using AutoFixture;
 using elastic_app_v3.application.DTOs.Payment;
+using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.e2e.tests.SetUp;
 
 namespace elastic_app_v3.e2e.tests
 {
-    [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
-    public class PaymentHappyPathTests(IntegrationTestFixture fixture)
+    [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
+    public class PaymentHappyPathTests(EndToEndTestFixture fixture)
     {
         private readonly ApiClient _apiClient = new(fixture.Client);
         private readonly Fixture _fixture = new();

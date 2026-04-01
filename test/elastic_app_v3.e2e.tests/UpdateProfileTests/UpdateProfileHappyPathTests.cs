@@ -1,19 +1,20 @@
 ﻿using System.Net;
 using AutoFixture;
 using elastic_app_v3.application.DTOs.Profile;
+using elastic_app_v3.common.tests;
+using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.e2e.tests.InfraHelpers;
 using elastic_app_v3.e2e.tests.SetUp;
 
 namespace elastic_app_v3.e2e.tests.UpdateProfileTests;
 
-[Collection(TestCollectionConstants.IntegrationTestCollectionName)]
+[Collection(TestCollectionConstants.EndToEndTestCollectionName)]
 public class UpdateProfileHappyPathTests
 {
     private readonly ApiClient _apiClient;
     private readonly Fixture _fixture = new();
-    private readonly UserDbTestHelper _userDbTestHelper = new();
-    public UpdateProfileHappyPathTests(IntegrationTestFixture fixture)
+    private readonly ElasticAppDbClient _userDbTestHelper = new();
+    public UpdateProfileHappyPathTests(EndToEndTestFixture fixture)
     {
         _apiClient = new(fixture.Client);
 

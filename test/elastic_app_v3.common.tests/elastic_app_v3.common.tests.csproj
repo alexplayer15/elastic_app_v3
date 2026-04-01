@@ -8,19 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture" />
     <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Dapper" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
-	<PackageReference Include="NSubstitute" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\elastic_app_v3.api\elastic_app_v3.api.csproj" />
-    <ProjectReference Include="..\..\src\elastic_app_v3.infrastructure\elastic_app_v3.infrastructure.csproj" />
-    <ProjectReference Include="..\elastic_app_v3.common.tests\elastic_app_v3.common.tests.csproj" />
+    <ProjectReference Include="..\..\src\elastic_app_v3.application\elastic_app_v3.application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

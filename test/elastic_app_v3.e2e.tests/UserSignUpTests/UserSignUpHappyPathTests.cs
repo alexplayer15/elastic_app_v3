@@ -1,16 +1,17 @@
 ﻿using System.Net;
 using AutoFixture;
 using elastic_app_v3.application.DTOs.SignUp;
+using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.e2e.tests.SetUp;
 
 namespace elastic_app_v3.e2e.tests.UserSignUpTests
 {
-    [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
+    [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
     public class UserSignUpHappyPathTests
     {
         private readonly ApiClient _client;
         private readonly Fixture _fixture = new();
-        public UserSignUpHappyPathTests(IntegrationTestFixture fixture)
+        public UserSignUpHappyPathTests(EndToEndTestFixture fixture)
         {
             _client = new ApiClient(fixture.Client);
 

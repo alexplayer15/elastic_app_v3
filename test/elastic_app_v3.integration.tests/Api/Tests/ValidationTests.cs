@@ -1,11 +1,13 @@
 ﻿using AutoFixture;
 using System.Net;
 using elastic_app_v3.application.DTOs.SignUp;
-using elastic_app_v3.integration.tests.Clients;
 using elastic_app_v3.integration.tests.Fixtures;
 using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.Login;
+using elastic_app_v3.application.DTOs.Profile;
+using elastic_app_v3.common.tests.Clients;
+using elastic_app_v3.common.tests;
 
 namespace elastic_app_v3.integration.tests.Api.Tests;
 
@@ -33,6 +35,16 @@ public class ValidationTests
         _fixture.Customize<LoginRequest>(c => c
             .With(x => x.UserName, username)
             .With(x => x.Password, "password")
+        );
+
+        var languages = new List<LanguageDto>()
+        {
+            new("English", "Native")
+        };
+
+        _fixture.Customize<UpdateProfileRequest>(upr => upr
+            .With(r => r.Bio, "Hello")
+            .With(r => r.Languages, languages)
         );
     }
 
@@ -66,6 +78,29 @@ public class ValidationTests
 
         //Act
         var response = await _apiClient.SendUserLoginRequest(request);
+
+        //Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var error = await _apiClient.GetResponseAsync<ProblemDetails>(response);
+        Assert.NotNull(error);
+        Assert.Equal(ErrorCodes.ValidationError, error.Type);
+    }
+
+    [Fact]
+    public async Task GivenInvalidUpdateProfileRequest_WhenSendUpdateProfileRequest_ThenReturn400AndValidationError()
+    {
+        //Arrange
+        var request = _fixture.Create<UpdateProfileRequest>() with
+        {
+            Languages = [] //this is a PATCH endpoint, languages can be null but not empty 
+        };
+
+        var userId = _fixture.Create<Guid>();
+
+        var token = TokenHelper.GenerateTestToken(userId);
+
+        //Act
+        var response = await _apiClient.SendUpdateProfileRequest(request, token);
 
         //Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

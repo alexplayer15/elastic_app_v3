@@ -3,8 +3,8 @@ using elastic_app_v3.application.Errors.Identity;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.infrastructure.Repositories;
-using elastic_app_v3.integration.tests.Clients;
 using elastic_app_v3.integration.tests.Fixtures;
+using elastic_app_v3.common.tests.Clients;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Polly;
@@ -15,7 +15,7 @@ namespace elastic_app_v3.integration.tests.ElasticAppDb.Tests;
 [Collection(TestCollectionConstants.ElasticAppDbTestCollectionName)]
 public class UserRepositoryTests
 {
-    private readonly ElasticAppDbTestClient _dbClient = new();
+    private readonly ElasticAppDbClient _dbClient = new();
     private readonly IUserRepository _userRepository;
     private readonly Fixture _fixture = new();
     public UserRepositoryTests(ElasticAppDbFixture fixture)

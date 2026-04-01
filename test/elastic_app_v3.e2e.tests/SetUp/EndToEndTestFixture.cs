@@ -1,20 +1,21 @@
 ﻿using Microsoft.Data.SqlClient;
 using Dapper;
 using elastic_app_v3.infrastructure.Config;
+using elastic_app_v3.common.tests.Config;
 
 namespace elastic_app_v3.e2e.tests.SetUp
 {
-    public class IntegrationTestFixture : IAsyncLifetime
+    public class EndToEndTestFixture : IAsyncLifetime
     {
         private readonly CustomWebApplicationFactory<Program> _factory;
         public HttpClient Client { get; }
         public ElasticDatabaseSettings ElasticDatabaseSettings { get; private set; }
         private readonly string _connectionString;
-        public IntegrationTestFixture()
+        public EndToEndTestFixture()
         {
             _factory = new CustomWebApplicationFactory<Program>();
             Client = _factory.CreateClient();
-            ElasticDatabaseSettings = ElasticDbTestSettings.SetElasticDatabaseTestSettings();
+            ElasticDatabaseSettings = ElasticAppDbTestSettings.SetElasticDatabaseTestSettings();
             _connectionString = ElasticDatabaseSettings.GetConnectionString();
         }
         public async Task InitializeAsync()
@@ -45,9 +46,9 @@ namespace elastic_app_v3.e2e.tests.SetUp
         }
     }
 
-    [CollectionDefinition(TestCollectionConstants.IntegrationTestCollectionName, DisableParallelization = true)]
-    public class IntegrationTestCollection :
-    ICollectionFixture<IntegrationTestFixture>
+    [CollectionDefinition(TestCollectionConstants.EndToEndTestCollectionName, DisableParallelization = true)]
+    public class EndToEndTestCollection :
+    ICollectionFixture<EndToEndTestFixture>
     {
     }
 }

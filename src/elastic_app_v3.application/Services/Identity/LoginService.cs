@@ -1,10 +1,8 @@
 ﻿using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.application.Errors;
 using elastic_app_v3.application.Errors.Identity;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using FluentResults;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 
 namespace elastic_app_v3.application.Services.Identity;

@@ -2,20 +2,20 @@
 using AutoFixture;
 using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.Login;
+using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.e2e.tests.InfraHelpers;
 using elastic_app_v3.e2e.tests.SetUp;
 using Microsoft.AspNetCore.Mvc;
 
 namespace elastic_app_v3.e2e.tests.UserLoginTests
 {
-    [Collection(TestCollectionConstants.IntegrationTestCollectionName)]
+    [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
     public class UserLoginUnhappyPathTests
     {
         private readonly ApiClient _apiClient;
         private readonly Fixture _fixture = new();
-        private readonly UserDbTestHelper _userDbTestHelper = new();
-        public UserLoginUnhappyPathTests(IntegrationTestFixture fixture)
+        private readonly ElasticAppDbClient _userDbTestHelper = new();
+        public UserLoginUnhappyPathTests(EndToEndTestFixture fixture)
         {
             _apiClient = new ApiClient(fixture.Client);
 

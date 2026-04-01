@@ -25,6 +25,7 @@
 		</PackageReference>
 		<ProjectReference Include="..\..\src\elastic_app_v3.api\elastic_app_v3.api.csproj" />
 		<ProjectReference Include="..\..\src\elastic_app_v3.application\elastic_app_v3.application.csproj" />
+		<ProjectReference Include="..\elastic_app_v3.common.tests\elastic_app_v3.common.tests.csproj" />
 
 		<Using Include="Xunit" />
 	</ItemGroup>

@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elastic_app_v3.e2e.tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elastic_app_v3.integration.tests", "test\elastic_app_v3.integration.tests\elastic_app_v3.integration.tests.csproj", "{8BC0BD2A-2DF3-4439-9059-8909B3ABFC29}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elastic_app_v3.common.tests", "test\elastic_app_v3.common.tests\elastic_app_v3.common.tests.csproj", "{78E409B1-72A0-4ECC-8125-8D297F76944A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{8BC0BD2A-2DF3-4439-9059-8909B3ABFC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BC0BD2A-2DF3-4439-9059-8909B3ABFC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BC0BD2A-2DF3-4439-9059-8909B3ABFC29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78E409B1-72A0-4ECC-8125-8D297F76944A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78E409B1-72A0-4ECC-8125-8D297F76944A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78E409B1-72A0-4ECC-8125-8D297F76944A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78E409B1-72A0-4ECC-8125-8D297F76944A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
