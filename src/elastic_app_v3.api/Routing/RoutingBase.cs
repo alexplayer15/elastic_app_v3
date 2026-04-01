@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.Builder;
+using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 namespace elastic_app_v3.api.Routing
 {
@@ -15,6 +16,7 @@ namespace elastic_app_v3.api.Routing
 
             var elasticAppApi = app
                .MapGroup(ElasticAppBaseRoute)
+               .AddFluentValidationAutoValidation()
                .WithApiVersionSet(apiVersionSet);
 
             IdentityRoutes.Map(elasticAppApi);

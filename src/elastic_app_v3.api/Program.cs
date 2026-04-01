@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using elastic_app_v3.api.Routing;
 using elastic_app_v3.api.Exceptions;
 using elastic_app_v3.api;
+using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.DefaultIgnoreCondition =
@@ -22,6 +25,11 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 builder.Services.ConfigureAppServices(builder.Configuration);
+
+builder.Services.AddFluentValidationAutoValidation(configuration =>
+{
+    configuration.OverrideDefaultResultFactoryWith<CustomValidationResultFactory>();
+});
 
 builder.Services.AddCors(options =>
 {

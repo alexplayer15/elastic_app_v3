@@ -2,4 +2,6 @@
 internal static class TestCollectionConstants
 {
     public const string ElasticAppDbTestCollectionName = "ElasticAppDbTestCollection";
+
+    public const string ApiTestCollectionName = "ApiTestCollection";
 }

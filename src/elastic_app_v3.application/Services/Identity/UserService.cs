@@ -3,7 +3,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs;
-using elastic_app_v3.application.Errors;
 using FluentResults;
 using elastic_app_v3.application.DTOs.SignUp;
 
@@ -11,25 +10,13 @@ namespace elastic_app_v3.application.Services.Identity
 {
     public class UserService(
         IUserRepository userDbRepository, 
-        IValidator<SignUpRequest> signUpRequestValidator,
         IPasswordHasher<User> passwordHasher
     ) : IUserService
     {
         private readonly IUserRepository _userDbRepository = userDbRepository;
-        private readonly IValidator<SignUpRequest> _signUpRequestValidator = signUpRequestValidator;
         private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
         public async Task<Result> SignUpAsync(SignUpRequest request, CancellationToken cancellationToken)
         {
-            var validationResult = _signUpRequestValidator.Validate(request);
-
-            if (!validationResult.IsValid)
-            {
-                var errorDescription = string.Join("; ",
-                    validationResult.Errors.Select(e => e.ErrorMessage));
-
-                return Result.Fail(new ValidationError(errorDescription));
-            }
-
             var user = new User
             {
                 FirstName = request.FirstName,

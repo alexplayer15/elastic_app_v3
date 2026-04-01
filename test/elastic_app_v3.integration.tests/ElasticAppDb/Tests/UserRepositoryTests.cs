@@ -23,7 +23,7 @@ public class UserRepositoryTests
         var dbSettings = Options.Create(fixture.ElasticDatabaseSettings);
 
         var pipeline = new ResiliencePipelineBuilder()
-        .Build(); 
+            .Build(); 
 
         var provider = Substitute.For<ResiliencePipelineProvider<string>>();
 

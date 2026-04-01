@@ -20,7 +20,7 @@ public class ElasticAppDbFixture
 }
 
 [CollectionDefinition(TestCollectionConstants.ElasticAppDbTestCollectionName, DisableParallelization = true)]
-public class IntegrationTestCollection :
+public class ElasticAppDbTestCollection :
     ICollectionFixture<ElasticAppDbFixture>
 {
 }

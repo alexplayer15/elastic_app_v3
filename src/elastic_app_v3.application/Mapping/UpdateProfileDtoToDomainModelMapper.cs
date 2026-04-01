@@ -2,19 +2,16 @@
 using elastic_app_v3.domain.Models;
 using elastic_app_v3.domain.ValueObjects;
 
-namespace elastic_app_v3.application.Mapping
+namespace elastic_app_v3.application.Mapping;
+public static class UpdateProfileDtoToDomainModelMapper
 {
-    public static class UpdateProfileDtoToDomainModelMapper
+    public static ProfileUpdate ToDomainModel(this UpdateProfileRequest request)
     {
-        public static ProfileUpdate ToDomainModel(this UpdateProfileRequest request)
+        return new ProfileUpdate
         {
-            return new ProfileUpdate
-            {
-                UserId = request.UserId,
-                Bio = request.Bio ?? string.Empty,
-                Languages = request.Languages is null ? null : [.. request.Languages.Select(l => new Language(l.Type, l.Proficiency))]
-            };
-
-        }
+            UserId = request.UserId,
+            Bio = request.Bio ?? string.Empty,
+            Languages = request.Languages is null ? null : [.. request.Languages.Select(l => new Language(l.Type, l.Proficiency))]
+        };
     }
 }

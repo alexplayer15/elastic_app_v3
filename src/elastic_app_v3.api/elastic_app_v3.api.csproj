@@ -10,6 +10,7 @@
     <PackageReference Include="FluentResults" />
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+	  <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Endpoints" />
   </ItemGroup>
 
   <ItemGroup>
