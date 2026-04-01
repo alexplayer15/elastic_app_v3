@@ -4,5 +4,5 @@ using FluentResults;
 namespace elastic_app_v3.application.Services.Identity;
 public interface ILoginService
 {
-    Task<Result<LoginResponse>> LoginAsync(LoginRequest request);
+    Task<Result<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken);
 }

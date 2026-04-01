@@ -28,6 +28,6 @@ public class UpdateProfileHandler(
         }
 
         var profileUpdate = request.ToDomainModel();
-        return await _profileService.UpdateProfile(profileUpdate, cancellationToken); //service needs a userId!
+        return await _profileService.UpdateProfile(profileUpdate, cancellationToken);
     }
 }

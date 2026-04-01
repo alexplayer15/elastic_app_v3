@@ -23,9 +23,10 @@ public static class IdentityRoutes
 
         group.MapPost(EndpointConstants.UserLoginEndpoint, async Task<IResult> (
             [FromBody] LoginRequest request,
-            [FromServices] ILoginService loginService) =>
+            [FromServices] ILoginService loginService,
+            CancellationToken cancellationToken) =>
         {
-            var result = await loginService.LoginAsync(request);
+            var result = await loginService.LoginAsync(request, cancellationToken);
             return result.ToApiResponse(EndpointConstants.UserLoginEndpoint);
         })
         .WithName(OpenApiConstants.UserLoginEndpointOpenApiName)

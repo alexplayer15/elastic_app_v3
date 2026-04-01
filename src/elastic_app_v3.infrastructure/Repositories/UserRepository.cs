@@ -96,38 +96,28 @@ namespace elastic_app_v3.infrastructure.Repositories
 
             return Result.Ok();
         }
-        public async Task<Result<User>> GetUserByUsernameAsync(string userName)
+        public async Task<Result<User>> GetUserByUsernameAsync(string userName, CancellationToken cancellationToken)
         {
-            User? user;
-            try
-            {
-                using (var connection = new SqlConnection(_connectionString))
+            var user = await _resiliencePipeline.ExecuteAsync(
+                async token =>
                 {
-                    await connection.OpenAsync();
-                    user = await connection.QuerySingleOrDefaultAsync<User>(
+                    await using var connection = new SqlConnection(_connectionString);
+                    await connection.OpenAsync(token);
+
+                    return await connection.QuerySingleOrDefaultAsync<User>(
                         UserSqlConstants.GetUserByUserName,
-                        new { UserName = userName }
-                    );
-                };
-                if (user == null)
-                {
-                    return Result.Fail(new UserDoesNotExistError());
-                }
-            }
-            catch (SqlException)
+                        new { UserName = userName });
+                }, cancellationToken
+            );
+
+            if (user is null)
             {
-                throw;
-            }
-            catch (TimeoutException)
-            {
-                throw; //to do: think how best to handle this;
-            }
-            catch (Exception)
-            {
-                throw;
+                return Result.Fail(new UserDoesNotExistError());
             }
 
-            return Result.Ok(user);
+            //later could add try/catch with logging and domain exceptions/errors
+
+            return user;
         }
         public async Task<Result<User>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
         {

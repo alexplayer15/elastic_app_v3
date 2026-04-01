@@ -6,7 +6,7 @@ namespace elastic_app_v3.domain.Abstractions
     public interface IUserRepository
     {
         Task<Result> AddAsync(User user, CancellationToken cancellationToken);
-        Task<Result<User>> GetUserByUsernameAsync(string userName);
+        Task<Result<User>> GetUserByUsernameAsync(string userName, CancellationToken cancellationToken);
         Task<Result<User>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
     }
 }

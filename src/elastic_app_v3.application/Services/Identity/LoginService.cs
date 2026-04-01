@@ -19,7 +19,7 @@ public class LoginService(
     private readonly IUserRepository _userDbRepository = userDbRepository;
     private readonly ITokenGenerator _tokenGenerator = tokenGenerator;
     private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
-    public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
+    public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
     {
         var validationResult = _loginRequestValidator.Validate(request);
         if (!validationResult.IsValid)
@@ -30,7 +30,7 @@ public class LoginService(
             return Result.Fail(new ValidationError(errorDescription));
         }
 
-        var getUserResult = await _userDbRepository.GetUserByUsernameAsync(request.UserName);
+        var getUserResult = await _userDbRepository.GetUserByUsernameAsync(request.UserName, cancellationToken);
 
         if (!getUserResult.IsSuccess)
         {

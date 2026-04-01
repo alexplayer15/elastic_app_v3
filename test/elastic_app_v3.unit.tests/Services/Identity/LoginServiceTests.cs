@@ -52,7 +52,7 @@ public class LoginServiceTests
             });
 
         //Act
-        var loginResult = await _loginService.LoginAsync(request);
+        var loginResult = await _loginService.LoginAsync(request, CancellationToken.None);
 
         //Assert
         Assert.False(loginResult.IsSuccess);
@@ -68,11 +68,11 @@ public class LoginServiceTests
         _mockLoginRequestValidator.Validate(request)
         .Returns(new ValidationResult());
 
-        _mockUserRepository.GetUserByUsernameAsync(request.UserName)
+        _mockUserRepository.GetUserByUsernameAsync(request.UserName, CancellationToken.None)
             .Returns(Result.Fail(new UserDoesNotExistError()));
 
         //Act
-        var loginResult = await _loginService.LoginAsync(request);
+        var loginResult = await _loginService.LoginAsync(request, CancellationToken.None);
 
         //Assert
         Assert.False(loginResult.IsSuccess);
@@ -97,7 +97,7 @@ public class LoginServiceTests
             .With(u => u.PasswordHash, request.Password)
             .Create();
 
-        _mockUserRepository.GetUserByUsernameAsync(request.UserName)
+        _mockUserRepository.GetUserByUsernameAsync(request.UserName, CancellationToken.None)
             .Returns(Result.Ok(user));
 
         _mockPasswordHasher.VerifyHashedPassword(
@@ -111,7 +111,7 @@ public class LoginServiceTests
         );
 
         //Act
-        var loginResult = await _loginService.LoginAsync(request);
+        var loginResult = await _loginService.LoginAsync(request, CancellationToken.None);
 
         //Assert
         Assert.True(loginResult.IsSuccess);
