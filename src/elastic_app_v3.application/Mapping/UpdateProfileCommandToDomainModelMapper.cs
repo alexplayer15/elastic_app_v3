@@ -1,11 +1,11 @@
-﻿using elastic_app_v3.application.DTOs.Profile;
+﻿using elastic_app_v3.application.Commands;
 using elastic_app_v3.domain.Models;
 using elastic_app_v3.domain.ValueObjects;
 
 namespace elastic_app_v3.application.Mapping;
-public static class UpdateProfileDtoToDomainModelMapper
+public static class UpdateProfileCommandToDomainModelMapper
 {
-    public static ProfileUpdate ToDomainModel(this UpdateProfileRequest request)
+    public static ProfileUpdate ToDomainModel(this UpdateProfileCommand request)
     {
         return new ProfileUpdate
         {

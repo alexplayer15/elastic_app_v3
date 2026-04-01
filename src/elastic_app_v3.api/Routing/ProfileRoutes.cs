@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using elastic_app_v3.api.Routing.Constants;
+using elastic_app_v3.application.Commands;
 using elastic_app_v3.application.DTOs.Profile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +21,12 @@ public static class ProfileRoutes
                 if (!Guid.TryParse(userIdClaim, out var userId))
                     return TypedResults.Unauthorized();
 
-                request.UserId = userId; //do not like this
+                var command = new UpdateProfileCommand(
+                    request.Bio,
+                    request.Languages is null ? null : [.. request.Languages.Select(l => new LanguageModel(l.Type, l.Proficiency))],
+                    userId); //okay to have this logic in the routing?
 
-                var result = await mediator.Send(request, cancellationToken);
+                var result = await mediator.Send(command, cancellationToken);
 
                 return result.ToApiResponse(EndpointConstants.UpdateProfileEndpoint);
             })

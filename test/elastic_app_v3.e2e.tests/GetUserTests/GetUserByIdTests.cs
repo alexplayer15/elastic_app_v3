@@ -3,10 +3,10 @@ using System.Net;
 using elastic_app_v3.e2e.tests.SetUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.api.Errors;
-using elastic_app_v3.application.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.application.DTOs;
 using elastic_app_v3.common.tests.Clients;
+using elastic_app_v3.common.tests;
 
 namespace elastic_app_v3.e2e.tests.GetUserTests
 {
@@ -24,7 +24,6 @@ namespace elastic_app_v3.e2e.tests.GetUserTests
             var maxUsernameLength = 22;
             //GUID length with N is 32 chars
             var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
-            var password = "password";
 
             var user = _fixture.Build<User>()
                 .With(u => u.FirstName, "Alex")
@@ -33,16 +32,9 @@ namespace elastic_app_v3.e2e.tests.GetUserTests
                 .Without(u => u.PasswordHash)
                 .Create();
 
-            await _userDbTestHelper.AddTestUserAsync(user, password);
+            var userId = await _userDbTestHelper.AddTestUserAsync(user);
 
-            var loginRequest = _fixture.Build<LoginRequest>()
-                .With(u => u.UserName, username)
-                .With(l => l.Password, password)
-                .Create();
-
-            var loginResponse = await _apiClient.SendUserLoginRequest(loginRequest);
-            var loginResult = await _apiClient.GetResponseAsync<LoginResponse>(loginResponse);
-            var token = loginResult!.AccessToken;
+            var token = TokenHelper.GenerateTestToken(userId);
 
             //Act
             var httpResponse = await _apiClient.SendGetUserByIdRequest(token);
@@ -60,7 +52,6 @@ namespace elastic_app_v3.e2e.tests.GetUserTests
         {
             //Arrange
             var username = "alexplayer15";
-            var password = "password";
 
             var user = _fixture.Build<User>()
                 .With(u => u.FirstName, "Alex")
@@ -69,18 +60,11 @@ namespace elastic_app_v3.e2e.tests.GetUserTests
                 .Without(u => u.PasswordHash)
                 .Create();
 
-            await _userDbTestHelper.AddTestUserAsync(user, password);
-
-            var loginRequest = _fixture.Build<LoginRequest>()
-                .With(u => u.UserName, username)
-                .With(l => l.Password, password)
-                .Create();
-
-            var loginResponse = await _apiClient.SendUserLoginRequest(loginRequest);
-            var loginResult = await _apiClient.GetResponseAsync<LoginResponse>(loginResponse);
-            var token = loginResult!.AccessToken;
+            var userId = await _userDbTestHelper.AddTestUserAsync(user);
 
             await _userDbTestHelper.DeleteTestUserAsync(username);
+
+            var token = TokenHelper.GenerateTestToken(userId);
 
             //Act
             var httpResponse = await _apiClient.SendGetUserByIdRequest(token);
