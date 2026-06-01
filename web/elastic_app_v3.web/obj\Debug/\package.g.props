@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <PackageJsonName Condition="$(PackageJsonName) == ''">elastic_app_v3.web</PackageJsonName>
+    <PackageJsonVersion Condition="$(PackageJsonVersion) == ''">1.0.0</PackageJsonVersion>
+    <PackageJsonType Condition="$(PackageJsonType) == ''">module</PackageJsonType>
+    <PackageJsonMain Condition="$(PackageJsonMain) == ''">app.js</PackageJsonMain>
+    <PackageJsonScriptsBuild Condition="$(PackageJsonScriptsBuild) == ''">node build.js</PackageJsonScriptsBuild>
+    <PackageJsonScriptsClean Condition="$(PackageJsonScriptsClean) == ''">rm -rf dist</PackageJsonScriptsClean>
+    <PackageJsonScriptsDev Condition="$(PackageJsonScriptsDev) == ''">node build.js --watch</PackageJsonScriptsDev>
+    <PackageJsonKeywords Condition="$(PackageJsonKeywords) == ''">[]</PackageJsonKeywords>
+    <PackageJsonAuthor Condition="$(PackageJsonAuthor) == ''"></PackageJsonAuthor>
+    <PackageJsonLicense Condition="$(PackageJsonLicense) == ''">ISC</PackageJsonLicense>
+    <PackageJsonDescription Condition="$(PackageJsonDescription) == ''"></PackageJsonDescription>
+    <PackageJsonDevdependenciesTypesNode Condition="$(PackageJsonDevdependenciesTypesNode) == ''">^25.5.0</PackageJsonDevdependenciesTypesNode>
+    <PackageJsonDevdependenciesEsbuild Condition="$(PackageJsonDevdependenciesEsbuild) == ''">^0.27.4</PackageJsonDevdependenciesEsbuild>
+    <PackageJsonDevdependenciesEslint Condition="$(PackageJsonDevdependenciesEslint) == ''">^9.39.4</PackageJsonDevdependenciesEslint>
+    <PackageJsonDevdependenciesTypescript Condition="$(PackageJsonDevdependenciesTypescript) == ''">^6.0.2</PackageJsonDevdependenciesTypescript>
+  </PropertyGroup>
+</Project>

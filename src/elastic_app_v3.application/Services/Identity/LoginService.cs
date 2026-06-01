@@ -3,6 +3,7 @@ using elastic_app_v3.application.Errors.Identity;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using FluentResults;
+using FluentResults.Extensions;
 using Microsoft.AspNetCore.Identity;
 
 namespace elastic_app_v3.application.Services.Identity;
@@ -17,23 +18,17 @@ public class LoginService(
     private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
     public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
     {
-        var getUserResult = await _userDbRepository.GetUserByUsernameAsync(request.UserName, cancellationToken);
-
-        if (!getUserResult.IsSuccess)
-        {
-            return getUserResult.ToResult<LoginResponse>();
-        }
-
-        var verifiedHashResult = _passwordHasher.VerifyHashedPassword(getUserResult.Value, getUserResult.Value.PasswordHash, request.Password);
-
-        if (verifiedHashResult == PasswordVerificationResult.Failed)
-        {
-            return Result.Fail(new IncorrectPasswordError());
-        }
-
-        var tokenResult = _tokenGenerator.Generate(getUserResult.Value); //what if this fails? 
-
-        return tokenResult
+        return await _userDbRepository.GetUserByUsernameAsync(request.UserName, cancellationToken)
+            .Bind(user => VerifyUserPassword(user, user.PasswordHash, request.Password))
+            .Bind(user => _tokenGenerator.Generate(user))
             .Map(tokens => new LoginResponse(tokens.AccessToken, tokens.RefreshToken, "Bearer", tokens.ExpiresInMinutes));
+    }
+    private Result<User> VerifyUserPassword(User user, string userPassword, string requestedPassword)
+    {
+        var verifiedHashResult = _passwordHasher.VerifyHashedPassword(user, userPassword, requestedPassword);
+
+        return verifiedHashResult == PasswordVerificationResult.Failed ?
+            Result.Fail(new IncorrectPasswordError()) :
+            Result.Ok(user);
     }
 }
