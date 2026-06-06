@@ -34,7 +34,7 @@ public static class ProfileRoutes
             .RequireAuthorization()
             .MapToApiVersion(1);
         
-        group.MapGet(EndpointConstants.GetProfilePictureUrl, IResult (
+        group.MapGet(EndpointConstants.GetProfilePictureUrls, IResult (
                 ClaimsPrincipal user,
                 [FromServices] IProfileService profileService,
                 CancellationToken cancellationToken) =>
@@ -44,8 +44,8 @@ public static class ProfileRoutes
                 if (!Guid.TryParse(userIdClaim, out var userId))
                     return TypedResults.Unauthorized();
 
-                var result = profileService.GetProfilePictureUrl(userId);
-                return result.ToApiResponse(EndpointConstants.GetProfilePictureUrl);
+                var result = profileService.GetProfilePictureUrls(userId);
+                return result.ToApiResponse(EndpointConstants.GetProfilePictureUrls);
             })
             .RequireAuthorization()
             .MapToApiVersion(1);

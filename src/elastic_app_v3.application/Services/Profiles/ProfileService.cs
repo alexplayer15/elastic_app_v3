@@ -20,9 +20,9 @@ public class ProfileService(
         return await _profileRepository.UpdateProfile(update, cancellationToken)
             .Map(updatedProfile => updatedProfile.ToDto());
     }
-
-    public Result<string> GetProfilePictureUrl(Guid userId)
+    public Result<GetProfilePictureUrlResponse> GetProfilePictureUrls(Guid userId)
     {
-        return _profilePictureDataStore.GetProfilePictureUrl(userId);
+        return _profilePictureDataStore.GetProfilePictureUrls(userId)
+            .Map(urls => new GetProfilePictureUrlResponse(urls.PreSignedUrl, urls.ObjectUrl));
     }
 }

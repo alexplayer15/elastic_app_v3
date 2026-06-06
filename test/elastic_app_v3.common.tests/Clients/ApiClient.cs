@@ -68,7 +68,7 @@ public class ApiClient(HttpClient client)
     
     public async Task<HttpResponseMessage> SendGetProfilePictureUrlRequest(string token)
     {
-        var uri = $"{EndpointConstants.Base}{EndpointConstants.GetProfilePictureUrl}";
+        var uri = $"{EndpointConstants.Base}{EndpointConstants.GetProfilePictureUrls}";
 
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
 

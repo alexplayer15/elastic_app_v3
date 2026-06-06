@@ -9,5 +9,5 @@ public interface IProfileService
         ProfileUpdate update,
         CancellationToken cancellationToken
     );
-    Result<string> GetProfilePictureUrl(Guid userId);
+    Result<GetProfilePictureUrlResponse> GetProfilePictureUrls(Guid userId);
 }

@@ -12,7 +12,7 @@
 
         public const string UpdateProfileEndpoint = "/profile";
         
-        public const string GetProfilePictureUrl = "/profile/picture-url";
+        public const string GetProfilePictureUrls = "/profile/picture-urls";
 
         public const string PaymentEndpoint = "/payment";
 

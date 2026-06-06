@@ -1,12 +1,12 @@
-﻿using AutoFixture;
-using System.Net;
-using elastic_app_v3.domain.Entities;
+﻿using System.Net;
+using AutoFixture;
 using elastic_app_v3.application.DTOs.Login;
 using elastic_app_v3.common.tests.Clients;
+using elastic_app_v3.domain.Entities;
 using elastic_app_v3.e2e.tests.Constants;
 using elastic_app_v3.e2e.tests.Fixtures;
 
-namespace elastic_app_v3.e2e.tests.UserLoginTests
+namespace elastic_app_v3.e2e.tests.Tests.UserLogin
 {
     [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
     public class UserLoginHappyPathTests(EndToEndTestFixture fixture)

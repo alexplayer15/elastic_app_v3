@@ -15,7 +15,7 @@ public class SuccessResponseMapper
         { EndpointConstants.GetUserByIdEndpoint, value => GetUserByIdSuccessResponse(value) },
         { EndpointConstants.PaymentEndpoint, value => GetPaymentSuccessResponse(value) },
         { EndpointConstants.UpdateProfileEndpoint, value => GetUpdateProfileSuccessResponse(value) },
-        { EndpointConstants.GetProfilePictureUrl, value => GetProfilePictureUrlResponse(value) }
+        { EndpointConstants.GetProfilePictureUrls, value => GetProfilePictureUrlResponse(value) }
     };
     public static IResult GetSuccessResponseByEndpoint(string endpoint)
     {
@@ -34,5 +34,5 @@ public class SuccessResponseMapper
     private static Ok<T> GetUserByIdSuccessResponse<T>(T value) => TypedResults.Ok(value);
     private static Ok<T> GetPaymentSuccessResponse<T>(T value) => TypedResults.Ok(value);
     private static Ok<T> GetUpdateProfileSuccessResponse<T>(T value) => TypedResults.Ok(value);
-    private static Created GetProfilePictureUrlResponse<T>(T value) => TypedResults.Created(value as string);
+    private static Ok<T> GetProfilePictureUrlResponse<T>(T value) => TypedResults.Ok(value);
 }

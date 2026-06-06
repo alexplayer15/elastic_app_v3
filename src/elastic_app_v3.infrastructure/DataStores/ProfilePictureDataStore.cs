@@ -1,6 +1,7 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using elastic_app_v3.domain.Abstractions;
+using elastic_app_v3.domain.Models;
 using elastic_app_v3.infrastructure.Config;
 using FluentResults;
 using Microsoft.Extensions.Options;
@@ -13,26 +14,29 @@ public class ProfilePictureDataStore(
 {
     private readonly IAmazonS3 _s3Client = s3Client;
     private readonly ProfilePictureDataStoreOptions _profilePictureDataStoreOptions = profilePictureDataStoreOptions.Value; 
-    public Result<string> GetProfilePictureUrl(Guid userId)
+    public Result<ProfilePictureUrls> GetProfilePictureUrls(Guid userId)
     {
-        string urlString = string.Empty;
+        string preSignedUrl = string.Empty;
+        var objectKey = $"profile-pictures/{userId}/avatar.jpg";
         try
         {
             var request = new GetPreSignedUrlRequest()
             {
                 BucketName = _profilePictureDataStoreOptions.BucketName,
-                Key = $"profile-pictures/{userId}/avatar.jpg",
+                Key = objectKey,
                 Verb = HttpVerb.PUT,
                 Expires = DateTime.UtcNow.AddMinutes(_profilePictureDataStoreOptions.PreSignedUrlExpirationMinutes),
             };
-            urlString = _s3Client.GetPreSignedURL(request);
+            preSignedUrl = _s3Client.GetPreSignedURL(request);
         }
         catch (AmazonS3Exception ex)
         {
-            throw; //to do: come back and add meaningful error handling 
+            //to do: add logging
         }
+        
+        var objectUrl = $"https://{_profilePictureDataStoreOptions.BucketName}.s3.{_profilePictureDataStoreOptions.Region}.amazonaws.com/{objectKey}";
     
-        return urlString;
+        return new ProfilePictureUrls(preSignedUrl, objectUrl);
     }
     
 }

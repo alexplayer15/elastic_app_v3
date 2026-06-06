@@ -8,7 +8,7 @@ using elastic_app_v3.e2e.tests.Constants;
 using elastic_app_v3.e2e.tests.Fixtures;
 using Microsoft.AspNetCore.Mvc;
 
-namespace elastic_app_v3.e2e.tests.UserLoginTests
+namespace elastic_app_v3.e2e.tests.Tests.UserLogin
 {
     [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
     public class UserLoginUnhappyPathTests

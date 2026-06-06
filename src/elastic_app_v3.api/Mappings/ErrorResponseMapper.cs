@@ -16,7 +16,7 @@ public static class ErrorResponseMapper
         { EndpointConstants.GetUserByIdEndpoint, GetUserByIdErrorResponse },
         { EndpointConstants.PaymentEndpoint, GetPaymentErrorResponse },
         { EndpointConstants.UpdateProfileEndpoint, GetUpdateProfileErrorResponse },
-        { EndpointConstants.GetProfilePictureUrl, GetProfilePictureUrlErrorResponse },
+        { EndpointConstants.GetProfilePictureUrls, GetProfilePictureUrlErrorResponse },
     };
     public static IResult GetErrorResponseByEndpoint(
         Error internalError,
