@@ -65,6 +65,18 @@ public class ApiClient(HttpClient client)
 
         return await _client.SendAsync(httpRequest);
     }
+    
+    public async Task<HttpResponseMessage> SendGetProfilePictureUrlRequest(string token)
+    {
+        var uri = $"{EndpointConstants.Base}{EndpointConstants.GetProfilePictureUrl}";
+
+        var request = new HttpRequestMessage(HttpMethod.Get, uri);
+
+        request.Headers.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+
+        return await _client.SendAsync(request);
+    }
     public async Task<T?> GetResponseAsync<T>(HttpResponseMessage response) where T : class
     {
         var contentString = await response.Content.ReadAsStringAsync();

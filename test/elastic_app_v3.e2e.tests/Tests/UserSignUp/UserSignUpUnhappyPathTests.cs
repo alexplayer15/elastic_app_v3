@@ -66,7 +66,7 @@ namespace elastic_app_v3.e2e.tests.Tests.UserSignUp
                 FirstName = string.Empty
             };
 
-            ///Act
+            //Act
             var httpResponse = await _apiClient.SendUserSignupRequest(requestBody);
 
             //Assert

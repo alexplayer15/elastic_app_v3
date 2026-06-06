@@ -3,6 +3,7 @@ using elastic_app_v3.application.Mapping;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Models;
 using FluentResults;
+using FluentResults.Extensions;
 
 namespace elastic_app_v3.application.Services.Profiles;
 public class ProfileService(IProfileRepository profileRepository) : IProfileService
@@ -23,13 +24,7 @@ public class ProfileService(IProfileRepository profileRepository) : IProfileServ
         profile.UpdateBio(update.Bio);
         profile.UpdateLanguages(update.Languages);
 
-        var updatedProfile = await _profileRepository.UpdateProfile(profile, cancellationToken);
-
-        if (updatedProfile.IsFailed)
-        {
-            return updatedProfile.ToResult<UpdateProfileResponse>();
-        }
-
-        return updatedProfile.Value.ToDto(); 
+        return await _profileRepository.UpdateProfile(profile, cancellationToken)
+            .Map(updatedProfile => updatedProfile.ToDto());
     }
 }

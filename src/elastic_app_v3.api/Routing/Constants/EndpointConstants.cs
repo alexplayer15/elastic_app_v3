@@ -11,6 +11,8 @@
         public const string GetUserByIdEndpoint = "/user/me";
 
         public const string UpdateProfileEndpoint = "/profile";
+        
+        public const string GetProfilePictureUrl = "/profile/picture-url";
 
         public const string PaymentEndpoint = "/payment";
 

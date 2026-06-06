@@ -25,7 +25,7 @@ public class ProfileRepository(
         var profile = await _resiliencePipeline.ExecuteAsync(
             async token =>
             {
-                using var connection = new SqlConnection(_connectionString);
+                await using var connection = new SqlConnection(_connectionString);
 
                 await connection.OpenAsync(token);
 
@@ -44,7 +44,7 @@ public class ProfileRepository(
             return Result.Fail(new NoProfileFoundError(userId));
         }
 
-        return profile; //can return Profile directly because of implicit operator in FluentResult package
+        return profile;
     }
 
     //to do: split this to follow SRP
@@ -55,11 +55,11 @@ public class ProfileRepository(
         return await _resiliencePipeline.ExecuteAsync(
             async token =>
             {
-                using var connection = new SqlConnection(_connectionString);
+                await using var connection = new SqlConnection(_connectionString);
 
                 await connection.OpenAsync(token);
 
-                using var transaction = await connection.BeginTransactionAsync(token);
+                await using var transaction = await connection.BeginTransactionAsync(token);
 
                 var updateProfileCommand = new CommandDefinition(
                     ProfileSqlConstants.UpdateProfile,
@@ -76,7 +76,7 @@ public class ProfileRepository(
 
                 if (!string.IsNullOrEmpty(profile.Bio) && updatedBio == null)
                 {
-                    return Result.Fail<Profile>(new UpdateBioError());
+                    return Result.Fail<Profile>(new UpdateBioError()); 
                 }
 
                 profile.UpdateBio(updatedBio);
@@ -111,7 +111,7 @@ public class ProfileRepository(
                         insertedLanguages.Add(insertedLanguage);
                     }
 
-                    profile.UpdateLanguages(insertedLanguages);
+                    profile.UpdateLanguages(insertedLanguages); //same as bio comment
                 }
 
                 await transaction.CommitAsync(token); //no test checks if the data is actually in the db

@@ -1,15 +1,15 @@
-﻿using AutoFixture;
-using System.Net;
-using elastic_app_v3.domain.Entities;
+﻿using System.Net;
+using AutoFixture;
 using elastic_app_v3.api.Errors;
-using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.application.DTOs;
-using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.common.tests;
+using elastic_app_v3.common.tests.Clients;
+using elastic_app_v3.domain.Entities;
 using elastic_app_v3.e2e.tests.Constants;
 using elastic_app_v3.e2e.tests.Fixtures;
+using Microsoft.AspNetCore.Mvc;
 
-namespace elastic_app_v3.e2e.tests.GetUserTests
+namespace elastic_app_v3.e2e.tests.Tests.GetUser
 {
     [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
     public class GetUserByIdTests(EndToEndTestFixture fixture)
