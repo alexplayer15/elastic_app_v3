@@ -4,9 +4,10 @@ using elastic_app_v3.application.DTOs.Profile;
 using elastic_app_v3.common.tests;
 using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.e2e.tests.SetUp;
+using elastic_app_v3.e2e.tests.Constants;
+using elastic_app_v3.e2e.tests.Fixtures;
 
-namespace elastic_app_v3.e2e.tests.UpdateProfileTests;
+namespace elastic_app_v3.e2e.tests.Tests.UpdateProfile;
 
 [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
 public class UpdateProfileHappyPathTests
@@ -22,7 +23,7 @@ public class UpdateProfileHappyPathTests
         //GUID length with N is 32 chars
         var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
 
-        _fixture.Customize<User>(u => u
+        _fixture.Customize<User>(c => c
               .With(u => u.FirstName, "Alex")
               .With(u => u.LastName, "Player")
               .With(u => u.UserName, username)

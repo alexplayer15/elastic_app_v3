@@ -21,6 +21,19 @@ namespace elastic_app_v3.unit.tests.Validations
                 .With(r => r.ReEnteredPassword, "password")
             );
         }
+        
+        [Fact]
+        public void GivenValidInputs_WhenTestValidate_ThenDoNotError()
+        {
+            // Arrange
+            var signUpRequest = _fixture.Create<SignUpRequest>();
+
+            // Act
+            var result = _signUpRequestValidator.TestValidate(signUpRequest);
+
+            // Assert
+            result.ShouldNotHaveAnyValidationErrors();
+        }
 
         [Fact]
         public void GivenEmptyFirstName_WhenTestValidate_ThenReturnErrorForFirstName()

@@ -4,10 +4,11 @@ using elastic_app_v3.api.Errors;
 using elastic_app_v3.application.DTOs.SignUp;
 using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.domain.Entities;
-using elastic_app_v3.e2e.tests.SetUp;
+using elastic_app_v3.e2e.tests.Constants;
+using elastic_app_v3.e2e.tests.Fixtures;
 using Microsoft.AspNetCore.Mvc;
 
-namespace elastic_app_v3.e2e.tests.UserSignUpTests
+namespace elastic_app_v3.e2e.tests.Tests.UserSignUp
 {
     [Collection(TestCollectionConstants.EndToEndTestCollectionName)]
     public class UserSignUpUnhappyPathTests

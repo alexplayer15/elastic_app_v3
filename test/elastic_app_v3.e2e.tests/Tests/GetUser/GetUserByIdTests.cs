@@ -1,12 +1,13 @@
 ﻿using AutoFixture;
 using System.Net;
-using elastic_app_v3.e2e.tests.SetUp;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.api.Errors;
 using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.application.DTOs;
 using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.common.tests;
+using elastic_app_v3.e2e.tests.Constants;
+using elastic_app_v3.e2e.tests.Fixtures;
 
 namespace elastic_app_v3.e2e.tests.GetUserTests
 {

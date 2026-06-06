@@ -1,15 +1,16 @@
-﻿using Microsoft.Data.SqlClient;
-using Dapper;
-using elastic_app_v3.infrastructure.Config;
+﻿using Dapper;
 using elastic_app_v3.common.tests.Config;
+using elastic_app_v3.e2e.tests.Constants;
+using elastic_app_v3.infrastructure.Config;
+using Microsoft.Data.SqlClient;
 
-namespace elastic_app_v3.e2e.tests.SetUp
+namespace elastic_app_v3.e2e.tests.Fixtures
 {
     public class EndToEndTestFixture : IAsyncLifetime
     {
         private readonly CustomWebApplicationFactory<Program> _factory;
         public HttpClient Client { get; }
-        public ElasticDatabaseSettings ElasticDatabaseSettings { get; private set; }
+        public ElasticDatabaseSettings ElasticDatabaseSettings { get; }
         private readonly string _connectionString;
         public EndToEndTestFixture()
         {
