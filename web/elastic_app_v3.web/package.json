@@ -4,9 +4,9 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "build": "node build.js",
+    "build": "vite build",
     "clean": "rm -rf dist",
-    "dev": "node build.js --watch"
+    "dev": "vite"
   },
   "keywords": [],
   "author": "",
@@ -14,8 +14,17 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "@types/react": "^19.2.16",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
     "esbuild": "^0.27.4",
     "eslint": "^9.39.4",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
+  },
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.17.0"
   }
 }
