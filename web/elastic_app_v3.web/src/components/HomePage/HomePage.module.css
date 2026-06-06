@@ -1,0 +1,53 @@
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.profileButton {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+}
+
+.profileButton {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+}
+
+.profileButton button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: absolute;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 120px;
+}
+
+.dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown li {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.dropdown li:hover {
+    background-color: #f4f4f9;
+    border-radius: 4px;
+}
