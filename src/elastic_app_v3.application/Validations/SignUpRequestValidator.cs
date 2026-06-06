@@ -15,23 +15,23 @@ namespace elastic_app_v3.application.Validations
             RuleForPassword();
             RuleForReEnteredPassword();
         }
-        public void RuleForFirstName()
+        private void RuleForFirstName()
         {
             RuleFor(sur => sur.FirstName)
                 .NotEmpty()
                 .WithMessage(IdentityErrorMessages.FirstNameEmpty)
-                .Matches("^[a-zA-z]+$")
+                .Matches(@"^[a-zA-Z]+\s*$")
                 .WithMessage(IdentityErrorMessages.FirstNameNonAlphabetical);
         }
-        public void RuleForLastName()
+        private void RuleForLastName()
         {
             RuleFor(sur => sur.LastName)
                 .NotEmpty()
                 .WithMessage(IdentityErrorMessages.LastNameEmpty)
-                .Matches("^[a-zA-z]+$")
+                .Matches(@"^[a-zA-Z]+\s*$")
                 .WithMessage(IdentityErrorMessages.LastNameNonAlphabetical);
         }
-        public void RuleForUserName()
+        private void RuleForUserName()
         {
             RuleFor(sur => sur.UserName)
                 .NotEmpty()
@@ -41,7 +41,7 @@ namespace elastic_app_v3.application.Validations
                 .MaximumLength(ValidationConstants.UserNameMaxLength)
                 .WithMessage(IdentityErrorMessages.UserNameTooLongMessage());
         }
-        public void RuleForPassword()
+        private void RuleForPassword()
         {
             RuleFor(sur => sur.Password)
                 .NotEmpty()
@@ -51,7 +51,7 @@ namespace elastic_app_v3.application.Validations
                 .MaximumLength(22)
                 .WithMessage(IdentityErrorMessages.PasswordTooLongMessage()); // to do: think of validations for password
         }
-        public void RuleForReEnteredPassword()
+        private void RuleForReEnteredPassword()
         {
             RuleFor(sur => sur.ReEnteredPassword)
                 .NotEmpty()

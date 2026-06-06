@@ -13,7 +13,7 @@ namespace elastic_app_v3.unit.tests.Validations
 
         public SignUpRequestValidatorTests()
         {
-            _fixture.Customize<SignUpRequest>(r => r
+            _fixture.Customize<SignUpRequest>(c => c
                 .With(r => r.FirstName, "Alex")
                 .With(r => r.LastName, "Player")
                 .With(r => r.UserName, "alexplayer15")
@@ -37,6 +37,22 @@ namespace elastic_app_v3.unit.tests.Validations
             // Assert
             result.ShouldHaveValidationErrorFor(r => r.FirstName)
                 .WithErrorMessage(IdentityErrorMessages.FirstNameEmpty);
+        }
+        
+        [Fact]
+        public void GivenFirstNameWithTrailingWhiteSpace_WhenTestValidate_ThenDoNotReturnErrorForFirstName()
+        {
+            // Arrange
+            var signUpRequest = _fixture.Create<SignUpRequest>() with
+            {
+                FirstName = "Alex "
+            };
+
+            // Act
+            var result = _signUpRequestValidator.TestValidate(signUpRequest);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(r => r.FirstName);
         }
 
         [Fact]
@@ -65,6 +81,22 @@ namespace elastic_app_v3.unit.tests.Validations
 
             result.ShouldHaveValidationErrorFor(r => r.LastName)
                 .WithErrorMessage(IdentityErrorMessages.LastNameEmpty);
+        }
+        
+        [Fact]
+        public void GivenLastNameWithTrailingWhiteSpace_WhenTestValidate_ThenDoNotReturnErrorForFirstName()
+        {
+            // Arrange
+            var signUpRequest = _fixture.Create<SignUpRequest>() with
+            {
+                LastName = "Player "
+            };
+
+            // Act
+            var result = _signUpRequestValidator.TestValidate(signUpRequest);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(r => r.LastName);
         }
 
         [Fact]
