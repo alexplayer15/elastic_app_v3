@@ -5,6 +5,7 @@ using elastic_app_v3.domain.ValueObjects;
 using elastic_app_v3.infrastructure.Config;
 using elastic_app_v3.infrastructure.SqlQueryConstants;
 using elastic_app_v3.application.Errors.Profile;
+using elastic_app_v3.domain.Models;
 using FluentResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
@@ -19,37 +20,10 @@ public class ProfileRepository(
     private readonly string _connectionString = elasticAppDatabaseSettings.Value.GetConnectionString();
     private readonly ResiliencePipeline _resiliencePipeline
             = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.ElasticAppDatabaseResiliencePolicyKey);
-
-    public async Task<Result<Profile>> GetProfileByUserId(Guid userId, CancellationToken cancellationToken)
-    {
-        var profile = await _resiliencePipeline.ExecuteAsync(
-            async token =>
-            {
-                await using var connection = new SqlConnection(_connectionString);
-
-                await connection.OpenAsync(token);
-
-                var command = new CommandDefinition(
-                    ProfileSqlConstants.GetProfileByUserId,
-                    new { UserId = userId },
-                    cancellationToken: token
-                );
-
-                return await connection.QuerySingleOrDefaultAsync<Profile>(command);
-            }, cancellationToken
-        );
-
-        if (profile is null || profile.UserId == Guid.Empty)
-        {
-            return Result.Fail(new NoProfileFoundError(userId));
-        }
-
-        return profile;
-    }
-
+    
     //to do: split this to follow SRP
     public async Task<Result<Profile>> UpdateProfile(
-        Profile profile,
+        ProfileUpdate profileUpdate,
         CancellationToken cancellationToken)
     {
         return await _resiliencePipeline.ExecuteAsync(
@@ -62,11 +36,11 @@ public class ProfileRepository(
                 await using var transaction = await connection.BeginTransactionAsync(token);
 
                 var updateProfileCommand = new CommandDefinition(
-                    ProfileSqlConstants.UpdateProfile,
+                    ProfileSqlConstants.UpdateBio,
                      new
                      {
-                         profile.UserId,
-                         profile.Bio
+                         profileUpdate.UserId,
+                         profileUpdate.Bio
                      },
                     transaction,
                     cancellationToken: token
@@ -74,50 +48,50 @@ public class ProfileRepository(
 
                 var updatedBio = await connection.QuerySingleOrDefaultAsync<string>(updateProfileCommand);
 
-                if (!string.IsNullOrEmpty(profile.Bio) && updatedBio == null)
+                if (!string.IsNullOrEmpty(profileUpdate.Bio) && updatedBio == null)
                 {
                     return Result.Fail<Profile>(new UpdateBioError()); 
                 }
 
-                profile.UpdateBio(updatedBio);
-
-                var languages = profile.GetLanguages();
+                var languages = profileUpdate.Languages;
+                var updatedLanguages = new List<Language>();
                 if (languages is not null)
                 {
                     var deleteLanguagesCommand = new CommandDefinition(
                         ProfileSqlConstants.DeleteProfileLanguages,
-                        new { UserId = profile.GetUserId() },
+                        new { UserId = profileUpdate.UserId },
                         transaction,
                         cancellationToken: token
                     );
 
                     await connection.ExecuteAsync(deleteLanguagesCommand);
-
-                    var insertedLanguages = new List<Language>();
+                    
                     foreach (Language language in languages)
                     {
                         var addLanguagesCommand = new CommandDefinition(
                             ProfileSqlConstants.AddProfileLanguages,
                             new
                             {
-                                profile.UserId,
+                                profileUpdate.UserId,
                                 language.Type,
                                 language.Proficiency
                             },
                             transaction,
                             cancellationToken: token
                         );
-                        var insertedLanguage = await connection.QuerySingleAsync<Language>(addLanguagesCommand);
-                        insertedLanguages.Add(insertedLanguage);
+                        var updatedLanguage = await connection.QuerySingleAsync<Language>(addLanguagesCommand);
+                        updatedLanguages.Add(updatedLanguage);
                     }
-
-                    profile.UpdateLanguages(insertedLanguages); //same as bio comment
                 }
 
                 await transaction.CommitAsync(token); //no test checks if the data is actually in the db
 
-                return profile;
-
+                return Result.Ok(new Profile()
+                {
+                    UserId = profileUpdate.UserId,
+                    Languages = updatedLanguages,
+                    Bio = updatedBio
+                });
             }, cancellationToken); //need a try/catch to rollback transactions?
     }
 }

@@ -5,14 +5,9 @@ public static class ProfileSqlConstants
     INSERT INTO Profiles (UserId)
     VALUES (@UserId);";
 
-    public const string GetProfileByUserId = @"
-    SELECT UserId, Bio
-    FROM Profiles
-    WHERE UserId = @UserId;";
-
-    public const string UpdateProfile = @"
+    public const string UpdateBio = @"
     UPDATE Profiles
-    SET Bio = @Bio
+    SET Bio = CASE WHEN @Bio IS NULL THEN Bio ELSE @Bio END
     OUTPUT inserted.Bio
     WHERE UserId = @UserId;";
 

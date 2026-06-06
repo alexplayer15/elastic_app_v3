@@ -13,18 +13,7 @@ public class ProfileService(IProfileRepository profileRepository) : IProfileServ
         ProfileUpdate update, 
         CancellationToken cancellationToken)
     {
-        var profileResult = await _profileRepository.GetProfileByUserId(update.UserId, cancellationToken);
-
-        if (profileResult.IsFailed)
-        {
-            return profileResult.ToResult<UpdateProfileResponse>();
-        }
-
-        var profile = profileResult.Value;
-        profile.UpdateBio(update.Bio);
-        profile.UpdateLanguages(update.Languages);
-
-        return await _profileRepository.UpdateProfile(profile, cancellationToken)
+        return await _profileRepository.UpdateProfile(update, cancellationToken)
             .Map(updatedProfile => updatedProfile.ToDto());
     }
 }
