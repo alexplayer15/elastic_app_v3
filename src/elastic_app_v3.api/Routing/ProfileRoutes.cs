@@ -36,8 +36,7 @@ public static class ProfileRoutes
         
         group.MapGet(EndpointConstants.GetProfilePictureUrls, IResult (
                 ClaimsPrincipal user,
-                [FromServices] IProfileService profileService,
-                CancellationToken cancellationToken) =>
+                [FromServices] IProfileService profileService) =>
             {
                 var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -46,6 +45,23 @@ public static class ProfileRoutes
 
                 var result = profileService.GetProfilePictureUrls(userId);
                 return result.ToApiResponse(EndpointConstants.GetProfilePictureUrls);
+            })
+            .RequireAuthorization()
+            .MapToApiVersion(1);
+        
+        group.MapPatch(EndpointConstants.SaveProfilePicture, async Task<IResult> (
+                ClaimsPrincipal user,
+                [FromBody] string objectUrl,
+                [FromServices] IProfileService profileService,
+                CancellationToken cancellationToken) =>
+            {
+                var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (!Guid.TryParse(userIdClaim, out var userId))
+                    return TypedResults.Unauthorized();
+
+                var result = await profileService.SaveProfilePicture(userId, objectUrl,  cancellationToken);
+                return result.ToApiResponse(EndpointConstants.SaveProfilePicture);
             })
             .RequireAuthorization()
             .MapToApiVersion(1);

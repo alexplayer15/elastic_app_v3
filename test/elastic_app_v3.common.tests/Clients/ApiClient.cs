@@ -77,6 +77,20 @@ public class ApiClient(HttpClient client)
 
         return await _client.SendAsync(request);
     }
+    public async Task<HttpResponseMessage> SendSaveProfileRequest(string objectUrl, string token)
+    {
+        const string uri = $"{EndpointConstants.Base}{EndpointConstants.SaveProfilePicture}";
+
+        var request = new HttpRequestMessage(HttpMethod.Patch, uri)
+        {
+            Content = JsonContent.Create(objectUrl)
+        };
+
+        request.Headers.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+
+        return await _client.SendAsync(request);
+    }
     public async Task<T?> GetResponseAsync<T>(HttpResponseMessage response) where T : class
     {
         var contentString = await response.Content.ReadAsStringAsync();

@@ -25,4 +25,12 @@ public class ProfileService(
         return _profilePictureDataStore.GetProfilePictureUrls(userId)
             .Map(urls => new GetProfilePictureUrlResponse(urls.PreSignedUrl, urls.ObjectUrl));
     }
+    public async Task<Result> SaveProfilePicture(
+        Guid userId, 
+        string objectUrl, 
+        CancellationToken cancellationToken
+    )
+    {
+        return await _profileRepository.SaveProfilePicture(userId, objectUrl, cancellationToken);
+    }
 }

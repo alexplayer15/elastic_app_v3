@@ -19,4 +19,9 @@ public static class ProfileSqlConstants
     INSERT INTO Languages (UserId, Type, Proficiency)
     OUTPUT inserted.Type, inserted.Proficiency
     VALUES (@UserId, @Type, @Proficiency);";
+    
+    public const string UpdateProfilePicture = @"
+    UPDATE Profiles
+    SET ProfilePictureUrl = @ProfilePictureUrl
+    WHERE UserId = @UserId;";
 }

@@ -6,7 +6,8 @@ public class SuccessResponseMapper
 {
     private static readonly Dictionary<string, Func<IResult>> _successResponseMapNoValue = new()
     {
-        { EndpointConstants.UserSignUpEndpoint, GetSignUpSuccessResponse }
+        { EndpointConstants.UserSignUpEndpoint, GetSignUpSuccessResponse },
+        { EndpointConstants.SaveProfilePicture, GetSaveProfilePictureResponse }
     };
 
     private static readonly Dictionary<string, Func<object, IResult>> _successResponseMapWithValue = new()
@@ -35,4 +36,5 @@ public class SuccessResponseMapper
     private static Ok<T> GetPaymentSuccessResponse<T>(T value) => TypedResults.Ok(value);
     private static Ok<T> GetUpdateProfileSuccessResponse<T>(T value) => TypedResults.Ok(value);
     private static Ok<T> GetProfilePictureUrlResponse<T>(T value) => TypedResults.Ok(value);
+    private static NoContent GetSaveProfilePictureResponse() => TypedResults.NoContent();
 }

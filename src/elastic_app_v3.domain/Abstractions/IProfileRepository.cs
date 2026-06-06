@@ -9,4 +9,10 @@ public interface IProfileRepository
         ProfileUpdate profile,
         CancellationToken cancellationToken
     );
+    
+    Task<Result> SaveProfilePicture(
+        Guid userId,
+        string objectUrl,
+        CancellationToken cancellationToken
+    );
 }

@@ -94,4 +94,41 @@ public class ProfileRepository(
                 });
             }, cancellationToken); //need a try/catch to rollback transactions?
     }
+    
+    public async Task<Result> SaveProfilePicture(
+        Guid userId, 
+        string objectUrl, 
+        CancellationToken cancellationToken
+    )
+    {
+        try
+        {
+            await _resiliencePipeline.ExecuteAsync(
+                async token =>
+                {
+                    await using var connection = new SqlConnection(_connectionString);
+
+                    await connection.OpenAsync(token);
+
+                    var command = new CommandDefinition(
+                        ProfileSqlConstants.UpdateProfilePicture,
+                        new
+                        {
+                            ProfilePictureUrl = objectUrl,
+                            UserId = userId
+                        },
+                        cancellationToken: token
+                    );
+
+                    return await connection.QuerySingleOrDefaultAsync(command);
+                },
+                cancellationToken);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+
+        return Result.Ok();
+    }
 }

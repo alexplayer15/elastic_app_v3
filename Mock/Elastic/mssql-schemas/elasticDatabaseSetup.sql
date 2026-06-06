@@ -94,8 +94,8 @@ IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Profiles')
 BEGIN
     CREATE TABLE Profiles (
         UserId UNIQUEIDENTIFIER NOT NULL,
-
         Bio NVARCHAR(250) NULL,
+        ProfilePictureUrl NVARCHAR(250) NULL
 
         CONSTRAINT PK_Profiles PRIMARY KEY (UserId),
 

@@ -17,6 +17,7 @@ public static class ErrorResponseMapper
         { EndpointConstants.PaymentEndpoint, GetPaymentErrorResponse },
         { EndpointConstants.UpdateProfileEndpoint, GetUpdateProfileErrorResponse },
         { EndpointConstants.GetProfilePictureUrls, GetProfilePictureUrlErrorResponse },
+        { EndpointConstants.SaveProfilePicture, GetSaveProfilePictureErrorResponse }
     };
     public static IResult GetErrorResponseByEndpoint(
         Error internalError,
@@ -27,6 +28,8 @@ public static class ErrorResponseMapper
             : throw new InvalidOperationException(
                 $"Error response mapping has not been configured for endpoint '{endpoint}'");
     }
+    
+    //LOTS of duplicate code - clean up here
     private static IResult GetSignUpErrorResponse(Error internalError)
     {
         (int statusCode, string errorCode) = internalError switch
@@ -131,6 +134,23 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred retrieving profile picture url.",
+            Detail = internalError.Message,
+            Status = statusCode
+        };
+
+        return Results.Json(problemDetails, statusCode: statusCode);
+    }
+    private static IResult GetSaveProfilePictureErrorResponse(Error internalError)
+    {
+        (int statusCode, string errorCode) = internalError switch
+        {
+            _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
+        };
+
+        var problemDetails = new ProblemDetails
+        {
+            Type = errorCode,
+            Title = "An error occurred saving profile picture.",
             Detail = internalError.Message,
             Status = statusCode
         };
