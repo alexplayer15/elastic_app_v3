@@ -7,5 +7,6 @@ public interface IProfileRepository
 {
     Task<Result<Profile>> UpdateProfile(
         ProfileUpdate profile,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken
+    );
 }

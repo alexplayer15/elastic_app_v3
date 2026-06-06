@@ -34,12 +34,12 @@ builder.Services.AddFluentValidationAutoValidation(configuration =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "AllowWeb",
-                      policy =>
-                      {
-                          policy.WithOrigins("http://localhost:3000")
-                            .WithHeaders("content-type")
-                            .WithMethods(HttpMethod.Post.ToString());
-                      });
+      policy =>
+      {
+          policy.WithOrigins("http://localhost:3000")
+            .WithHeaders("content-type")
+            .WithMethods(HttpMethod.Post.ToString());
+      });
 }); // to do: implement reverse proxy
 
 builder.Services.AddAuthentication(options =>

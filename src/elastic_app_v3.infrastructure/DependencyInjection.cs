@@ -1,8 +1,11 @@
 ﻿using System.Text;
+using Amazon;
+using Amazon.S3;
 using elastic_app_v3.application.Handler;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.infrastructure.Config;
+using elastic_app_v3.infrastructure.DataStores;
 using elastic_app_v3.infrastructure.Repositories;
 using elastic_app_v3.infrastructure.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,11 +28,13 @@ namespace elastic_app_v3.infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IProfileRepository, ProfileRepository>();
+            services.AddScoped<IProfilePictureDataStore, ProfilePictureDataStore>();
             services.AddHealthChecks();
             services.ConfigureOptions(configuration);
             services.AddMediatRConfiguration();
             services.AddResilienceConfiguration(configuration);
-
+            services.AddS3();
+            
             return services;
         }
         private static IServiceCollection ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
@@ -37,6 +42,8 @@ namespace elastic_app_v3.infrastructure
             services.Configure<ElasticDatabaseSettings>(configuration.GetSection(ElasticDatabaseSettings.ElasticDatabaseSettingsName));
 
             services.Configure<KafkaSettings>(configuration.GetSection(KafkaSettings.KafkaSettingsName));
+            
+            services.Configure<ProfilePictureDataStoreOptions>(configuration.GetSection(ProfilePictureDataStoreOptions.ProfilePictureDataStoreOptionsName));
 
             services.AddOptions<JwtConfigOptions>()
                 .Bind(configuration.GetSection(JwtConfigOptions.JwtConfig))
@@ -137,6 +144,13 @@ namespace elastic_app_v3.infrastructure
                         }
                     });
             });
+        }
+        
+        private static IServiceCollection AddS3(this IServiceCollection services)
+        {
+            services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(RegionEndpoint.EUWest1));
+
+            return services;
         }
     }
 }

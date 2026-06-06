@@ -12,17 +12,18 @@ public class GetProfilePictureUrlTests
     public class GetUserByIdTests(EndToEndTestFixture fixture)
     {
         private readonly ApiClient _apiClient = new(fixture.Client);
-
-        // public async Task Given_When_GetProfilePictureUrl_ThenReturnPreSignedUrl()
-        // {
-        //     //Arrange
-        //     var token = TokenHelper.GenerateTestToken(Guid.NewGuid());
-        //     
-        //     //Act
-        //     var response = await _apiClient.SendGetProfilePictureUrlRequest(token);
-        //     
-        //     //Assert
-        //     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        // }
+        
+        [Fact]
+        public async Task GivenValidUser_WhenSendGetProfilePictureUrlRequest_GetProfilePictureUrl_ThenReturnPreSignedUrl()
+        {
+            //Arrange
+            var token = TokenHelper.GenerateTestToken(Guid.NewGuid());
+            
+            //Act
+            var response = await _apiClient.SendGetProfilePictureUrlRequest(token);
+            
+            //Assert
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        }
     }
 }

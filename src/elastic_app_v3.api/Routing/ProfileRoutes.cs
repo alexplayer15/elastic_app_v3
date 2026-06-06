@@ -2,6 +2,7 @@
 using elastic_app_v3.api.Routing.Constants;
 using elastic_app_v3.application.Commands;
 using elastic_app_v3.application.DTOs.Profile;
+using elastic_app_v3.application.Services.Profiles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,22 @@ public static class ProfileRoutes
                 var result = await mediator.Send(command, cancellationToken);
 
                 return result.ToApiResponse(EndpointConstants.UpdateProfileEndpoint);
+            })
+            .RequireAuthorization()
+            .MapToApiVersion(1);
+        
+        group.MapGet(EndpointConstants.GetProfilePictureUrl, IResult (
+                ClaimsPrincipal user,
+                [FromServices] IProfileService profileService,
+                CancellationToken cancellationToken) =>
+            {
+                var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (!Guid.TryParse(userIdClaim, out var userId))
+                    return TypedResults.Unauthorized();
+
+                var result = profileService.GetProfilePictureUrl(userId);
+                return result.ToApiResponse(EndpointConstants.GetProfilePictureUrl);
             })
             .RequireAuthorization()
             .MapToApiVersion(1);

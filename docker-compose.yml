@@ -19,6 +19,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+      localstack:
+        condition: service_healthy
   web:
     build:
       context: ./web/elastic_app_v3.web
@@ -55,6 +57,21 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+  localstack:
+    container_name: localstack
+    hostname: localstack
+    image: localstack/localstack:4.14
+    ports:
+      - '4566:4566'
+      - '4510-4559:4510-4559'
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_ACCESS_KEY_ID=DUMMYIDEXAMPLE
+      - AWS_SECRET_ACCESS_KEY=DUMMYEXAMPLEKEY
+      - REGION=eu-west-1
+    volumes:
+      - ./LocalStackScripts:/etc/localstack/init/ready.d
+      - /var/run/docker.sock:/var/run/docker.sock
   kafka:
     image: apache/kafka:latest
     container_name: broker

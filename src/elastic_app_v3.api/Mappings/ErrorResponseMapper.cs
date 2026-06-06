@@ -15,7 +15,8 @@ public static class ErrorResponseMapper
         { EndpointConstants.UserLoginEndpoint, GetLoginErrorResponse  },
         { EndpointConstants.GetUserByIdEndpoint, GetUserByIdErrorResponse },
         { EndpointConstants.PaymentEndpoint, GetPaymentErrorResponse },
-        { EndpointConstants.UpdateProfileEndpoint, GetUpdateProfileErrorResponse }
+        { EndpointConstants.UpdateProfileEndpoint, GetUpdateProfileErrorResponse },
+        { EndpointConstants.GetProfilePictureUrl, GetProfilePictureUrlErrorResponse },
     };
     public static IResult GetErrorResponseByEndpoint(
         Error internalError,
@@ -113,6 +114,23 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred during update profile.",
+            Detail = internalError.Message,
+            Status = statusCode
+        };
+
+        return Results.Json(problemDetails, statusCode: statusCode);
+    }
+    private static IResult GetProfilePictureUrlErrorResponse(Error internalError)
+    {
+        (int statusCode, string errorCode) = internalError switch
+        {
+            _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
+        };
+
+        var problemDetails = new ProblemDetails
+        {
+            Type = errorCode,
+            Title = "An error occurred retrieving profile picture url.",
             Detail = internalError.Message,
             Status = statusCode
         };

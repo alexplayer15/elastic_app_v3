@@ -3,12 +3,12 @@
     public class ElasticDatabaseSettings
     {
         public const string ElasticDatabaseSettingsName = "ElasticDatabaseSettings";
-        public string Server { get; set; } = string.Empty;
-        public string User { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string Database { get; set; } = string.Empty;
-        public int Port { get; set; }
-        public bool TrustServerCertificate { get; set; }
+        public string Server { get; init; } = string.Empty;
+        public string User { get; init; } = string.Empty;
+        public string Password { get; init; } = string.Empty;
+        public string Database { get; init; } = string.Empty;
+        public int Port { get; init; }
+        public bool TrustServerCertificate { get; init; }
         public string GetConnectionString()
         {
             return $"Server={Server},{Port};User={User};Password={Password};" +
