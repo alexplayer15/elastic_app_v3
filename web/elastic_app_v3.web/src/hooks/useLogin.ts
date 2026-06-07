@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type {LoginRequest} from "../dtos/LoginRequest";
 import {post} from "../api/apiClient";
+import type {LoginResponse} from "../dtos/LoginResponse";
 
 type LoginState = {
     isLoading: boolean;
@@ -13,7 +14,13 @@ export const useLogin = () => {
     const login = async (request: LoginRequest): Promise<boolean> => {
         setState({ isLoading: true, error: null });
 
-        const result = await post<LoginRequest, void>('http://localhost:8081/elastic-app/v1/user/login', request);
+        const loginUrl = 'http://localhost:8081/elastic-app/v1/user/login'
+        
+        const result = await post<LoginRequest, void>(
+            loginUrl, 
+            request
+        );
+        
         if (!result.success) {
             setState({ isLoading: false, error: result.error });
             return false;

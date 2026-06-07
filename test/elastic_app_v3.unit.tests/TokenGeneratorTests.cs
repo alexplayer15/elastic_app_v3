@@ -24,7 +24,7 @@ namespace elastic_app_v3.unit.tests
 
             _tokenGenerator = new TokenGenerator(jwtOptions);
 
-            _fixture.Customize<User>(u => u
+            _fixture.Customize<User>(c => c
                 .With(u => u.FirstName, "Alex")
                 .With(u => u.LastName, "Player")
                 .With(u => u.UserName, "alexplayer15")

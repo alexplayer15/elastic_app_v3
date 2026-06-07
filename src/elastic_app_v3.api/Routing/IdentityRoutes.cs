@@ -4,6 +4,8 @@ using elastic_app_v3.application.Services.Identity;
 using elastic_app_v3.application.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.application.DTOs.SignUp;
+using FluentResults.Extensions;
+using Microsoft.AspNetCore.CookiePolicy;
 
 namespace elastic_app_v3.api.Routing;
 public static class IdentityRoutes
@@ -22,12 +24,21 @@ public static class IdentityRoutes
         .MapToApiVersion(1);
 
         group.MapPost(EndpointConstants.UserLoginEndpoint, async Task<IResult> (
+            HttpContext httpContext,
             [FromBody] LoginRequest request,
             [FromServices] ILoginService loginService,
             CancellationToken cancellationToken) =>
         {
-            var result = await loginService.LoginAsync(request, cancellationToken);
-            return result.ToApiResponse(EndpointConstants.UserLoginEndpoint);
+            var result = await loginService.LoginAsync(request, cancellationToken)
+                .Tap(loginResponse => AddAccessTokenToHttpContext(
+                    httpContext, 
+                    loginResponse.AccessToken, 
+                    loginResponse.ExpiresInMinutes
+                ));
+                
+            return result
+                .ToResult()
+                .ToApiResponse(EndpointConstants.UserLoginEndpoint);
         })
         .WithName(OpenApiConstants.UserLoginEndpointOpenApiName)
         .MapToApiVersion(1);
@@ -49,4 +60,20 @@ public static class IdentityRoutes
         .WithName(OpenApiConstants.GetUserByIdEndpointOpenApiName)
         .MapToApiVersion(1);
     }
+
+    private static void AddAccessTokenToHttpContext(
+        HttpContext httpContext,
+        string accessToken,
+        int expiresInMinutes
+    )
+    {
+        httpContext.Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(expiresInMinutes)
+        });
+    }
+    
 }

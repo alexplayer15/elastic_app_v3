@@ -7,12 +7,12 @@ public class SuccessResponseMapper
     private static readonly Dictionary<string, Func<IResult>> _successResponseMapNoValue = new()
     {
         { EndpointConstants.UserSignUpEndpoint, GetSignUpSuccessResponse },
-        { EndpointConstants.SaveProfilePicture, GetSaveProfilePictureResponse }
+        { EndpointConstants.SaveProfilePicture, GetSaveProfilePictureResponse },
+        { EndpointConstants.UserLoginEndpoint, GetLoginSuccessResponse }
     };
 
     private static readonly Dictionary<string, Func<object, IResult>> _successResponseMapWithValue = new()
     {
-        { EndpointConstants.UserLoginEndpoint, value => GetLoginSuccessResponse(value) },
         { EndpointConstants.GetUserByIdEndpoint, value => GetUserByIdSuccessResponse(value) },
         { EndpointConstants.PaymentEndpoint, value => GetPaymentSuccessResponse(value) },
         { EndpointConstants.UpdateProfileEndpoint, value => GetUpdateProfileSuccessResponse(value) },
@@ -31,7 +31,7 @@ public class SuccessResponseMapper
             : throw new InvalidOperationException($"No success response configured for endpoint '{endpoint}'");
     }
     private static Created GetSignUpSuccessResponse() => TypedResults.Created();
-    private static Ok<T> GetLoginSuccessResponse<T>(T value) => TypedResults.Ok(value);
+    private static NoContent GetLoginSuccessResponse() => TypedResults.NoContent();
     private static Ok<T> GetUserByIdSuccessResponse<T>(T value) => TypedResults.Ok(value);
     private static Ok<T> GetPaymentSuccessResponse<T>(T value) => TypedResults.Ok(value);
     private static Ok<T> GetUpdateProfileSuccessResponse<T>(T value) => TypedResults.Ok(value);

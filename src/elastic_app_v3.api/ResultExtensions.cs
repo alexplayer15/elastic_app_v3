@@ -22,4 +22,14 @@ public static class ResultExtension
             _ => throw new InvalidOperationException("Unexpected error type")
         };
     }
+    
+    public static async Task<Result<T>> Tap<T>(this Task<Result<T>> resultTask, Action<T> action)
+    {
+        var result = await resultTask;
+        
+        if (result.IsSuccess)
+            action(result.Value);
+        
+        return result;
+    }
 }

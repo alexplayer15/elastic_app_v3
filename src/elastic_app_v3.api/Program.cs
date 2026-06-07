@@ -36,9 +36,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AllowWeb",
       policy =>
       {
-          policy.WithOrigins("http://localhost:3000")
+          policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
+            .AllowCredentials()
             .WithHeaders("content-type")
-            .WithMethods(HttpMethod.Post.ToString());
+            .WithMethods(
+                HttpMethods.Post, 
+                HttpMethods.Patch,
+                HttpMethods.Get
+            );
       });
 }); // to do: implement reverse proxy
 
@@ -47,7 +52,17 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer();
+.AddJwtBearer(options =>
+{
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            context.Token = context.Request.Cookies["accessToken"];
+            return Task.CompletedTask;
+        }
+    };
+});
 
 builder.Services.AddAuthorization();
 

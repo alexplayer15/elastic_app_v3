@@ -16,7 +16,7 @@ namespace elastic_app_v3.e2e.tests.Tests.UserLogin
         private readonly ElasticAppDbClient _userDbTestHelper = new();
 
         [Fact]
-        public async Task GivenSignedUpUser_WhenSendUserLoginRequest_ThenReturn200AndLoginCredentials()
+        public async Task GivenSignedUpUser_WhenSendUserLoginRequest_ThenReturn204AndPopulateHttpContext()
         {
             //Arrange
             var maxUsernameLength = 22;
@@ -41,12 +41,20 @@ namespace elastic_app_v3.e2e.tests.Tests.UserLogin
             var response = await _apiClient.SendUserLoginRequest(request);
 
             //Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var loginResponse = await _apiClient.GetResponseAsync<LoginResponse>(response);
-            Assert.NotNull(loginResponse);
-            Assert.Equal(3, loginResponse.AccessToken.Split(".").Length);
-            Assert.Equal(60, loginResponse.ExpiresInMinutes);
-            Assert.Equal("Bearer", loginResponse.TokenType);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    
+            var accessTokenCookie = response.Headers
+                .Where(h => h.Key == "Set-Cookie")
+                .SelectMany(h => h.Value)
+                .FirstOrDefault(c => c.StartsWith("accessToken="));
+
+            Assert.NotNull(accessTokenCookie);
+            Assert.Contains("httponly", accessTokenCookie, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("samesite=strict", accessTokenCookie, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("secure", accessTokenCookie, StringComparison.OrdinalIgnoreCase);
+            
+            var tokenValue = accessTokenCookie.Split(';')[0].Split('=')[1];
+            Assert.Equal(3, tokenValue.Split('.').Length);
         }
     }
 }
