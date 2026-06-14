@@ -25,7 +25,7 @@ public static class ProfileRoutes
                 var command = new UpdateProfileCommand(
                     request.Bio,
                     request.Languages is null ? null : [.. request.Languages.Select(l => new LanguageModel(l.Type, l.Proficiency))],
-                    userId); //okay to have this logic in the routing?
+                    userId); //okay to have this logic in routing?
 
                 var result = await mediator.Send(command, cancellationToken);
 
@@ -51,7 +51,7 @@ public static class ProfileRoutes
         
         group.MapPatch(EndpointConstants.SaveProfilePicture, async Task<IResult> (
                 ClaimsPrincipal user,
-                [FromBody] string objectUrl,
+                [FromBody] SaveProfilePictureRequest request,
                 [FromServices] IProfileService profileService,
                 CancellationToken cancellationToken) =>
             {
@@ -60,7 +60,7 @@ public static class ProfileRoutes
                 if (!Guid.TryParse(userIdClaim, out var userId))
                     return TypedResults.Unauthorized();
 
-                var result = await profileService.SaveProfilePicture(userId, objectUrl,  cancellationToken);
+                var result = await profileService.SaveProfilePicture(userId, request,  cancellationToken);
                 return result.ToApiResponse(EndpointConstants.SaveProfilePicture);
             })
             .RequireAuthorization()

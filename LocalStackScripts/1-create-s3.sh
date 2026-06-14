@@ -10,7 +10,7 @@ awslocal s3api put-bucket-cors \
   --cors-configuration '{
     "CORSRules": [
       {
-        "AllowedOrigins": ["http://localhost:5173"],
+        "AllowedOrigins": ["http://localhost:5173", "http://localhost:3000"],
         "AllowedMethods": ["PUT"],
         "AllowedHeaders": ["*"],
         "MaxAgeSeconds": 3000

@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.Extensions.Resilience" />
     <PackageReference Include="AWSSDK.Core" />
     <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>

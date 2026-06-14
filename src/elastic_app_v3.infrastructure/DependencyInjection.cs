@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Amazon;
+using Amazon.Runtime;
 using Amazon.S3;
 using elastic_app_v3.application.Handler;
 using elastic_app_v3.domain.Abstractions;
@@ -32,8 +33,8 @@ namespace elastic_app_v3.infrastructure
             services.AddHealthChecks();
             services.ConfigureOptions(configuration);
             services.AddMediatRConfiguration();
-            services.AddResilienceConfiguration(configuration);
-            services.AddS3();
+            services.AddResilienceConfiguration();
+            services.AddS3(configuration);
             
             return services;
         }
@@ -43,7 +44,12 @@ namespace elastic_app_v3.infrastructure
 
             services.Configure<KafkaSettings>(configuration.GetSection(KafkaSettings.KafkaSettingsName));
             
-            services.Configure<ProfilePictureDataStoreOptions>(configuration.GetSection(ProfilePictureDataStoreOptions.ProfilePictureDataStoreOptionsName));
+            services.AddOptions<ProfilePictureDataStoreOptions>()
+                .BindConfiguration(ProfilePictureDataStoreOptions.ProfilePictureDataStoreOptionsName)
+                .Validate<IHostEnvironment>((options, env) => 
+                        !env.IsProduction() || string.IsNullOrEmpty(options.ObjectUrlBase),
+                    "ObjectUrlBase must not be set in Production.")
+                .ValidateOnStart();
 
             services.AddOptions<JwtConfigOptions>()
                 .Bind(configuration.GetSection(JwtConfigOptions.JwtConfig))
@@ -62,6 +68,16 @@ namespace elastic_app_v3.infrastructure
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(jwtConfig.PrivateKey)),
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Cookies["accessToken"];
+                            context.Token = accessToken;
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             services.AddOptions<ResiliencePolicy>(ResiliencePolicy.UserResiliencePolicySettings)
@@ -78,7 +94,7 @@ namespace elastic_app_v3.infrastructure
                 configuration.RegisterServicesFromAssembly(typeof(UpdateProfileHandler).Assembly);
             });
         }
-        private static IServiceCollection AddResilienceConfiguration(this IServiceCollection services, IConfiguration configuration)
+        private static IServiceCollection AddResilienceConfiguration(this IServiceCollection services)
         {
             return services.AddResiliencePipeline(ResiliencePolicy.ElasticAppDatabaseResiliencePolicyKey, (builder, context) =>
             {
@@ -146,9 +162,31 @@ namespace elastic_app_v3.infrastructure
             });
         }
         
-        private static IServiceCollection AddS3(this IServiceCollection services)
+        private static IServiceCollection AddS3(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(RegionEndpoint.EUWest1));
+            var settings = configuration
+                .GetSection(ProfilePictureDataStoreOptions.ProfilePictureDataStoreOptionsName)
+                .Get<ProfilePictureDataStoreOptions>();
+
+            if (settings is null)
+            {
+                throw new InvalidOperationException($"Cannot find {nameof(ProfilePictureDataStoreOptions)} in configuration");
+            }
+
+            if (settings.IsLocal)
+            {
+                services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(
+                    new BasicAWSCredentials("DUMMYIDEXAMPLE", "DUMMYEXAMPLEKEY"),
+                    new AmazonS3Config
+                    {
+                        ServiceURL = settings.ServiceUrl,
+                        ForcePathStyle = true
+                    }));
+            }
+            else
+            {
+                services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(RegionEndpoint.EUWest1));
+            }
 
             return services;
         }

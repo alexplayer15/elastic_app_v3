@@ -10,10 +10,10 @@ public interface IProfileService
         CancellationToken cancellationToken
     );
     Result<GetProfilePictureUrlResponse> GetProfilePictureUrls(Guid userId);
-    
+
     Task<Result> SaveProfilePicture(
         Guid userId,
-        string objectUrl,
+        SaveProfilePictureRequest request,
         CancellationToken cancellationToken
     );
 }

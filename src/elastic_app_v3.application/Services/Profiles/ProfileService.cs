@@ -27,10 +27,10 @@ public class ProfileService(
     }
     public async Task<Result> SaveProfilePicture(
         Guid userId, 
-        string objectUrl, 
+        SaveProfilePictureRequest request, 
         CancellationToken cancellationToken
     )
     {
-        return await _profileRepository.SaveProfilePicture(userId, objectUrl, cancellationToken);
+        return await _profileRepository.SaveProfilePicture(userId, request.ObjectUrl, cancellationToken);
     }
 }

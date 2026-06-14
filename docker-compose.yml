@@ -63,7 +63,6 @@ services:
     image: localstack/localstack:4.14
     ports:
       - '4566:4566'
-      - '4510-4559:4510-4559'
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - AWS_ACCESS_KEY_ID=DUMMYIDEXAMPLE
@@ -94,6 +93,7 @@ services:
       timeout: 5s
       retries: 5
   sqlserver-local:
+    platform: linux/amd64
     build:
       context: ./Mock/Elastic
       dockerfile: Dockerfile

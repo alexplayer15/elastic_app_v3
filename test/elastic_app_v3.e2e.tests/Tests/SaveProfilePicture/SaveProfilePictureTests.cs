@@ -1,5 +1,6 @@
 using System.Net;
 using AutoFixture;
+using elastic_app_v3.application.DTOs.Profile;
 using elastic_app_v3.common.tests;
 using elastic_app_v3.common.tests.Clients;
 using elastic_app_v3.domain.Entities;
@@ -35,9 +36,11 @@ public class SaveProfilePictureTests(EndToEndTestFixture fixture)
         var token = TokenHelper.GenerateTestToken(userId);
         
         const string objectUrl = $"https://elastic-app-profile-pictures.s3.eu-west-1.amazonaws.com/test-object-key";
+
+        var request = new SaveProfilePictureRequest(objectUrl);
         
         //Act
-        var response = await _apiClient.SendSaveProfileRequest(objectUrl, token);
+        var response = await _apiClient.SendSaveProfileRequest(request, token);
         
         //Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

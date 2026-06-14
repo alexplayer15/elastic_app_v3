@@ -77,13 +77,13 @@ public class ApiClient(HttpClient client)
 
         return await _client.SendAsync(request);
     }
-    public async Task<HttpResponseMessage> SendSaveProfileRequest(string objectUrl, string token)
+    public async Task<HttpResponseMessage> SendSaveProfileRequest(SaveProfilePictureRequest requestBody, string token)
     {
         const string uri = $"{EndpointConstants.Base}{EndpointConstants.SaveProfilePicture}";
 
         var request = new HttpRequestMessage(HttpMethod.Patch, uri)
         {
-            Content = JsonContent.Create(objectUrl)
+            Content = JsonContent.Create(requestBody)
         };
 
         request.Headers.Authorization =

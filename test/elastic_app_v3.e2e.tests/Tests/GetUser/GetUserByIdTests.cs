@@ -52,7 +52,9 @@ public class GetUserByIdTests(EndToEndTestFixture fixture)
     public async Task GivenNonExistingUserId_WhenSendGetUserById_ThenReturn404AndError()
     {
         //Arrange
-        var username = "alexplayer15";
+        var maxUsernameLength = 22;
+        //GUID length with N is 32 chars
+        var username = $"alexplayer15_{Guid.NewGuid():N}"[..maxUsernameLength];
 
         var user = _fixture.Build<User>()
             .With(u => u.FirstName, "Alex")
