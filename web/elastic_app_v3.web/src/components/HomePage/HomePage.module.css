@@ -8,24 +8,6 @@
     text-align: center;
 }
 
-.profileButton {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-}
-
-.profileButton {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-}
-
-.profileButton button {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
 .dropdown {
     position: absolute;
     right: 0;
@@ -50,4 +32,48 @@
 .dropdown li:hover {
     background-color: #f4f4f9;
     border-radius: 4px;
+}
+
+.hero {
+    width: 100%;
+    height: 100vh;
+    background-image: url('../../assets/subnautica.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profileButton {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+}
+
+.profileButton {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+}
+
+.profileButton button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.sloganText {
+    color: white;
+    font-size: 3rem;
+    margin-bottom: 60vh;
+}
+
+.topRibbon {
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    text-align: center;
+    background-color: seagreen;
 }
