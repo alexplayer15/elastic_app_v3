@@ -11,7 +11,8 @@
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Serilog.AspNetCore" />
-	  <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Endpoints" />
+    <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Endpoints" />
+    <PackageReference Include="CSharpFunctionalExtensions" />
   </ItemGroup>
 
   <ItemGroup>

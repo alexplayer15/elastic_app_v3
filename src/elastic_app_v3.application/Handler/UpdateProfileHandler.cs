@@ -1,6 +1,5 @@
 ﻿using elastic_app_v3.application.Commands;
 using elastic_app_v3.application.DTOs.Profile;
-using elastic_app_v3.application.Mapping;
 using elastic_app_v3.application.Services.Profiles;
 using FluentResults;
 using MediatR;
@@ -10,10 +9,9 @@ public class UpdateProfileHandler(IProfileService profileService) : IRequestHand
 {
     private readonly IProfileService _profileService = profileService;
     public async Task<Result<UpdateProfileResponse>> Handle(
-        UpdateProfileCommand request, 
+        UpdateProfileCommand command, 
         CancellationToken cancellationToken)
     {
-        var profileUpdate = request.ToDomainModel();
-        return await _profileService.UpdateProfile(profileUpdate, cancellationToken);
+        return await _profileService.UpdateProfile(command, cancellationToken);
     }
 }

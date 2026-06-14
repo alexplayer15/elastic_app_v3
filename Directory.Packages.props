@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Confluent.Kafka" Version="2.13.2" />
+    <PackageVersion Include="CSharpFunctionalExtensions" Version="3.7.0" />
     <PackageVersion Include="FluentResults" Version="4.0.0" />
     <PackageVersion Include="Mediator" Version="1.0.2123" />
     <PackageVersion Include="MediatR" Version="14.1.0" />

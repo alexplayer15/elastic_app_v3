@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CSharpFunctionalExtensions" />
     <PackageReference Include="FluentResults" />
   </ItemGroup>
 

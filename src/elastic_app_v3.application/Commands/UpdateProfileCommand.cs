@@ -1,10 +1,11 @@
-﻿using elastic_app_v3.application.DTOs.Profile;
-using FluentResults;
+﻿using CSharpFunctionalExtensions;
+using elastic_app_v3.application.DTOs.Profile;
 using MediatR;
 
 namespace elastic_app_v3.application.Commands;
-public sealed record UpdateProfileCommand(
-    string? Bio,
-    List<LanguageModel>? Languages,
+public record UpdateProfileCommand(
+    Maybe<string> Bio,
+    Maybe<IReadOnlyList<LanguageModel>> Languages,
+    Maybe<IReadOnlyList<string>> Hobbies,
     Guid UserId
-) : IRequest<Result<UpdateProfileResponse>>;
+): IRequest<FluentResults.Result<UpdateProfileResponse>>;

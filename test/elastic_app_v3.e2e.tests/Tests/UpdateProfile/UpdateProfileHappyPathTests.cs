@@ -33,7 +33,10 @@ public class UpdateProfileHappyPathTests
 
     [Theory]
     [MemberData(nameof(UpdateProfileTestCases))]
-    public async Task GivenLoggedInUser_WhenSendUpdateProfileRequest_ThenReturnUpdatedProfile(string? bio, List<LanguageDto>? languages)
+    public async Task GivenLoggedInUser_WhenSendUpdateProfileRequest_ThenReturnUpdatedProfile(
+        string? bio, 
+        List<LanguageDto>? languages,
+        List<string>? hobbies)
     {
         //Arrange
         var user = _fixture.Create<User>();
@@ -44,6 +47,7 @@ public class UpdateProfileHappyPathTests
         var request = _fixture.Build<UpdateProfileRequest>()
             .With(upr => upr.Bio, bio)
             .With(upr => upr.Languages, languages)
+            .With(upr => upr.Hobbies, hobbies)
             .Create();
 
         //Act
@@ -58,11 +62,11 @@ public class UpdateProfileHappyPathTests
         var expectedLanguages = languages ?? [];
         Assert.Equal(expectedLanguages, updateProfileResponse.Languages);
     }
-    public static TheoryData<string?, List<LanguageDto>?> UpdateProfileTestCases =>
+    public static TheoryData<string?, List<LanguageDto>?, List<string>?> UpdateProfileTestCases =>
     new()
     {
-        { "Hello", new List<LanguageDto> { new("English", "Native") } },
-        { "Hello", null },
-        { null, new List<LanguageDto> { new("English", "Native") } }
+        { "Hello", [new LanguageDto("English", "Native")], ["Football"] },
+        { "Hello", null, null },
+        { null, [new LanguageDto("English", "Native")], null }
     };
 }

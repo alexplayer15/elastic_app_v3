@@ -5,8 +5,10 @@ using FluentResults;
 namespace elastic_app_v3.domain.Abstractions;
 public interface IProfileRepository
 {
+    Task<Result<Profile>> GetProfileByUserId(Guid userId, CancellationToken cancellationToken);
+        
     Task<Result<Profile>> UpdateProfile(
-        ProfileUpdate profile,
+        Profile profile,
         CancellationToken cancellationToken
     );
     

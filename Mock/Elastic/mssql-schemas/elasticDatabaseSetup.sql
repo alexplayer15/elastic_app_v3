@@ -110,12 +110,26 @@ GO
 -- 8. Create Languages table if it does not exist
 IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Languages')
 BEGIN
-    CREATE TABLE Languages (
-        Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-        UserId UNIQUEIDENTIFIER NOT NULL,
-        [Type] NVARCHAR(50) NOT NULL,
-        Proficiency NVARCHAR(50) NOT NULL,
-        CONSTRAINT FK_Languages_User FOREIGN KEY (UserId) REFERENCES Users(Id)
+CREATE TABLE Languages (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    [Type] NVARCHAR(50) NOT NULL,
+    Proficiency NVARCHAR(50) NOT NULL,
+    CONSTRAINT FK_Languages_Profiles FOREIGN KEY (UserId) REFERENCES Profiles(UserId)
+        ON DELETE CASCADE
+    );
+END;
+GO
+
+-- 9. Create Languages table if it does not exist
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Hobbies')
+BEGIN
+CREATE TABLE Hobbies (
+     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+     UserId UNIQUEIDENTIFIER NOT NULL,
+     Name NVARCHAR(100) NOT NULL,
+     CONSTRAINT FK_Hobbies_Profiles FOREIGN KEY (UserId) REFERENCES Profiles(UserId)
+         ON DELETE CASCADE
 );
 END;
 GO
