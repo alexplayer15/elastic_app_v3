@@ -8,6 +8,7 @@ using elastic_app_v3.domain.Entities;
 using FluentResults;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain;
+using elastic_app_v3.domain.DTOs;
 
 namespace elastic_app_v3.infrastructure.Tokens
 {

@@ -1,4 +1,4 @@
-namespace elastic_app_v3.domain.Models;
+namespace elastic_app_v3.domain.DTOs;
 
 public sealed record ProfilePictureUrls(
     string PreSignedUrl, 

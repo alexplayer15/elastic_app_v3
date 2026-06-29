@@ -1,4 +1,5 @@
-﻿using elastic_app_v3.domain.Entities;
+﻿using elastic_app_v3.domain.DTOs;
+using elastic_app_v3.domain.Entities;
 using FluentResults;
 
 namespace elastic_app_v3.domain.Abstractions

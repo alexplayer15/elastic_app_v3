@@ -1,5 +1,4 @@
 ﻿using elastic_app_v3.domain.Entities;
-using elastic_app_v3.domain.Models;
 using FluentResults;
 
 namespace elastic_app_v3.domain.Abstractions;

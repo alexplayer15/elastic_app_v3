@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Registry;
 using Dapper;
+using elastic_app_v3.domain.DTOs;
 using Microsoft.Data.SqlClient;
 using elastic_app_v3.infrastructure.Models;
 using elastic_app_v3.infrastructure.SqlQueryConstants;

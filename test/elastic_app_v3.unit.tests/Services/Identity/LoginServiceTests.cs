@@ -4,6 +4,7 @@ using elastic_app_v3.application.Errors.Identity;
 using elastic_app_v3.application.Services.Identity;
 using elastic_app_v3.domain;
 using elastic_app_v3.domain.Abstractions;
+using elastic_app_v3.domain.DTOs;
 using elastic_app_v3.domain.Entities;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;

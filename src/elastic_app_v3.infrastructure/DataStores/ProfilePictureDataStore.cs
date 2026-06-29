@@ -2,7 +2,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using elastic_app_v3.domain.Abstractions;
-using elastic_app_v3.domain.Models;
+using elastic_app_v3.domain.DTOs;
 using elastic_app_v3.infrastructure.Config;
 using FluentResults;
 using Microsoft.Extensions.Options;
