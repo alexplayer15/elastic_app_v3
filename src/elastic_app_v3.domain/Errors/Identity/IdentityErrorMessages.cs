@@ -1,6 +1,6 @@
-﻿using elastic_app_v3.application.Constants;
+﻿using elastic_app_v3.domain.Constants;
 
-namespace elastic_app_v3.application.Errors.Identity
+namespace elastic_app_v3.domain.Errors.Identity
 {
     public static class IdentityErrorMessages
     {

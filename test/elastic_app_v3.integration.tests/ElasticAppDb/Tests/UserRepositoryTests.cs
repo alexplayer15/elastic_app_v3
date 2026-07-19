@@ -1,10 +1,10 @@
 ﻿using AutoFixture;
-using elastic_app_v3.application.Errors.Identity;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.infrastructure.Repositories;
 using elastic_app_v3.integration.tests.Fixtures;
 using elastic_app_v3.common.tests.Clients;
+using elastic_app_v3.domain.Errors.Identity;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Polly;
@@ -73,8 +73,8 @@ public class UserRepositoryTests
         var userResult = await _userRepository.GetUserByUsernameAsync(username, CancellationToken.None);
 
         //Assert
-        Assert.True(userResult.IsFailed);
-        Assert.Single(userResult.Errors);
-        Assert.IsType<UserDoesNotExistError>(userResult.Errors[0]);
+        Assert.True(userResult.IsFailure);
+        Assert.NotNull(userResult.Error);
+        Assert.IsType<UserDoesNotExistError>(userResult.Error);
     }
 }

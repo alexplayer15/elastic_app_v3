@@ -32,7 +32,7 @@ public static class ProfileRoutes
                     request.Bio,
                     languages,
                     request.Hobbies,
-                    userId); //okay to have this logic in routing?
+                    userId);
 
                 var result = await mediator.Send(command, cancellationToken);
 

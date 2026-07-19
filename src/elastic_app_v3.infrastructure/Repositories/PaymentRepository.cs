@@ -1,12 +1,13 @@
 ﻿using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.infrastructure.Config;
-using FluentResults;
+using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Registry;
 using Dapper;
 using elastic_app_v3.domain.DTOs;
+using elastic_app_v3.domain.Errors;
 using Microsoft.Data.SqlClient;
 using elastic_app_v3.infrastructure.Models;
 using elastic_app_v3.infrastructure.SqlQueryConstants;
@@ -15,17 +16,18 @@ namespace elastic_app_v3.infrastructure.Repositories
 {
     public class PaymentRepository(
         IOptions<ElasticDatabaseSettings> elasticDatabaseSettings,
-        ResiliencePipelineProvider<string> resiliencePipelineProvider) : IPaymentRepository
+        ResiliencePipelineProvider<string> resiliencePipelineProvider
+    ) : IPaymentRepository
     {
         private readonly string _connectionString = elasticDatabaseSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline
             = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.ElasticAppDatabaseResiliencePolicyKey);
-        public async Task<Result<Guid>> AddPaymentAsync(Payment payment, string idempotencyKey, CancellationToken cancellationToken)
+        public async Task<Result<Guid, PaymentError>> AddPaymentAsync(Payment payment, string idempotencyKey,
+            CancellationToken cancellationToken)
         {
-            Guid paymentId = Guid.Empty;
             try
             {
-                paymentId = await _resiliencePipeline.ExecuteAsync(
+                Guid paymentId = await _resiliencePipeline.ExecuteAsync(
                 async token =>
                 {
                     await using var connection = new SqlConnection(_connectionString);
@@ -73,11 +75,14 @@ namespace elastic_app_v3.infrastructure.Repositories
                 throw;
             }
         }
-        public async Task<Result<Guid>> CheckIfIdempotencyKeyExists(string idempotencyKey, CancellationToken cancellation)
+        public async Task<Result<Guid, PaymentError>> CheckIfIdempotencyKeyExists(
+            string idempotencyKey,
+            CancellationToken cancellation
+        )
         {
             try
             {
-                var idempotencyRecord = await _resiliencePipeline.ExecuteAsync(
+                Maybe<IdempotencyKeySchema> idempotencyRecord = await _resiliencePipeline.ExecuteAsync(
                 async token =>
                 {
                     await using var connection = new SqlConnection(_connectionString);
@@ -91,14 +96,13 @@ namespace elastic_app_v3.infrastructure.Repositories
                 },
                 cancellation);
 
-                if (idempotencyRecord is not null
-                          && idempotencyRecord.IdempotencyKey is not null
-                          && DateTime.UtcNow - idempotencyRecord.CreatedAt <= TimeSpan.FromMinutes(10))
+                if (idempotencyRecord.HasValue
+                          && DateTime.UtcNow - idempotencyRecord.Value.CreatedAt <= TimeSpan.FromMinutes(10))
                 {
-                    return idempotencyRecord.PaymentId;
+                    return idempotencyRecord.Value.PaymentId;
                 }
 
-                return Result.Ok<Guid>(Guid.Empty);
+                return Result.Success<Guid, PaymentError>(Guid.Empty);
             }
             catch (SqlException)
             {

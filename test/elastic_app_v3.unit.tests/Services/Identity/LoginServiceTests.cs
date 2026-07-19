@@ -1,12 +1,12 @@
 ﻿using AutoFixture;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.application.Errors.Identity;
 using elastic_app_v3.application.Services.Identity;
-using elastic_app_v3.domain;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.DTOs;
 using elastic_app_v3.domain.Entities;
-using FluentResults;
+using elastic_app_v3.domain.Errors.Identity;
+using CSharpFunctionalExtensions;
+using elastic_app_v3.domain.Errors;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
 
@@ -40,15 +40,15 @@ public class LoginServiceTests
         var request = _fixture.Create<LoginRequest>();
 
         _mockUserRepository.GetUserByUsernameAsync(request.UserName, CancellationToken.None)
-            .Returns(Result.Fail(new UserDoesNotExistError()));
+            .Returns(Result.Failure<User, UserError>(new UserDoesNotExistError()));
 
         //Act
         var loginResult = await _loginService.LoginAsync(request, CancellationToken.None);
 
         //Assert
         Assert.False(loginResult.IsSuccess);
-        Assert.Single(loginResult.Errors);
-        Assert.IsType<UserDoesNotExistError>(loginResult.Errors[0]);
+        Assert.NotNull(loginResult.Error);
+        Assert.IsType<UserDoesNotExistError>(loginResult.Error);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class LoginServiceTests
             .Create();
 
         _mockUserRepository.GetUserByUsernameAsync(request.UserName, CancellationToken.None)
-            .Returns(Result.Ok(user));
+            .Returns(Result.Success<User, UserError>(user));
 
         _mockPasswordHasher.VerifyHashedPassword(
             Arg.Any<User>(), user.PasswordHash, request.Password)
@@ -75,7 +75,7 @@ public class LoginServiceTests
 
         var accessToken = Guid.NewGuid().ToString();
         _mockTokenGenerator.Generate(Arg.Any<User>())
-            .Returns(Result.Ok(new JwtToken
+            .Returns(Result.Success<JwtToken, UserError>(new JwtToken
             (accessToken, string.Empty, "Bearer", 60))
         );
 

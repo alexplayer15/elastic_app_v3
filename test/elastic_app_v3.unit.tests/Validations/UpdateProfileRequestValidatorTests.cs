@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using elastic_app_v3.application.DTOs.Profile;
-using elastic_app_v3.application.Errors.Profile;
 using elastic_app_v3.application.Validations;
 using FluentValidation.TestHelper;
 

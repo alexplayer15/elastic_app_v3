@@ -1,4 +1,4 @@
-﻿namespace elastic_app_v3.application.Constants;
+﻿namespace elastic_app_v3.domain.Constants;
 public class ValidationConstants
 {
     public const int UserNameMinLength = 6;

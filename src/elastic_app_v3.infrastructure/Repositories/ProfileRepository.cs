@@ -4,25 +4,26 @@ using elastic_app_v3.domain.Entities;
 using elastic_app_v3.domain.ValueObjects;
 using elastic_app_v3.infrastructure.Config;
 using elastic_app_v3.infrastructure.SqlQueryConstants;
-using elastic_app_v3.application.Errors.Profile;
-using FluentResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Registry;
+using CSharpFunctionalExtensions;
+using elastic_app_v3.domain.DTOs;
+using elastic_app_v3.domain.Errors;
+using elastic_app_v3.domain.Errors.Profile;
 
 namespace elastic_app_v3.infrastructure.Repositories;
 public class ProfileRepository(
     IOptions<ElasticDatabaseSettings> elasticAppDatabaseSettings,
-    ResiliencePipelineProvider<string> resiliencePipelineProvider) : IProfileRepository
+    ResiliencePipelineProvider<string> resiliencePipelineProvider
+) : IProfileRepository
 {
     private readonly string _connectionString = elasticAppDatabaseSettings.Value.GetConnectionString();
     private readonly ResiliencePipeline _resiliencePipeline
             = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.ElasticAppDatabaseResiliencePolicyKey);
     
-    private record ProfileRow(Guid UserId, string? Bio);
-    
-    public async Task<Result<Profile>> GetProfileByUserId(Guid userId, CancellationToken cancellationToken)
+    public async Task<Result<Profile, ProfileError>> GetProfileByUserId(Guid userId, CancellationToken cancellationToken)
     {
         try
         {
@@ -39,7 +40,9 @@ public class ProfileRepository(
                 var profileRow = await connection.QuerySingleOrDefaultAsync<ProfileRow>(profileCommand);
 
                 if (profileRow is null)
-                    return Result.Fail<Profile>(new NoProfileFoundError(userId));
+                {
+                    return Result.Failure<Profile, ProfileError>(new NoProfileFoundError(userId));
+                }
 
                 var languagesCommand = new CommandDefinition(
                     ProfileSqlConstants.GetLanguagesByUserId,
@@ -55,7 +58,7 @@ public class ProfileRepository(
 
                 var hobbies = (await connection.QueryAsync<string>(hobbiesCommand)).ToList();
 
-                return Result.Ok(Profile.Rehydrate(profileRow.UserId, profileRow.Bio, languages, hobbies));
+                return Result.Success<Profile, ProfileError>(Profile.Rehydrate(profileRow.UserId, profileRow.Bio, languages, hobbies));
             }, cancellationToken);
         }
         catch (SqlException ex)
@@ -69,8 +72,7 @@ public class ProfileRepository(
     }
     
     //to do: split this to follow SRP
-    public async Task<Result<Profile>> UpdateProfile(
-        Profile profile,
+    public async Task<Result<Profile, ProfileError>> UpdateProfile(Profile profile,
         CancellationToken cancellationToken)
     {
         try
@@ -98,7 +100,7 @@ public class ProfileRepository(
                     await connection.QuerySingleOrDefaultAsync<string>(updateProfileCommand);
 
                     var languages = profile.Languages;
-                    if (languages is not null)
+                    if (languages.Count > 0)
                     {
                         var deleteLanguagesCommand = new CommandDefinition(
                             ProfileSqlConstants.DeleteProfileLanguages,
@@ -128,21 +130,19 @@ public class ProfileRepository(
 
                     await transaction.CommitAsync(token); //no test checks if the data is actually in the db
 
-                    return Result.Ok(profile);
+                    return Result.Success<Profile, ProfileError>(profile);
                 }, cancellationToken);
         }
         catch(Exception ex)
         {
-            throw ex;
+            throw ex; //to do: add logger and meaningful exception
         }
     }
     
     //Does this belong here?
-    public async Task<Result> SaveProfilePicture(
-        Guid userId, 
-        string objectUrl, 
-        CancellationToken cancellationToken
-    )
+    public async Task<UnitResult<ProfileError>> SaveProfilePicture(Guid userId,
+        string objectUrl,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -171,7 +171,7 @@ public class ProfileRepository(
         {
             throw;
         }
-
-        return Result.Ok();
+        
+        return UnitResult.Success<ProfileError>();
     }
 }

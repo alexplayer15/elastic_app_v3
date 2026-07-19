@@ -2,11 +2,12 @@
 using NSubstitute;
 using Microsoft.AspNetCore.Identity;
 using elastic_app_v3.domain.Entities;
-using FluentResults;
+using CSharpFunctionalExtensions;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.application.Services.Identity;
 using elastic_app_v3.application.DTOs.SignUp;
-using elastic_app_v3.application.Errors.Identity;
+using elastic_app_v3.domain.Errors;
+using elastic_app_v3.domain.Errors.Identity;
 
 namespace elastic_app_v3.unit.tests.Services.Identity;
 public class UserServiceTests
@@ -42,7 +43,7 @@ public class UserServiceTests
             .Returns("hashedPassword");
 
         _mockUserRepository.AddAsync(Arg.Any<User>(), CancellationToken.None)
-            .Returns(Result.Ok());
+            .Returns(UnitResult.Success<UserError>());
 
         //Act
         var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);
@@ -61,15 +62,15 @@ public class UserServiceTests
             .Returns("hashedPassword");
 
         _mockUserRepository.AddAsync(Arg.Any<User>(), CancellationToken.None)
-            .Returns(Result.Fail(new UserAlreadyExistsError()));
+            .Returns(UnitResult.Failure<UserError>(new UserAlreadyExistsError()));
 
         //Act
         var signUpResult = await _userService.SignUpAsync(request, CancellationToken.None);
 
         //Assert
         Assert.False(signUpResult.IsSuccess);
-        Assert.Single(signUpResult.Errors);
-        Assert.IsType<UserAlreadyExistsError>(signUpResult.Errors[0]);
+        Assert.NotNull(signUpResult.Error);
+        Assert.IsType<UserAlreadyExistsError>(signUpResult.Error);
     }
 
     [Fact]
@@ -80,10 +81,10 @@ public class UserServiceTests
         var user = _fixture.Create<User>();
 
         _mockUserRepository.GetUserByIdAsync(userId, CancellationToken.None)
-            .Returns(Result.Ok(user));
+            .Returns(Result.Success<User, UserError>(user));
 
         //Act
-        var result = await _userService.GetUserByIdAsync(userId, CancellationToken.None); //better alternative to provide empty cancellation token in tests?
+        var result = await _userService.GetUserByIdAsync(userId, CancellationToken.None);
 
         //Assert
         Assert.True(result.IsSuccess);
@@ -100,14 +101,14 @@ public class UserServiceTests
         var userId = _fixture.Create<Guid>();
 
         _mockUserRepository.GetUserByIdAsync(userId, CancellationToken.None)
-            .Returns(Result.Fail(new UserDoesNotExistError()));
+            .Returns(Result.Failure<User, UserError>(new UserDoesNotExistError()));
 
         //Act
         var result = await _userService.GetUserByIdAsync(userId, CancellationToken.None);
 
         //Assert
-        Assert.True(result.IsFailed);
-        Assert.Single(result.Errors);
-        Assert.IsType<UserDoesNotExistError>(result.Errors[0]);
+        Assert.True(result.IsFailure);
+        Assert.NotNull(result.Error);
+        Assert.IsType<UserDoesNotExistError>(result.Error);
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System.Text.Json;
+using CSharpFunctionalExtensions;
 using Dapper;
-using elastic_app_v3.application.Errors;
-using elastic_app_v3.application.Errors.Identity;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
+using elastic_app_v3.domain.Errors;
+using elastic_app_v3.domain.Errors.Identity;
 using elastic_app_v3.domain.Events;
 using elastic_app_v3.infrastructure.Config;
 using elastic_app_v3.infrastructure.SqlQueryConstants;
-using FluentResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using Polly;
@@ -23,7 +23,7 @@ namespace elastic_app_v3.infrastructure.Repositories
         private readonly string _connectionString = elasticDatabaseSettings.Value.GetConnectionString();
         private readonly ResiliencePipeline _resiliencePipeline 
             = resiliencePipelineProvider.GetPipeline(ResiliencePolicy.ElasticAppDatabaseResiliencePolicyKey);
-        public async Task<Result> AddAsync(User user, CancellationToken cancellationToken)
+        public async Task<UnitResult<UserError>> AddAsync(User user, CancellationToken cancellationToken)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace elastic_app_v3.infrastructure.Repositories
 
                 if (userExists)
                 {
-                    return Result.Fail(new UserAlreadyExistsError());
+                    return UnitResult.Failure<UserError>(new UserAlreadyExistsError());
                 }
 
                 await _resiliencePipeline.ExecuteAsync(
@@ -71,7 +71,7 @@ namespace elastic_app_v3.infrastructure.Repositories
                                 Payload = JsonSerializer.Serialize(userSignedUpEvent)
                             },
                             transaction: transaction,
-                            cancellationToken: cancellationToken
+                            cancellationToken: token
                         );
 
                         await connection.ExecuteAsync(outboxCommand);
@@ -94,9 +94,12 @@ namespace elastic_app_v3.infrastructure.Repositories
                 throw;
             }
 
-            return Result.Ok();
+            return UnitResult.Success<UserError>();
         }
-        public async Task<Result<User>> GetUserByUsernameAsync(string userName, CancellationToken cancellationToken)
+        public async Task<Result<User, UserError>> GetUserByUsernameAsync(
+            string userName, 
+            CancellationToken cancellationToken
+        )
         {
             var user = await _resiliencePipeline.ExecuteAsync(
                 async token =>
@@ -112,14 +115,14 @@ namespace elastic_app_v3.infrastructure.Repositories
 
             if (user is null)
             {
-                return Result.Fail(new UserDoesNotExistError());
+                return Result.Failure<User, UserError>(new UserDoesNotExistError());
             }
 
             //later could add try/catch with logging and domain exceptions/errors
 
-            return user;
+            return Result.Success<User, UserError>(user);
         }
-        public async Task<Result<User>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<Result<User, UserError>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
         {
             User? user;
             try
@@ -142,7 +145,7 @@ namespace elastic_app_v3.infrastructure.Repositories
                     cancellationToken);
                 if (user == null)
                 {
-                    return Result.Fail(new UserDoesNotExistError());
+                    return Result.Failure<User, UserError>(new UserDoesNotExistError());
                 }
             }
             catch (SqlException)
@@ -158,14 +161,14 @@ namespace elastic_app_v3.infrastructure.Repositories
                 throw;
             }
 
-            return Result.Ok(user);
+            return Result.Success<User, UserError>(user);
         }
         private async Task<bool> CheckIfUserNameExistsAsync(string userName, CancellationToken cancellationToken)
         {
             return await _resiliencePipeline.ExecuteAsync(
                 async token =>
                 {
-                     using var connection = new SqlConnection(_connectionString);
+                     await using var connection = new SqlConnection(_connectionString);
                      await connection.OpenAsync(token);
 
                     var command = new CommandDefinition(

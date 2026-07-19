@@ -1,15 +1,14 @@
 ﻿using elastic_app_v3.api.Errors;
 using elastic_app_v3.api.Routing.Constants;
-using elastic_app_v3.application.Errors;
-using elastic_app_v3.application.Errors.Identity;
-using elastic_app_v3.application.Errors.Profile;
-using FluentResults;
+using elastic_app_v3.domain.Errors;
+using elastic_app_v3.domain.Errors.Identity;
+using elastic_app_v3.domain.Errors.Profile;
 using Microsoft.AspNetCore.Mvc;
 
 namespace elastic_app_v3.api.Mappings;
 public static class ErrorResponseMapper
 {
-    private static readonly Dictionary<string, Func<Error, IResult>> _errorResponseMap = new()
+    private static readonly Dictionary<string, Func<BaseError, IResult>> _errorResponseMap = new()
     {
         { EndpointConstants.UserSignUpEndpoint, GetSignUpErrorResponse },
         { EndpointConstants.UserLoginEndpoint, GetLoginErrorResponse  },
@@ -20,7 +19,7 @@ public static class ErrorResponseMapper
         { EndpointConstants.SaveProfilePicture, GetSaveProfilePictureErrorResponse }
     };
     public static IResult GetErrorResponseByEndpoint(
-        Error internalError,
+        BaseError internalError,
         string endpoint)
     {
         return _errorResponseMap.TryGetValue(endpoint, out var mapper)
@@ -30,11 +29,10 @@ public static class ErrorResponseMapper
     }
     
     //LOTS of duplicate code - clean up here
-    private static IResult GetSignUpErrorResponse(Error internalError)
+    private static IResult GetSignUpErrorResponse(BaseError error)
     {
-        (int statusCode, string errorCode) = internalError switch
+        (int statusCode, string errorCode) = error switch
         {
-            ValidationError => (StatusCodes.Status400BadRequest, ErrorCodes.ValidationError),
             UserAlreadyExistsError => (StatusCodes.Status409Conflict, ErrorCodes.UserAlreadyExistsError),
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
@@ -43,17 +41,16 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred during user sign-up.",
-            Detail = internalError.Message,
+            Detail = error.Message,
             Status = statusCode
         };
 
         return Results.Json(problemDetails, statusCode: statusCode);
     }
-    private static IResult GetLoginErrorResponse(Error internalError)
+    private static IResult GetLoginErrorResponse(BaseError error)
     {
-        (int statusCode, string errorCode) = internalError switch
+        (int statusCode, string errorCode) = error switch
         {
-            ValidationError => (StatusCodes.Status400BadRequest, ErrorCodes.ValidationError),
             UserDoesNotExistError => (StatusCodes.Status404NotFound, ErrorCodes.UserDoesNotExistError),
             IncorrectPasswordError => (StatusCodes.Status401Unauthorized, ErrorCodes.IncorrectPasswordError),
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
@@ -63,15 +60,15 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred during user login.",
-            Detail = internalError.Message,
+            Detail = error.Message,
             Status = statusCode
         };
 
         return Results.Json(problemDetails, statusCode: statusCode);
     }
-    private static IResult GetUserByIdErrorResponse(Error internalError)
+    private static IResult GetUserByIdErrorResponse(BaseError error)
     {
-        (int statusCode, string errorCode) = internalError switch
+        (int statusCode, string errorCode) = error switch
         {
             UserDoesNotExistError => (StatusCodes.Status404NotFound, ErrorCodes.UserDoesNotExistError),
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
@@ -81,15 +78,15 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred retrieving user.",
-            Detail = internalError.Message,
+            Detail = error.Message,
             Status = statusCode
         };
 
         return Results.Json(problemDetails, statusCode: statusCode);
     }
-    private static IResult GetPaymentErrorResponse(Error internalError)
+    private static IResult GetPaymentErrorResponse(BaseError error)
     {
-        (int statusCode, string errorCode) = internalError switch
+        (int statusCode, string errorCode) = error switch
         {
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
@@ -98,17 +95,16 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred during payment.",
-            Detail = internalError.Message,
+            Detail = error.Message,
             Status = statusCode
         };
 
         return Results.Json(problemDetails, statusCode: statusCode);
     }
-    private static IResult GetUpdateProfileErrorResponse(Error internalError)
+    private static IResult GetUpdateProfileErrorResponse(BaseError error)
     {
-        (int statusCode, string errorCode) = internalError switch
+        (int statusCode, string errorCode) = error switch
         {
-            ValidationError => (StatusCodes.Status400BadRequest, ErrorCodes.ValidationError),
             NoProfileFoundError => (StatusCodes.Status404NotFound, ErrorCodes.NoProfileFoundError),
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
@@ -116,16 +112,16 @@ public static class ErrorResponseMapper
         var problemDetails = new ProblemDetails
         {
             Type = errorCode,
-            Title = "An error occurred during update profile.",
-            Detail = internalError.Message,
+            Title = "An error occurred during update profile",
+            Detail = error.Message,
             Status = statusCode
         };
 
         return Results.Json(problemDetails, statusCode: statusCode);
     }
-    private static IResult GetProfilePictureUrlErrorResponse(Error internalError)
+    private static IResult GetProfilePictureUrlErrorResponse(BaseError error)
     {
-        (int statusCode, string errorCode) = internalError switch
+        (int statusCode, string errorCode) = error switch
         {
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
@@ -134,15 +130,15 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred retrieving profile picture url.",
-            Detail = internalError.Message,
+            Detail = error.Message,
             Status = statusCode
         };
 
         return Results.Json(problemDetails, statusCode: statusCode);
     }
-    private static IResult GetSaveProfilePictureErrorResponse(Error internalError)
+    private static IResult GetSaveProfilePictureErrorResponse(BaseError error)
     {
-        (int statusCode, string errorCode) = internalError switch
+        (int statusCode, string errorCode) = error switch
         {
             _ => (StatusCodes.Status500InternalServerError, ErrorCodes.UnknownError)
         };
@@ -151,7 +147,7 @@ public static class ErrorResponseMapper
         {
             Type = errorCode,
             Title = "An error occurred saving profile picture.",
-            Detail = internalError.Message,
+            Detail = error.Message,
             Status = statusCode
         };
 

@@ -2,7 +2,7 @@
 using FluentValidation.TestHelper;
 using elastic_app_v3.application.Validations;
 using elastic_app_v3.application.DTOs.Login;
-using elastic_app_v3.application.Errors.Identity;
+using elastic_app_v3.domain.Errors.Identity;
 
 namespace elastic_app_v3.unit.tests.Validations
 {

@@ -1,18 +1,17 @@
 ﻿using elastic_app_v3.application.DTOs.Payment;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.Entities;
-using FluentResults;
+using CSharpFunctionalExtensions;
+using elastic_app_v3.domain.Errors;
 
 namespace elastic_app_v3.application.Services.Payments
 {
     public class PaymentService(IPaymentRepository paymentRepository) : IPaymentService
     {
         private readonly IPaymentRepository _paymentRepository = paymentRepository;
-        public async Task<Result<PaymentResponse>> AddPayment(
-            PaymentRequest request,
+        public async Task<Result<PaymentResponse, PaymentError>> AddPayment(PaymentRequest request,
             string idempotencyKey,
-            CancellationToken cancellationToken
-        )
+            CancellationToken cancellationToken)
         {
             //to do: payment request validations
 

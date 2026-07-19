@@ -4,7 +4,8 @@ using Amazon.S3.Model;
 using elastic_app_v3.domain.Abstractions;
 using elastic_app_v3.domain.DTOs;
 using elastic_app_v3.infrastructure.Config;
-using FluentResults;
+using CSharpFunctionalExtensions;
+using elastic_app_v3.domain.Errors;
 using Microsoft.Extensions.Options;
 
 namespace elastic_app_v3.infrastructure.DataStores;
@@ -17,7 +18,7 @@ public class ProfilePictureDataStore(
     private readonly IAmazonS3 _s3Client = s3Client;
     private readonly ILogger<ProfilePictureDataStore> _logger = logger;
     private readonly ProfilePictureDataStoreOptions _profilePictureDataStoreOptions = profilePictureDataStoreOptions.Value; 
-    public Result<ProfilePictureUrls> GetProfilePictureUrls(Guid userId)
+    public Result<ProfilePictureUrls, ProfileError> GetProfilePictureUrls(Guid userId)
     {
         string preSignedUrl = string.Empty;
         var objectKey = $"profile-pictures/{userId}/avatar.jpg";

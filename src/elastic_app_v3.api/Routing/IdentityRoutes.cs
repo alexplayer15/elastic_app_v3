@@ -4,8 +4,9 @@ using elastic_app_v3.application.Services.Identity;
 using elastic_app_v3.application.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
 using elastic_app_v3.application.DTOs.SignUp;
-using FluentResults.Extensions;
-using Microsoft.AspNetCore.CookiePolicy;
+using CSharpFunctionalExtensions;
+using elastic_app_v3.domain.Errors;
+using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace elastic_app_v3.api.Routing;
 public static class IdentityRoutes
@@ -29,15 +30,15 @@ public static class IdentityRoutes
             [FromServices] ILoginService loginService,
             CancellationToken cancellationToken) =>
         {
-            var result = await loginService.LoginAsync(request, cancellationToken)
+            UnitResult<UserError> result = await loginService.LoginAsync(request, cancellationToken)
                 .Tap(loginResponse => AddAccessTokenToHttpContext(
                     httpContext, 
                     loginResponse.AccessToken, 
                     loginResponse.ExpiresInMinutes
                 ));
-                
+            
+            //convert for below call
             return result
-                .ToResult()
                 .ToApiResponse(EndpointConstants.UserLoginEndpoint);
         })
         .WithName(OpenApiConstants.UserLoginEndpointOpenApiName)

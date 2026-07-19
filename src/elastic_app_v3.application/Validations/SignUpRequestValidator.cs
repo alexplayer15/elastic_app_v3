@@ -1,6 +1,6 @@
-﻿using elastic_app_v3.application.Constants;
-using elastic_app_v3.application.DTOs.SignUp;
-using elastic_app_v3.application.Errors.Identity;
+﻿using elastic_app_v3.application.DTOs.SignUp;
+using elastic_app_v3.domain.Constants;
+using elastic_app_v3.domain.Errors.Identity;
 using FluentValidation;
 
 namespace elastic_app_v3.application.Validations

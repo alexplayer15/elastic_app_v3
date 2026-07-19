@@ -1,10 +1,10 @@
 ﻿using elastic_app_v3.domain.Abstractions;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using elastic_app_v3.domain.Entities;
 using elastic_app_v3.application.DTOs;
-using FluentResults;
+using CSharpFunctionalExtensions;
 using elastic_app_v3.application.DTOs.SignUp;
+using elastic_app_v3.domain.Errors;
 
 namespace elastic_app_v3.application.Services.Identity
 {
@@ -15,7 +15,10 @@ namespace elastic_app_v3.application.Services.Identity
     {
         private readonly IUserRepository _userDbRepository = userDbRepository;
         private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
-        public async Task<Result> SignUpAsync(SignUpRequest request, CancellationToken cancellationToken)
+        public async Task<UnitResult<UserError>> SignUpAsync(
+            SignUpRequest request, 
+            CancellationToken cancellationToken
+        )
         {
             var user = new User
             {
@@ -30,7 +33,7 @@ namespace elastic_app_v3.application.Services.Identity
 
             return await _userDbRepository.AddAsync(user, cancellationToken);
         }
-        public async Task<Result<GetUserResponse>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<Result<GetUserResponse, UserError>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
         {
             var userResult = await _userDbRepository.GetUserByIdAsync(userId, cancellationToken);
 
