@@ -4,4 +4,5 @@ export const paths = {
     home: '/home',
     settings: '/settings',
     editProfile: '/editProfile',
+    editBio: '/editBio',
 } as const;
